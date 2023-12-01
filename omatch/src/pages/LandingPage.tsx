@@ -1,4 +1,5 @@
-import WelcomeBox from "./WelcomeBox";
+import { useState } from "react";
+import WelcomeBox from "../components/landing/WelcomeBox";
 
 export default function LandingPage() {
   return (

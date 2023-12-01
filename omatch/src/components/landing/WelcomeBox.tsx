@@ -1,32 +1,30 @@
 import "../../styles/index.css";
+import { Link } from "react-router-dom";
+import { auth } from "../../firebase-config";
+import { User, onAuthStateChanged } from "firebase/auth";
+import { useState } from "react";
 
 export default function WelcomeBox() {
-  function CreateProfile() {
-    {
-      <h1>Change to Create Profile link here</h1>;
-    }
-  }
-  function LogIn() {
-    {
-      <h1>Go to Log In Page Here</h1>;
-    }
-  }
+  const [loggedInUser, setLoggedInUser] = useState(auth.currentUser);
+  console.log("before entering observer");
+  console.log(loggedInUser);
+  onAuthStateChanged(auth, (user) => {
+    setLoggedInUser(user);
+    console.log("entered onAuthStateChanged function");
+    console.log(user);
+  });
+
   return (
     <div id="welcome">
       <h1>Welcome to OMatch!</h1>
       <h2>[WELCOME MESSAGE + INSTRUCTIONS]</h2>
-      <div id="buttonContainer">
-        <button
-          id="leftButton"
-          className="button"
-          onClick={() => CreateProfile()}
-        >
-          Create Account
-        </button>
-        <button id="rightButton" className="button" onClick={() => LogIn()}>
-          Log In
-        </button>
-      </div>
+      <Link to="/signin">
+        <button id="toSignInPageButton">Sign In</button>
+      </Link>
+      <Link to="/create-account">
+        <button id="toCreateAccountPageButton">Create Account</button>
+      </Link>
+      <p> {loggedInUser?.email} are logged in.</p>
     </div>
   );
 }

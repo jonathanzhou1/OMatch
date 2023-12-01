@@ -10,9 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "firebase": "^10.7.0",
     "playwright": "^1.40.1",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.20.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.40.0",
