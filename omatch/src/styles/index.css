@@ -1,0 +1,23 @@
+#welcome {
+  background-color: rgb(255, 182, 47);
+  border-radius: 4rem;
+  border-width: 2px;
+  margin: 15vh auto 0 auto;
+  width: 60vw;
+  height: 60vh;
+}
+
+h1 {
+  padding-top: 5vh;
+  font-size: calc(30px + 1vw);
+  text-align: center;
+}
+
+h2 {
+  font-size: calc(20px + 1vw);
+  text-align: center;
+}
+
+body {
+  background-color: rgb(255, 225, 180);
+}
