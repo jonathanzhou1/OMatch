@@ -1,5 +1,5 @@
 #welcome {
-  background-color: rgb(255, 182, 47);
+  background-color: rgb(255, 165, 47);
   border-radius: 4rem;
   border-width: 2px;
   margin: 15vh auto 0 auto;
@@ -8,7 +8,7 @@
 }
 
 h1 {
-  padding-top: 5vh;
+  padding-top: 15vh;
   font-size: calc(30px + 1vw);
   text-align: center;
 }
@@ -19,5 +19,86 @@ h2 {
 }
 
 body {
-  background-color: rgb(255, 225, 180);
+  background-color: rgb(251, 200, 124);
+}
+
+/*BUTTON CSS*/
+
+#leftButton {
+  margin-left: auto;
+  display: inline-block;
+  margin-right: 3vw;
+}
+
+#rightButton {
+  margin-right: auto;
+  display: inline-block;
+}
+
+#buttonContainer {
+  text-align: center;
+}
+
+/* BUTTON CSS FROM DUOLINGO */
+.button {
+  appearance: button;
+  background-color: rgb(223, 79, 27);
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: din-round, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  line-height: 20px;
+  outline: none;
+  padding: 30px 10px;
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transform: translateZ(0);
+  transition: filter 0.2s;
+  user-select: none;
+  -webkit-user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  width: 30%;
+}
+
+.button:after {
+  background-clip: padding-box;
+  background-color: rgb(255, 140, 98);
+  border: solid transparent;
+  border-radius: 16px;
+  border-width: 0 0 4px;
+  bottom: -4px;
+  content: "";
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.button:main,
+.button:focus {
+  user-select: auto;
+}
+
+.button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  -webkit-filter: brightness(1.1);
+}
+
+.button:disabled {
+  cursor: auto;
+}
+
+.button:active {
+  border-width: 4px 0 0;
+  background: none;
 }
