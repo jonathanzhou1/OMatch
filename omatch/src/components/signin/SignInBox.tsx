@@ -8,24 +8,33 @@ import { error } from "console";
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
 
 export default function SignInBox() {
+  //state variables to show progress logging in
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
 
+  //state variable to store whether there is an error logging in
   const [errorStatus, setErrorStatus] = useState(false);
+
+  //used for navigation between website endpoints
   const navigate = useNavigate();
 
   async function login() {
     try {
+      //log into firebase auth
       const user = await signInWithEmailAndPassword(
         auth,
         loginEmail,
         loginPassword
       );
-      console.log(user);
-      return navigate("/");
+      console.log(user); //Remove this later
+      //localStorage acts as a KV-store locally on the browser
+      localStorage.setItem("userEmail", loginEmail);
+      //go to /dashboard endpoint, with Dashboard tsx
+      return navigate("/dashboard");
     } catch (error: any) {
+      //show descriptive error message
       setErrorStatus(true);
-      console.log(error.message);
+      console.log(error.message); //Remove this later
     }
   }
 
