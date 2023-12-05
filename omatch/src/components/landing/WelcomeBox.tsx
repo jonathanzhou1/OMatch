@@ -18,13 +18,25 @@ export default function WelcomeBox() {
     <div id="welcome">
       <h1>Welcome to OMatch!</h1>
       <h2>[WELCOME MESSAGE + INSTRUCTIONS]</h2>
-      <Link to="/signin">
-        <button id="toSignInPageButton">Sign In</button>
-      </Link>
-      <Link to="/create-account">
-        <button id="toCreateAccountPageButton">Create Account</button>
-      </Link>
-      <p> {loggedInUser?.email} are logged in.</p>
+      <div id="buttonContainer">
+        <Link to="/signin">
+          <button
+            className="button leftButton twoButtons"
+            id="toSignInPageButton"
+          >
+            Sign In
+          </button>
+        </Link>
+        <Link to="/create-account">
+          <button
+            className="button rightButton twoButtons"
+            id="toCreateAccountPageButton"
+          >
+            Create Account
+          </button>
+        </Link>
+      </div>
+      <p> {loggedInUser?.email} is logged in.</p>
     </div>
   );
 }

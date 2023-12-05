@@ -2,13 +2,17 @@ import { auth } from "../../firebase-config";
 import "../../styles/index.css";
 import { useState } from "react";
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { error } from "console";
 
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
 
 export default function SignInBox() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+
+  const [errorStatus, setErrorStatus] = useState(false);
+  const navigate = useNavigate();
 
   async function login() {
     try {
@@ -18,7 +22,9 @@ export default function SignInBox() {
         loginPassword
       );
       console.log(user);
+      return navigate("/");
     } catch (error: any) {
+      setErrorStatus(true);
       console.log(error.message);
     }
   }
@@ -44,11 +50,20 @@ export default function SignInBox() {
           setLoginPassword(event.target.value);
         }}
       ></input>
-      <Link to="/">
-        <button id="signInButton" onClick={login}>
+      <div id="buttonContainer">
+        <button
+          className="button singleButton"
+          id="signInButton"
+          onClick={login}
+        >
           Sign In
         </button>
-      </Link>
+        {errorStatus && (
+          <p className="redText">
+            Invalid login information inputted. Please try again!
+          </p>
+        )}
+      </div>
     </div>
   );
 }
