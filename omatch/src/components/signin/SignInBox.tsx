@@ -1,9 +1,8 @@
 import { auth } from "../../firebase-config";
 import "../../styles/index.css";
 import { useState } from "react";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { Link, useNavigate } from "react-router-dom";
-import { error } from "console";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
 
@@ -38,10 +37,6 @@ export default function SignInBox() {
     }
   }
 
-  // async function logout() {
-  //   await signOut(auth);
-  // }
-
   return (
     <div id="signIn">
       <h1>Sign In</h1>
@@ -51,12 +46,24 @@ export default function SignInBox() {
         onChange={(event) => {
           setLoginEmail(event.target.value);
         }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            login();
+          }
+        }}
       ></input>
       <h2>Password</h2>
       <input
         type="password"
         onChange={(event) => {
           setLoginPassword(event.target.value);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            login();
+          }
         }}
       ></input>
       <div id="buttonContainer">

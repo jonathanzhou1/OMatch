@@ -1,16 +1,34 @@
 import "../../styles/index.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { signOut } from "@firebase/auth";
+import { auth } from "../../firebase-config";
+import { useEffect } from "react";
 
 export default function Dashboard() {
   //get user email from local storage
   const userEmail = localStorage.getItem("userEmail");
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (userEmail == null) {
+      console.log(`Dashboard currentUser: ${userEmail}`);
+      navigate("/");
+    }
+  }, [location]);
+
+  async function logOut() {
+    await signOut(auth);
+    localStorage.removeItem("userEmail");
+  }
+
   return (
     <div id="welcome">
       <h1>Welcome to OMatch, User: {userEmail}!</h1>
       <div id="buttonContainer">
         <Link to="/view-profile">
           <button
-            className="button leftButton twoButtons"
+            className="button leftButton threeButtons"
             id="toViewProfileButton"
           >
             View Profile
@@ -18,10 +36,20 @@ export default function Dashboard() {
         </Link>
         <Link to="/match-team">
           <button
-            className="button rightButton twoButtons"
+            className="button middleButton threeButtons"
             id="toMatchATeamButton"
           >
             Match a Team
+          </button>
+        </Link>
+        <Link to="/">
+          <button
+            className="button rightButton threeButtons"
+            id="signOutButton"
+            style={{ display: "inline-block" }}
+            onClick={logOut}
+          >
+            Sign Out
           </button>
         </Link>
       </div>

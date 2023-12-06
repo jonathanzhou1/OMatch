@@ -37,6 +37,13 @@ body {
   margin-right: 3vw;
 }
 
+.middleButton {
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
+  margin-right: 3vw;
+}
+
 .rightButton {
   margin-right: auto;
   display: inline-block;
@@ -53,6 +60,10 @@ body {
 
 .twoButtons {
   width: 30%;
+}
+
+.threeButtons {
+  width: 25%;
 }
 
 /* BUTTON CSS FROM DUOLINGO */

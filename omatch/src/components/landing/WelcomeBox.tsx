@@ -1,7 +1,7 @@
 import "../../styles/index.css";
 import { Link } from "react-router-dom";
 import { auth } from "../../firebase-config";
-import { User, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { useState } from "react";
 
 export default function WelcomeBox() {
@@ -36,7 +36,12 @@ export default function WelcomeBox() {
           </button>
         </Link>
       </div>
-      <p> {loggedInUser?.email} is logged in.</p>
+      <p>
+        {" "}
+        {loggedInUser
+          ? `${loggedInUser.email} is logged in.`
+          : "You are not logged in."}{" "}
+      </p>
     </div>
   );
 }
