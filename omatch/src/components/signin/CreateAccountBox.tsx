@@ -2,7 +2,7 @@ import "../../styles/index.css";
 import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase-config";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
 
@@ -37,6 +37,12 @@ export default function CreateAccountBox() {
         onChange={(event) => {
           setRegisterEmail(event.target.value);
         }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            register();
+          }
+        }}
       ></input>
       <h2>Password</h2>
       {/* Consider adding minLength and pattern properties for more secure passwords */}
@@ -44,6 +50,12 @@ export default function CreateAccountBox() {
         type="password"
         onChange={(event) => {
           setRegisterPassword(event.target.value);
+        }}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            register();
+          }
         }}
       ></input>
       <div id="buttonContainer">
