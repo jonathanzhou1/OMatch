@@ -17,7 +17,7 @@ public class Match implements IMatch {
   }
 
   /**
-   * SetOutcome. Default = -1 (Not finished. 0 = Draw, 1 = Team 1 Wins, 2 = Team 2 Wins
+   * SetOutcome. Default = -1 = Not finished. 0 = Draw, 1 = Team 1 Wins, 2 = Team 2 Wins
    * @param outcome
    */
   public void setOutcome(int outcome) {

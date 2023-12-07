@@ -38,4 +38,8 @@ public class Player implements IPlayer {
   public float getSkillLevel(){
     return this.skillLevel;
   }
+
+  public float getWinPercentage(){
+    return (float) this.wins/(this.wins + this.losses);
+  }
 }
