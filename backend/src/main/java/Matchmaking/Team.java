@@ -11,6 +11,8 @@ public class Team {
 
   public Team() {
     this.players = new ArrayList<>();
+    this.avgSkill = 0;
+    this.size = 0;
   }
   public void addPlayer(Player player){
     this.players.add(player);
@@ -19,6 +21,10 @@ public class Team {
   }
   public List<Player> getPlayers() {
     return this.players;
+  }
+
+  public int getSize() {
+    return this.size;
   }
 
   private float updateAvgSkill(){

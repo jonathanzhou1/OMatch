@@ -24,6 +24,10 @@ public class Player implements IPlayer {
     this.losses = 0;
   }
 
+  public Position getPosition() {
+    return this.position;
+  }
+
   public void addWin() {
     this.wins++;
   }

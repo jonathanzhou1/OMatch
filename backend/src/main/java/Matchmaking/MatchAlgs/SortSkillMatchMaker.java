@@ -1,5 +1,6 @@
 package Matchmaking.MatchAlgs;
 
+
 import Matchmaking.Match;
 import Matchmaking.Player;
 import Matchmaking.Team;
@@ -31,6 +32,10 @@ public class SortSkillMatchMaker implements IMatchMaker{
     for (int i = 0; i < players.size(); i++) {
       teams.get(i % numTeams).addPlayer(players.get(i));
     }
+    return matchTeams(numTeams, teams);
+  }
+
+  static List<Match> matchTeams(int numTeams, List<Team> teams) {
     Collections.sort(teams, (t1, t2) -> Float.compare(t1.getAvgSkill(), t2.getAvgSkill()));
     List<Match> matches = new ArrayList<>();
     for (int i = 0; i < numTeams; i +=2) {
