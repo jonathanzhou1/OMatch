@@ -48,4 +48,10 @@ public interface DataStore {
    * @return The list of players in the form of an unmodifiable map from String ID to Player
    */
   public Map<String,Player> getPlayers();
+
+  /**
+   * Takes in a json and uses it to initialize the database with information
+   * @param fileJson The file which is used to populate the database
+   */
+  public void parseFile(String fileJson);
 }

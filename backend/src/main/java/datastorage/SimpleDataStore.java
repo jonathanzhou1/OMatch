@@ -95,4 +95,14 @@ public class SimpleDataStore implements DataStore{
   public Map<String, Player> getPlayers() {
     return Collections.unmodifiableMap(dataMap);
   }
+
+  /**
+   * Takes in a json and uses it to initialize the database with information
+   *
+   * @param fileJson The file which is used to populate the database
+   */
+  @Override
+  public void parseFile(String fileJson) {
+
+  }
 }
