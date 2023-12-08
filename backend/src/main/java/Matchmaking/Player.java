@@ -24,6 +24,10 @@ public class Player implements IPlayer {
     this.losses = 0;
   }
 
+  public Position getPosition() {
+    return this.position;
+  }
+
   public void addWin() {
     this.wins++;
   }
@@ -37,5 +41,9 @@ public class Player implements IPlayer {
   }
   public float getSkillLevel(){
     return this.skillLevel;
+  }
+
+  public float getWinPercentage(){
+    return (float) this.wins/(this.wins + this.losses);
   }
 }

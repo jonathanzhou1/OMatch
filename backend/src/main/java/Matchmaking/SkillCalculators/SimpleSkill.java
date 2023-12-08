@@ -28,11 +28,14 @@ public class SimpleSkill implements SkillUpdater {
       for(Player player: team1Players){
         float oldSkill = player.getSkillLevel();
         player.setSkillLevel(oldSkill + 1);
+        player.addLoss();
       }
       for(Player player: team2Players){
         float oldSkill = player.getSkillLevel();
         player.setSkillLevel(oldSkill - 1);
+        player.addLoss();
       }
+      return;
     }
     if(outcome == 2){
       List<Player> team1Players = match.getTeam1().getPlayers();
@@ -40,10 +43,12 @@ public class SimpleSkill implements SkillUpdater {
       for(Player player: team2Players){
         float oldSkill = player.getSkillLevel();
         player.setSkillLevel(oldSkill + 1);
+        player.addWin();
       }
       for(Player player: team1Players){
         float oldSkill = player.getSkillLevel();
         player.setSkillLevel(oldSkill - 1);
+        player.addLoss();
       }
     }
     throw new IOException("Outcome is Unexpected Number");
