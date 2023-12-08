@@ -42,6 +42,7 @@ export default function SignInBox() {
       <h1>Sign In</h1>
       <h2>Email</h2>
       <input
+        aria-label="emailInput"
         type="email"
         onChange={(event) => {
           setLoginEmail(event.target.value);
@@ -55,6 +56,7 @@ export default function SignInBox() {
       ></input>
       <h2>Password</h2>
       <input
+        aria-label="passwordInput"
         type="password"
         onChange={(event) => {
           setLoginPassword(event.target.value);
