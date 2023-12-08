@@ -26,8 +26,6 @@ public class ProfileEditHandler implements Route {
   @Override
   public Object handle(Request request, Response response) throws Exception {
 
-
-    // Prepare to send a reply - Taken nearly verbatim from the NWSAPI Livecode
     Moshi moshi = new Moshi.Builder().build();
     Type mapStringObject = Types.newParameterizedType(Map.class, String.class, Object.class);
     JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapStringObject);

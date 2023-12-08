@@ -1,10 +1,11 @@
 package server;
 
 import Matchmaking.IMatch;
+import Matchmaking.MatchAlgs.IMatchMaker;
+import Matchmaking.SkillCalculators.SkillUpdater;
 import datastorage.DataStore;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import server.handlers.MatchHandler;
+import server.handlers.MatchViewHandler;
 import server.handlers.ProfileAddHandler;
 import server.handlers.ProfileEditHandler;
 import spark.Spark;
@@ -15,6 +16,8 @@ public class Server {
 
   private DataStore dataStore;
   private ArrayList<IMatch> matches;
+  private IMatchMaker matchMaker;
+  private SkillUpdater skillUpdater;
 
 
   // Shared state variables
@@ -36,7 +39,7 @@ public class Server {
     // Set up handlers:
     Spark.get("profile-add", new ProfileAddHandler(this));
     Spark.get("profile-edit", new ProfileEditHandler(this));
-    Spark.get("match", new MatchHandler());
+    Spark.get("match-view", new MatchViewHandler(this));
 
     Spark.awaitInitialization();
 
@@ -45,9 +48,9 @@ public class Server {
 
     System.out.println("\n- - - - - - - ENDPOINTS - - - - - - -\n");
 
-    System.out.println("For Profile Adding:  http://localhost:" + port + "/profile-add");
+    System.out.println("For Profile Adding:   http://localhost:" + port + "/profile-add");
     System.out.println("For Profile Editing:  http://localhost:" + port + "/profile-edit");
-    System.out.println("For Matching:         http://localhost:" + port + "/searchcsv");
+    System.out.println("For Matching:         http://localhost:" + port + "/match-edit");
   }
 
   /**
@@ -64,6 +67,22 @@ public class Server {
    */
   public DataStore getDataStore(){
     return this.dataStore;
+  }
+
+  /**
+   * Gets the skill updater used by this server
+   * @return The skill updater used by this server
+   */
+  public SkillUpdater getSkillUpdater(){
+    return this.skillUpdater;
+  }
+
+  /**
+   * Gets the matchmaker used by this server
+   * @return The matchmaker used by this server
+   */
+  public IMatchMaker getMatchMaker(){
+    return this.matchMaker;
   }
 
 }
