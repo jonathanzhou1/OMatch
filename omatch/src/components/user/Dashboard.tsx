@@ -15,11 +15,12 @@ export default function Dashboard() {
       console.log(`Dashboard currentUser: ${userEmail}`);
       navigate("/");
     }
-  }, [location]);
+  }, [location, userEmail, localStorage]);
 
   async function logOut() {
     await signOut(auth);
     localStorage.removeItem("userEmail");
+    navigate("/");
   }
 
   return (
@@ -42,16 +43,14 @@ export default function Dashboard() {
             Match a Team
           </button>
         </Link>
-        <Link to="/">
-          <button
-            className="button rightButton threeButtons"
-            id="signOutButton"
-            style={{ display: "inline-block" }}
-            onClick={logOut}
-          >
-            Sign Out
-          </button>
-        </Link>
+        <button
+          className="button rightButton threeButtons"
+          id="signOutButton"
+          style={{ display: "inline-block" }}
+          onClick={logOut}
+        >
+          Sign Out
+        </button>
       </div>
     </div>
   );

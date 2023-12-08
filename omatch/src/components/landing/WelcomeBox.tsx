@@ -2,10 +2,12 @@ import "../../styles/index.css";
 import { Link } from "react-router-dom";
 import { auth } from "../../firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { User } from "firebase/auth";
 
 export default function WelcomeBox() {
   const [loggedInUser, setLoggedInUser] = useState(auth.currentUser);
+
   console.log("before entering observer");
   console.log(loggedInUser);
   onAuthStateChanged(auth, (user) => {

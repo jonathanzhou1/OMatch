@@ -21,10 +21,11 @@ export default function CreateAccountBox() {
         registerPassword
       );
       console.log(user);
-      return navigate("/");
+      localStorage.setItem("userEmail", registerEmail);
+      return navigate("/dashboard");
     } catch (error: any) {
-      console.log(error.message);
       setErrorStatus(true);
+      console.log(error.message);
     }
   }
 
@@ -33,6 +34,7 @@ export default function CreateAccountBox() {
       <h1>Create Account</h1>
       <h2>Email</h2>
       <input
+        aria-label="emailInput"
         type="email"
         onChange={(event) => {
           setRegisterEmail(event.target.value);
@@ -47,6 +49,7 @@ export default function CreateAccountBox() {
       <h2>Password</h2>
       {/* Consider adding minLength and pattern properties for more secure passwords */}
       <input
+        aria-label="passwordInput"
         type="password"
         onChange={(event) => {
           setRegisterPassword(event.target.value);
