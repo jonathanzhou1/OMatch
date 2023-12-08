@@ -1,11 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { signInTestHelper } from "./AuthenticationTests.spec";
+import { signInTestHelper } from "./SignInTests.spec";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:5173/");
 });
 
-// Remember to delete the new account in Firebase before running this test
+// Remember to delete the new account in Firebase before running this test!
 test("integration: create a new account + confirm by signing in again", async ({
   page,
 }) => {
@@ -41,6 +41,7 @@ test("integration: create a new account + confirm by signing in again", async ({
   // Ensure that we have navigated to the "Dashboard" page
   await page.waitForURL("http://localhost:5173/dashboard");
   await expect(page).toHaveURL("http://localhost:5173/dashboard");
+  await expect(page.getByText(email)).toBeVisible();
 
   // Sign out
   const signOutButton = page.getByRole("button", { name: "Sign Out" });
@@ -49,4 +50,5 @@ test("integration: create a new account + confirm by signing in again", async ({
 
   // Log in to confirm that the account actually exists
   await signInTestHelper(page, email, password);
+  await expect(page.getByText(email)).toBeVisible();
 });
