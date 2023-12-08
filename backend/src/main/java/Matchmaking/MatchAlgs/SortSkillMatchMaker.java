@@ -32,9 +32,11 @@ public class SortSkillMatchMaker implements IMatchMaker{
       teams.get(i % numTeams).addPlayer(players.get(i));
     }
     Collections.sort(teams, (t1, t2) -> Float.compare(t1.getAvgSkill(), t2.getAvgSkill()));
+    List<Match> matches = new ArrayList<>();
     for (int i = 0; i < numTeams; i +=2) {
       Match match = new Match(teams.get(i), teams.get(i + 1));
+      matches.add(match);
     }
-
+    return matches;
   }
 }
