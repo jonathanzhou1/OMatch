@@ -6,6 +6,9 @@ export default defineConfig({
   // Look for test files in the "tests" directory, relative to this configuration file.
   testDir: "./src/tests",
 
+  // Each test is given 30 seconds.
+  timeout: 20000,
+
   // Run all tests in parallel.
   fullyParallel: true,
 

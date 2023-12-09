@@ -34,10 +34,35 @@ export async function signInTestHelper(
   await signInButton.click();
 }
 
+async function signOutTestHelper(page: Page) {
+  const signOutButton = page.getByRole("button", { name: "Sign Out" });
+  await expect(signOutButton).toBeVisible();
+  await signOutButton.click();
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:5173/");
 });
 
 test("sign into an existing user account", async ({ page }) => {
+  const email = "test@gmail.com";
+  const password = "1234567";
+  await signInTestHelper(page, email, password);
+
+  // Sign in successful
+  await expect(page).toHaveURL("http://localhost:5173/dashboard");
+  await expect(page.getByText(email)).toBeVisible();
+
+  await signOutTestHelper(page);
+});
+
+test("sign out successfully", async ({ page }) => {
   await signInTestHelper(page, "test@gmail.com", "1234567");
+  await signOutTestHelper(page);
+
+  // Test for successful sign out
+  await expect(page).toHaveURL("http://localhost:5173/");
+  await expect(
+    page.getByText("You are not logged in.", { exact: true })
+  ).toBeVisible();
 });
