@@ -32,24 +32,27 @@ public class ProfileEditHandler implements Route {
     HashMap<String, Object> responseMap = new HashMap<>();
 
     // get the parameters
+    String playerID;
     String playerName;
     Position playerPosition;
+
     String action;
     Player player;
     try{
+      playerID = request.queryMap().get("id").value();
       playerName = request.queryMap().get("name").value();
-      action = playerName = request.queryMap().get("action").value();
+      action = playerID = request.queryMap().get("action").value();
       playerPosition = Position.valueOf(request.queryMap().get("position").value());
 
       // if the player exists within the database, update them, and use their new
       // stats/position within the database.
-      player = server.getDataStore().getPlayer(playerName);
+      player = server.getDataStore().getPlayer(playerID);
       player = new Player(playerName, playerPosition);
 
       if(action.equalsIgnoreCase("edit")){
-        server.getDataStore().updatePlayer(playerName, player);
+        server.getDataStore().updatePlayer(playerID, player);
       }else if(action.equalsIgnoreCase("delete")){
-        server.getDataStore().deleteItem(playerName);
+        server.getDataStore().deleteItem(playerID);
       }else{
         responseMap.put("result", "error_bad_request");
         responseMap.put("details", "action keyword must contain the word 'edit' or 'delete'. Any"

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import server.handlers.MatchViewHandler;
 import server.handlers.ProfileAddHandler;
 import server.handlers.ProfileEditHandler;
+import server.handlers.ProfileViewHandler;
 import spark.Spark;
 
 
@@ -39,6 +40,7 @@ public class Server {
     // Set up handlers:
     Spark.get("profile-add", new ProfileAddHandler(this));
     Spark.get("profile-edit", new ProfileEditHandler(this));
+    Spark.get("profile-view", new ProfileViewHandler(this));
     Spark.get("match-view", new MatchViewHandler(this));
 
     Spark.awaitInitialization();
@@ -50,7 +52,8 @@ public class Server {
 
     System.out.println("For Profile Adding:   http://localhost:" + port + "/profile-add");
     System.out.println("For Profile Editing:  http://localhost:" + port + "/profile-edit");
-    System.out.println("For Matching:         http://localhost:" + port + "/match-edit");
+    //System.out.println("For Matching:         http://localhost:" + port + "/match-edit");
+    System.out.println("For Matching:         http://localhost:" + port + "/match-view");
   }
 
   /**
