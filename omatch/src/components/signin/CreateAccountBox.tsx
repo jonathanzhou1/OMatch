@@ -21,7 +21,9 @@ export default function CreateAccountBox() {
         registerPassword
       );
       console.log(user);
+      //localStorage acts as a KV-store locally on the browser
       localStorage.setItem("userEmail", registerEmail);
+      localStorage.setItem("userID", user.user.uid);
       return navigate("/dashboard");
     } catch (error: any) {
       setErrorStatus(true);
@@ -31,7 +33,7 @@ export default function CreateAccountBox() {
 
   return (
     <div id="createAccount">
-      <h1>Create Account</h1>
+      <h1 className="welcomeHeader">Create Account</h1>
       <h2>Email</h2>
       <input
         aria-label="emailInput"

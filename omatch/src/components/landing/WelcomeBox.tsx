@@ -18,7 +18,7 @@ export default function WelcomeBox() {
 
   return (
     <div id="welcome">
-      <h1>Welcome to OMatch!</h1>
+      <h1 className="welcomeHeader">Welcome to OMatch!</h1>
       <h2>[WELCOME MESSAGE + INSTRUCTIONS]</h2>
       <div id="buttonContainer">
         <Link to="/signin">

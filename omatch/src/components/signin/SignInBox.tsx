@@ -28,6 +28,7 @@ export default function SignInBox() {
       console.log(user); //Remove this later
       //localStorage acts as a KV-store locally on the browser
       localStorage.setItem("userEmail", loginEmail);
+      localStorage.setItem("userID", user.user.uid);
       //go to /dashboard endpoint, with Dashboard tsx
       return navigate("/dashboard");
     } catch (error: any) {
@@ -39,7 +40,7 @@ export default function SignInBox() {
 
   return (
     <div id="signIn">
-      <h1>Sign In</h1>
+      <h1 className="welcomeHeader">Sign In</h1>
       <h2>Email</h2>
       <input
         aria-label="emailInput"

@@ -25,7 +25,7 @@ export default function Dashboard() {
 
   return (
     <div id="welcome">
-      <h1>Welcome to OMatch, User: {userEmail}!</h1>
+      <h1 className="welcomeHeader">Welcome to OMatch, User: {userEmail}!</h1>
       <div id="buttonContainer">
         <Link to="/view-profile">
           <button
