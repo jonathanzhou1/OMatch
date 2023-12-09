@@ -49,9 +49,10 @@ public class ProfileAddHandler implements Route {
       return adapter.toJson(responseMap);
     }
 
+    Player newPlayer;
     // Now that we have the queryparams, we can update the server with this new information:
     try {
-      Player newPlayer = new Player(playerName, playerPosition);
+      newPlayer = new Player(playerName, playerPosition);
       server.getDataStore().addPlayer(newPlayer);
     }catch(ItemAlreadyExistsException e){
       responseMap.put("result", "error_bad_request");
@@ -67,6 +68,7 @@ public class ProfileAddHandler implements Route {
     }
     // Success. Return success message
     responseMap.put("result", "success");
+    responseMap.put("playerID", newPlayer.getId());
     responseMap.put("queries", request.queryParams());
     return adapter.toJson(responseMap);
   }

@@ -33,6 +33,7 @@ public class Player implements IPlayer {
     this.skillLevel = 10;
     this.wins = 0;
     this.losses = 0;
+    this.generateID();
   }
 
   public void generateID(){

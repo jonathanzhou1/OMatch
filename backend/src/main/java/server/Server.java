@@ -25,17 +25,8 @@ public class Server {
 
   /**
    *
-   * @param playerJson A filepath to a JSON which contains the requisite data
    */
-  public Server(String playerJson){
-    // load the Player data from the JSON into a hashmap from player to ID
-
-    //try {
-      // TODO: Parse the player data into a Map<String (id), Player>. Should be mostly just loading the data into a reader and then running a bit of Moshi on it.
-
-    //}catch(FileNotFoundException e){
-    //  System.err.println("Player Json file: " + playerJson + " could not be found. Server start aborted: " + e.getMessage());
-    //}
+  public Server(){
 
     // Set up handlers:
     Spark.get("profile-add", new ProfileAddHandler(this));
@@ -50,10 +41,11 @@ public class Server {
 
     System.out.println("\n- - - - - - - ENDPOINTS - - - - - - -\n");
 
+    System.out.println("For Profile Viewing:  http://localhost:" + port + "/profile-view");
     System.out.println("For Profile Adding:   http://localhost:" + port + "/profile-add");
     System.out.println("For Profile Editing:  http://localhost:" + port + "/profile-edit");
-    //System.out.println("For Matching:         http://localhost:" + port + "/match-edit");
-    System.out.println("For Matching:         http://localhost:" + port + "/match-view");
+    System.out.println("For Match Editing:    http://localhost:" + port + "/match-edit");
+    System.out.println("For Match Viewing:    http://localhost:" + port + "/match-view");
   }
 
   /**
