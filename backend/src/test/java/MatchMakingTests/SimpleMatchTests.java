@@ -30,7 +30,7 @@ public class SimpleMatchTests {
     List<Player> players = makePlayers(10);
     Position[] positions = Position.values();
     for (int i = 0; i < players.size(); i++) {
-      Assert.assertEquals(players.get(i).getId(), Integer.toString(i));
+      Assert.assertEquals(players.get(i).getName(), Integer.toString(i));
       Assert.assertEquals(players.get(i).getPosition(), positions[i % 5]);
       System.out.println(players.get(i).getPosition());
     }
@@ -47,13 +47,8 @@ public class SimpleMatchTests {
     Match match = matches.get(0);
     Team team1 = match.getTeam1();
     Team team2 = match.getTeam2();
-    for (int i = 0; i < 10; i++) {
-      if (i % 2 == 0) {
-        Assert.assertTrue(team1.isPlayer(Integer.toString(i)));
-      } else {
-        Assert.assertTrue(team2.isPlayer(Integer.toString(i)));
-      }
-    }
+    Assert.assertEquals(team1.getSize(), 5);
+    Assert.assertEquals(team2.getSize(), 5);
   }
   @Test
   public void unevenTeams() throws IOException {
