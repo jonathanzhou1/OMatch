@@ -1,8 +1,11 @@
 package Matchmaking;
 
+import java.util.Random;
+
 public class Player implements IPlayer {
 
   private String id;
+  private String name;
   private float skillLevel;
   private int wins;
   private int losses;
@@ -12,16 +15,42 @@ public class Player implements IPlayer {
     return this.id;
   }
 
-  public void setName(String id) {
+  public void setId(String id) {
     this.id = id;
   }
 
-  public Player(String id, Position position) {
-    this.id = id;
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getName() {
+    return this.name;
+  }
+
+  public Player(String name, Position position) {
+    this.name = name;
     this.position = position;
     this.skillLevel = 10;
     this.wins = 0;
     this.losses = 0;
+    this.generateID();
+  }
+
+  public void generateID(){
+    String initialChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    Random random = new Random();
+    StringBuilder idBuilder = new StringBuilder();
+    int length = 0;
+    // Generate a sufficiently long id to minimize collisions (they're still handled but chances
+    // are remarkably low)
+
+    while (length < 20){
+      // get next int from 0 (inclusive) to length - 1 (exclusive)
+      int nextCharInt = random.nextInt(initialChars.length() - 1);
+      idBuilder.append(initialChars, nextCharInt, nextCharInt - 1);
+      length++;
+    }
+    this.id = idBuilder.toString();
   }
 
   public Position getPosition() {
