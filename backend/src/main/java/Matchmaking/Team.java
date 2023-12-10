@@ -1,8 +1,11 @@
 package Matchmaking;
 
 import Matchmaking.Player;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import org.eclipse.jetty.util.IO;
 
 public class Team {
   private List<Player> players;
@@ -23,6 +26,28 @@ public class Team {
     return this.players;
   }
 
+  /**
+   * May want to make a new exception for this, IO Exception isn't the best
+   * @param id
+   * @return
+   * @throws IOException
+   */
+  public Player getPlayer(String id) throws IOException {
+    for (Player player : this.players) {
+      if (Objects.equals(player.getId(), id)) {
+        return player;
+      }
+    }
+    throw new IOException("Player Not Found");
+  }
+  public boolean isPlayer(String id) {
+    for (Player player : this.players) {
+      if (Objects.equals(player.getId(), id)) {
+        return true;
+      }
+    }
+    return false;
+  }
   public int getSize() {
     return this.size;
   }

@@ -22,13 +22,13 @@ public class WLSkill implements SkillUpdater{
     if(outcome == 0){
       return;
     }
-    if(outcome == 1){
+    if (outcome == 1){
       List<Player> team1Players = match.getTeam1().getPlayers();
       List<Player> team2Players = match.getTeam2().getPlayers();
       WLHelper(team1Players, team2Players);
       return;
     }
-    if(outcome == 2){
+    if (outcome == 2){
       List<Player> team1Players = match.getTeam1().getPlayers();
       List<Player> team2Players = match.getTeam2().getPlayers();
       WLHelper(team2Players, team1Players);

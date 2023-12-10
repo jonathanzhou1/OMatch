@@ -53,8 +53,8 @@ public class EloSkill implements  SkillUpdater{
       player.setSkillLevel(oldSkill + wAdd);
     }
     for (Player player: lTeam.getPlayers()){
-      float oldskill = player.getSkillLevel();
-      player.setSkillLevel(oldskill - lSubtract);
+      float oldSkill = player.getSkillLevel();
+      player.setSkillLevel(oldSkill - lSubtract);
     }
   }
 }
