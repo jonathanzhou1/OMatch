@@ -1,5 +1,5 @@
 import "../../styles/index.css";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   AuthErrorCodes,
@@ -7,15 +7,11 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
-import Profile from "./Profile.ts";
+import UserProfile from "../user/mock-data/MockProfiles";
 
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
 
-interface CreateAccountBoxProps {
-  setProfile: Dispatch<SetStateAction<Profile | null>>;
-}
-
-export default function CreateAccountBox(props: CreateAccountBoxProps) {
+export default function CreateAccountBox() {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
 
@@ -32,12 +28,13 @@ export default function CreateAccountBox(props: CreateAccountBoxProps) {
     await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
       .then((userCredential) => {
         const user = userCredential.user;
-        const newProfile = {
+        const newProfile: UserProfile = {
+          id: user.uid,
           name: `${firstName} ${lastName}`,
           position: position,
         };
-        props.setProfile(newProfile);
         console.log(user);
+        console.log(newProfile);
         localStorage.setItem("userEmail", registerEmail);
         // localStorage acts as a KV-store locally on the browser
         localStorage.setItem("userID", user.uid);

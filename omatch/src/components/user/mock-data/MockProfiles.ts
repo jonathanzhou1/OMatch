@@ -22,3 +22,14 @@ const sussy_baka: UserProfile = {
 };
 
 export const sussy_baka_json: string = JSON.stringify(sussy_baka);
+
+// newplayer@gmail.com USER PROFILE
+const tingus_pingus: UserProfile = {
+  id: "Zg0FeoUOtxVIq1Q1NFdq8K3AbBP1",
+  name: "Tingus Pingus",
+  position: "CENTER",
+};
+
+export const tingus_pingus_json: string = JSON.stringify(tingus_pingus);
+
+export default UserProfile;
