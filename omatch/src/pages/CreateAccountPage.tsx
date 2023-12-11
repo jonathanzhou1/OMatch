@@ -1,6 +1,6 @@
 import CreateAccountBox from "../components/signin/CreateAccountBox";
 
-export default function SignInPage() {
+export default function CreateAccountPage() {
   return (
     <div>
       <CreateAccountBox />
