@@ -10,7 +10,7 @@
 }
 
 .welcomeHeader {
-  padding-top: 15vh;
+  padding-top: 10vh;
 }
 
 h1 {
@@ -19,12 +19,28 @@ h1 {
 }
 
 h2 {
-  font-size: calc(20px + 1vw);
+  font-size: calc(20px + 0.2vw);
   text-align: center;
 }
 
+/** SIGN IN AND CREATE ACCOUNT STYLING **/
+#signIn,
+#createAccount {
+  margin: auto;
+  width: 40vw;
+  background-color: rgb(255, 165, 47);
+  height: 80vh;
+  border-radius: 30px;
+}
+
+input {
+  width: 20vw;
+  border-radius: 7px;
+  font-size: calc(16px + 0.2vw);
+}
+
 /* label {
-  font-size: calc(20px + 1vw);
+  font-size: calc(20px + 1vw)
   text-align: center;
   font-weight: bold;
   display: block;
@@ -71,7 +87,7 @@ body {
 }
 
 .singleButton {
-  width: 15%;
+  width: 45%;
 }
 
 .twoButtons {

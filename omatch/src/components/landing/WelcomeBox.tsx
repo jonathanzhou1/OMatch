@@ -19,7 +19,10 @@ export default function WelcomeBox() {
   return (
     <div id="welcome">
       <h1 className="welcomeHeader">Welcome to OMatch!</h1>
-      <h2>[WELCOME MESSAGE + INSTRUCTIONS]</h2>
+      <h2>
+        If you have an account, please sign in. <br></br> Otherwise, please
+        create an account.
+      </h2>
       <div id="buttonContainer">
         <Link to="/signin">
           <button
