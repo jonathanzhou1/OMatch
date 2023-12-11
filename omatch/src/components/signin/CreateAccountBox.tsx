@@ -68,8 +68,8 @@ export default function CreateAccountBox() {
 
   return (
     <div id="createAccount">
-      <h1 className="welcomeHeader">Create Account</h1>
-      <h2>Email</h2>
+      <h1 id="createAccountHeader">Create Account</h1>
+      <h2 id="lessTopMargin">Email</h2>
       <input
         aria-label="emailInput"
         type="email"

@@ -4,6 +4,8 @@
   border-width: 2px;
   margin: 15vh auto 0 auto;
   width: 60vw;
+  min-width: 300px;
+  min-height: 450px;
   height: 60vh;
   text-align: center;
   box-shadow: 0 2px 6px 0 hsla(0, 0%, 0%, 0.2);
@@ -17,7 +19,11 @@ body {
 /** HEADER STYLING **/
 
 .welcomeHeader {
-  padding-top: 2vh;
+  padding-top: 10vh;
+}
+
+#createAccountHeader {
+  padding-top: 3vh;
 }
 
 .dashboardHeader {
@@ -41,29 +47,40 @@ h2 {
 
 /** SIGN IN AND CREATE ACCOUNT STYLING **/
 #signIn,
-#createAccount,
-#viewProfile {
+#viewProfile,
+#createAccount {
   margin: auto;
   width: 40vw;
   background-color: rgb(255, 165, 47);
-  height: 80vh;
   border-radius: 30px;
   box-shadow: 0 2px 6px 0 hsla(0, 0%, 0%, 0.2);
 }
 
-body {
-  background-color: rgb(251, 200, 124);
-  color: white;
+#signIn,
+#viewProfile {
+  height: 70vh;
+  min-height: 400px;
+}
+
+#createAccount {
+  height: 90vh;
+  min-height: 750px;
 }
 
 input {
   width: 20vw;
   border-radius: 7px;
   font-size: calc(16px + 0.2vw);
+  display: block;
+  margin: auto;
+  margin-top: -1vh;
 }
 
 select {
   text-align: center;
+  width: 20vw;
+  border-radius: 5px;
+  height: 30px;
 }
 
 #position-select {
@@ -177,11 +194,6 @@ select {
   background: none;
 }
 
-input {
-  display: block;
-  margin: auto;
-}
-
 /** PROFILE INFORMATION CSS **/
 #profileInfo {
   width: 60%;
@@ -207,4 +219,9 @@ input {
 #calendarHolder {
   text-align: center;
   margin-top: 8vh;
+}
+
+/**INPUT FORM STYLING **/
+#lessTopMargin {
+  margin-top: -2vh;
 }
