@@ -13,6 +13,10 @@
   padding-top: 10vh;
 }
 
+.userHeader {
+  padding-top: 13vh;
+}
+
 h1 {
   font-size: calc(30px + 1vw);
   text-align: center;
@@ -25,7 +29,8 @@ h2 {
 
 /** SIGN IN AND CREATE ACCOUNT STYLING **/
 #signIn,
-#createAccount {
+#createAccount,
+#viewProfile {
   margin: auto;
   width: 40vw;
   background-color: rgb(255, 165, 47);
@@ -169,14 +174,14 @@ input {
 
 /** PROFILE INFORMATION CSS **/
 #profileInfo {
-  width: 30%;
+  width: 60%;
   border-style: solid;
   border-width: medium;
   border-color: black;
   border-radius: 20px;
   text-align: center;
   margin: auto;
-  background-color: rgb(255, 165, 47);
+  background-color: rgb(255, 137, 58);
   box-shadow: 0 2px 6px 0 hsla(0, 0%, 0%, 0.2);
   padding-bottom: 10px;
   padding-top: 10px;

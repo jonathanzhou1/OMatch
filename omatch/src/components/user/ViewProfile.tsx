@@ -36,8 +36,8 @@ export default function ViewProfile() {
   }
 
   return (
-    <div>
-      <h1>VIEW PROFILE!</h1>
+    <div id="viewProfile">
+      <h1 className="welcomeHeader">VIEW PROFILE!</h1>
       <div id="buttonContainer">
         <p>NOTE: Mocked Profile</p>
         <div id="profileInfo">
