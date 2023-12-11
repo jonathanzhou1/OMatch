@@ -1,6 +1,7 @@
 package Matchmaking.SkillCalculators;
 
 import Matchmaking.Match;
+import Matchmaking.Outcome;
 import Matchmaking.Player;
 import Matchmaking.Team;
 import java.io.IOException;
@@ -15,14 +16,14 @@ public class SimpleSkill implements SkillUpdater {
    */
   @Override
   public void skillUpdater(Match match) throws IOException {
-    int outcome = match.getOutcome();
-    if(outcome == -1){
+    Outcome outcome = match.getOutcome();
+    if(outcome == Outcome.ONGOING){
       throw new IOException("Cannot Update Skills, Match is Incomplete.");
     }
-    if(outcome == 0){
+    if(outcome == Outcome.TIE){
       return;
     }
-    if(outcome == 1){
+    if(outcome == Outcome.TEAM1WIN){
       List<Player> team1Players = match.getTeam1().getPlayers();
       List<Player> team2Players = match.getTeam2().getPlayers();
       for(Player player: team1Players){
@@ -37,7 +38,7 @@ public class SimpleSkill implements SkillUpdater {
       }
       return;
     }
-    if(outcome == 2){
+    if(outcome == Outcome.TEAM2WIN){
       List<Player> team1Players = match.getTeam1().getPlayers();
       List<Player> team2Players = match.getTeam2().getPlayers();
       for(Player player: team2Players){
@@ -51,7 +52,7 @@ public class SimpleSkill implements SkillUpdater {
         player.addLoss();
       }
     }
-    throw new IOException("Outcome is Unexpected Number");
+    throw new IOException("Matchmaking.Outcome is Unexpected Number");
 
   }
 }

@@ -3,7 +3,7 @@ package Matchmaking;
 public class Match implements IMatch {
   private Team team1;
   private Team team2;
-  private int outcome;
+  private Outcome outcome;
   private String score;
   /**
    * Constructor for a match
@@ -13,14 +13,14 @@ public class Match implements IMatch {
   public Match(Team team1, Team team2) {
     this.team1 = team1;
     this.team2 = team2;
-    this.outcome = -1;
+    this.outcome = Outcome.ONGOING;
   }
 
   /**
    * SetOutcome. Default = -1 = Not finished. 0 = Draw, 1 = Team 1 Wins, 2 = Team 2 Wins
    * @param outcome
    */
-  public void setOutcome(int outcome) {
+  public void setOutcome(Outcome outcome) {
     this.outcome = outcome;
   }
 
@@ -52,7 +52,7 @@ public class Match implements IMatch {
    * Getter for the outcome
    * @return, outcome of the game
    */
-  public int getOutcome() {
+  public Outcome getOutcome() {
     return this.outcome;
   }
 }
