@@ -1,10 +1,15 @@
 import "../../styles/index.css";
+import Profile from "../signin/Profile";
 import {
   sussy_baka_json,
   joemungus_burger_json,
 } from "./mock-data/MockProfiles";
 
-export default function ViewProfile() {
+interface ViewProfileProps {
+  profile: Profile | null;
+}
+
+export default function ViewProfile(props: ViewProfileProps) {
   //get user id and make sure it is valid using type predicates
   let userID: string | null = localStorage.getItem("userID");
   if (!isString(userID)) {
@@ -20,6 +25,8 @@ export default function ViewProfile() {
     profileInfo = joemungus_burger_json;
   } else if (userID === "Zg0FeoUOtxVIq1Q1NFdq8K3AbBP2") {
     profileInfo = sussy_baka_json;
+  } else if (props.profile !== null) {
+    profileInfo = JSON.stringify(props.profile);
   } else {
     profileInfo = "THIS ID IS UNMOCKED :(";
     existingMock = false;
