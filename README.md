@@ -34,6 +34,8 @@
       2. `profile-edit?action=eDiT&id=awWo0cH6jw4Ib8fD9Fgi&name=Sussy Baka&position=SHOOTING_GUARD` --> {"result":"success","queries":["action","id","name","position"]}
       3. `profile-edit?action=EDIT&id=awWo0cH6jw4Ib8fD9Fgi&position=SHOOTING_GUARD` --> {"result":"success","queries":["action","id","position"]}
       4. `profile-edit?action=edit&id=a0Xd2wuFh9oGb3aJuv4K&name=Bosh Boshington` --> {"result":"success","queries":["action","id",'name"]}
+      5. `profile-edit?action=edit&id=definitelynotaplayerid&name=Bames Jond&position=SHOOTING_GUARD` --> failure condition. the result is `error_bad_request` and the corresponding exception sent back is a `NoItemFoundException`
+      6. `profile-edit?id=definitelynotaplayerid&name=Jond, Bames Jond&position=SHOOTING_GUARD` --> {"result":"error_bad_request","details":"action keyword must contain the word 'edit' or 'delete'. Any other word will result in an error","queries":["id","name","position"]}
 4. `match-add <id>`
    1. The match addition handler manages player's being assigned to matches. It returns the match that the player was added to, which in turn contains all the team details.
    2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
