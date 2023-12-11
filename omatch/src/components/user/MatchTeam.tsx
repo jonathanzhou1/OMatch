@@ -5,7 +5,7 @@ export default function MatchTeam() {
     <div id="welcome">
       <h1 className="welcomeHeader">MATCH TEAM!</h1>
       <div id="buttonContainer">
-        <p>Temporary Text</p>
+        <button className="button twoButtons">Match Team</button>
       </div>
     </div>
   );
