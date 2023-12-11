@@ -25,3 +25,4 @@ dist-ssr
 private
 coverage
 test-results
+playwright-report

@@ -1,7 +1,11 @@
 import { auth } from "../../firebase-config";
 import "../../styles/index.css";
 import { useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  AuthError,
+  AuthErrorCodes,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
@@ -13,29 +17,41 @@ export default function SignInBox() {
 
   //state variable to store whether there is an error logging in
   const [errorStatus, setErrorStatus] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   //used for navigation between website endpoints
   const navigate = useNavigate();
 
   async function login() {
-    try {
-      //log into firebase auth
-      const user = await signInWithEmailAndPassword(
-        auth,
-        loginEmail,
-        loginPassword
-      );
-      console.log(user); //Remove this later
-      //localStorage acts as a KV-store locally on the browser
-      localStorage.setItem("userEmail", loginEmail);
-      localStorage.setItem("userID", user.user.uid);
-      //go to /dashboard endpoint, with Dashboard tsx
-      return navigate("/dashboard");
-    } catch (error: any) {
-      //show descriptive error message
-      setErrorStatus(true);
-      console.log(error.message); //Remove this later
-    }
+    await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        localStorage.setItem("userEmail", loginEmail);
+        // localStorage acts as a KV-store locally on the browser
+        localStorage.setItem("userID", user.uid);
+        return navigate("/dashboard");
+      })
+      .catch((error: AuthError) => {
+        const errorCode = error.code;
+        switch (errorCode) {
+          case AuthErrorCodes.INVALID_EMAIL: {
+            setErrorMessage("Invalid email. Please try again!");
+            break;
+          }
+          case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS: {
+            setErrorMessage("Invalid login. Please try again!");
+            break;
+          }
+          default: {
+            setErrorMessage(
+              "Invalid account information inputted. Please try again!"
+            );
+          }
+        }
+        setErrorStatus(true);
+        console.log(error.message);
+      });
   }
 
   return (
@@ -77,11 +93,7 @@ export default function SignInBox() {
         >
           Sign In
         </button>
-        {errorStatus && (
-          <p className="redText">
-            Invalid login information inputted. Please try again!
-          </p>
-        )}
+        {errorStatus && <p className="redText">{errorMessage}</p>}
       </div>
     </div>
   );
