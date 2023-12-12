@@ -13,8 +13,6 @@ import server.exceptions.NoItemFoundException;
  */
 public class SimpleDataStore implements DataStore {
 
-
-
   private HashMap<String, Player> dataMap;
 
   public SimpleDataStore(){
