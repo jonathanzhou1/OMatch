@@ -12,35 +12,47 @@ import UserProfile from "../user/mock-data/MockProfiles";
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
 
 export default function CreateAccountBox() {
+  //react state variables to store email and password
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
 
+  //react state variables to store error message + manage error status
   const [errorStatus, setErrorStatus] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
+  //react state variables for profile information
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [position, setPosition] = useState("");
 
+  //navigate is for routing through various links
   const navigate = useNavigate();
 
+  //register called on button click
   async function register() {
+    //register email and password with firebase and create account
     await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
       .then((userCredential) => {
+        //create user profile -- eventually replace when integrated with backend
         const user = userCredential.user;
         const newProfile: UserProfile = {
           id: user.uid,
           name: `${firstName} ${lastName}`,
           position: position,
         };
+        //remove console logs later
         console.log(user);
         console.log(newProfile);
+        //_______________________________KEEP BELOW//
+        //localStorage acts as a KV-store locally on the browser
+        //store user email and user id locally on browser for later access
         localStorage.setItem("userEmail", registerEmail);
-        // localStorage acts as a KV-store locally on the browser
         localStorage.setItem("userID", user.uid);
+        //go to dashboard upon successful account creation
         return navigate("/dashboard");
       })
       .catch((error: AuthError) => {
+        //upon error, check what type of error and return descriptive error message.
         const errorCode = error.code;
         switch (errorCode) {
           case AuthErrorCodes.EMAIL_EXISTS: {
@@ -62,6 +74,7 @@ export default function CreateAccountBox() {
           }
         }
         setErrorStatus(true);
+        //remove later
         console.log(error.message);
       });
   }

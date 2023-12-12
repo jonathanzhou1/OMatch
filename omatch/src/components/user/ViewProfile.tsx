@@ -10,6 +10,7 @@ export default function ViewProfile() {
   //get user id and make sure it is valid using type predicates
   let userID: string | null = localStorage.getItem("userID");
   const userEmail: string | null = localStorage.getItem("userEmail");
+  //use type predicate to narrow type of userID down
   if (!isString(userID)) {
     userID = "invalid ID smh my head";
     //do some error message here

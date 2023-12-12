@@ -26,13 +26,16 @@ export default function SignInBox() {
     await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
       .then((userCredential) => {
         const user = userCredential.user;
+        //remove console log later
         console.log(user);
-        localStorage.setItem("userEmail", loginEmail);
         // localStorage acts as a KV-store locally on the browser
+        //store email and user id locally for later use
+        localStorage.setItem("userEmail", loginEmail);
         localStorage.setItem("userID", user.uid);
         return navigate("/dashboard");
       })
       .catch((error: AuthError) => {
+        //return descriptive error message based on type of error
         const errorCode = error.code;
         switch (errorCode) {
           case AuthErrorCodes.INVALID_EMAIL: {

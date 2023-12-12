@@ -7,9 +7,12 @@ import { useEffect } from "react";
 export default function Dashboard() {
   //get user email from local storage
   const userEmail = localStorage.getItem("userEmail");
+
+  //navigate and location just used for navigating to links in router
   const navigate = useNavigate();
   const location = useLocation();
 
+  //have dashboard update accordingly whenever changes are mande
   useEffect(() => {
     if (userEmail == null) {
       console.log(`Dashboard currentUser: ${userEmail}`);
@@ -17,9 +20,11 @@ export default function Dashboard() {
     }
   }, [location, userEmail, localStorage]);
 
+  //log out functionality -- make sure to sign out from firebase, reset local storage
   async function logOut() {
     await signOut(auth);
     localStorage.removeItem("userEmail");
+    localStorage.removeItem("userID");
     navigate("/");
   }
 
