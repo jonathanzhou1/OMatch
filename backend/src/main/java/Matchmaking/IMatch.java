@@ -1,3 +1,3 @@
 package Matchmaking;
 
-public interface IMatch { }
+public interface IMatch {}

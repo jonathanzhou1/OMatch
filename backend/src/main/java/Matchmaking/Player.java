@@ -36,7 +36,7 @@ public class Player implements IPlayer {
     this.generateID();
   }
 
-  public void generateID(){
+  public void generateID() {
     String initialChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     Random random = new Random();
     StringBuilder idBuilder = new StringBuilder();
@@ -44,10 +44,12 @@ public class Player implements IPlayer {
     // Generate a sufficiently long id to minimize collisions (they're still handled but chances
     // are remarkably low)
 
-    while (length < 20){
+    while (length < 20) {
       // get next int from 0 (inclusive) to length - 1 (exclusive)
-      int nextCharInt = random.nextInt(initialChars.length() - 1);
-      idBuilder.append(initialChars.charAt(nextCharInt));
+
+      int nextCharInt = random.nextInt(initialChars.length() - 2);
+      idBuilder.append(initialChars, nextCharInt , nextCharInt + 1);
+
       length++;
     }
     this.id = idBuilder.toString();
@@ -68,11 +70,12 @@ public class Player implements IPlayer {
   public void setSkillLevel(float skillLevel) {
     this.skillLevel = skillLevel;
   }
-  public float getSkillLevel(){
+
+  public float getSkillLevel() {
     return this.skillLevel;
   }
 
-  public float getWinPercentage(){
-    return (float) this.wins/(this.wins + this.losses);
+  public float getWinPercentage() {
+    return (float) this.wins / (this.wins + this.losses);
   }
 }

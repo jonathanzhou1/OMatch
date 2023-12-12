@@ -16,13 +16,11 @@ public class ProfileViewHandler implements Route {
 
   private Server server;
 
-  public ProfileViewHandler(Server server){
+  public ProfileViewHandler(Server server) {
     this.server = server;
   }
 
-
   /**
-   *
    * @param request
    * @param response
    * @return
@@ -38,15 +36,15 @@ public class ProfileViewHandler implements Route {
 
     String playerID;
 
-    try{
+    try {
       playerID = request.queryMap().get("id").value();
-      responseMap.put("player",server.getDataStore().getPlayer(playerID));
-    }catch(NoItemFoundException e){
+      responseMap.put("player", server.getDataStore().getPlayer(playerID));
+    } catch (NoItemFoundException e) {
       responseMap.put("result", "error_bad_request");
       responseMap.put("details", "No item found within the database: " + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
-    }catch(Exception e){
+    } catch (Exception e) {
       responseMap.put("result", "error_datastore");
       responseMap.put("details", "Datastore Error: " + e.getMessage());
       responseMap.put("queries", request.queryParams());

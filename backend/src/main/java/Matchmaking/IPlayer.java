@@ -1,3 +1,3 @@
 package Matchmaking;
 
-public interface IPlayer { }
+public interface IPlayer {}

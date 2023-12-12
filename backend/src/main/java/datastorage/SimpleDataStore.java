@@ -1,7 +1,6 @@
 package datastorage;
 
 import Matchmaking.Player;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,26 +8,30 @@ import server.exceptions.ItemAlreadyExistsException;
 import server.exceptions.NoItemFoundException;
 
 /**
- * A simple implementation of the DataStore interface with mocking/early deployment in mind.
- * Stores all data in a HashMap from String to Player.
+ * A simple implementation of the DataStore interface with mocking/early deployment in mind. Stores
+ * all data in a HashMap from String to Player.
  */
-public class SimpleDataStore implements DataStore{
+public class SimpleDataStore implements DataStore {
 
   private HashMap<String, Player> dataMap;
+
+  public SimpleDataStore(){
+    this.dataMap = new HashMap<>();
+  }
 
   /**
    * Returns the player when referenced by their ID. Throws a NoItemFoundException when the ID
    * doesn't reference a Player
    *
    * @param id A string containing the ID of the particular player we're referencing. Used primarily
-   *           for internal purposes.
+   *     for internal purposes.
    * @return A Player object that corresponds to the request ID
    */
   @Override
   public Player getPlayer(String id) throws NoItemFoundException {
-    if (!dataMap.containsKey(id)){
+    if (!dataMap.containsKey(id)) {
       throw new NoItemFoundException("No Player found with corresponding ID");
-    }else{
+    } else {
       return dataMap.get(id);
     }
   }
@@ -42,15 +45,15 @@ public class SimpleDataStore implements DataStore{
    */
   @Override
   public String addPlayer(Player player) throws ItemAlreadyExistsException {
-    if (dataMap.containsKey(player.getId())){
+    if (dataMap.containsKey(player.getId())) {
       // ID is already in database, we can't be reasonably sure that this player already
       // exists within the database, or that two IDs are the same, so we change the ID of one of the
       // players and recurse.
       player.generateID();
       this.addPlayer(player);
-      //throw new ItemAlreadyExistsException("Player to be added already exists within database. "
+      // throw new ItemAlreadyExistsException("Player to be added already exists within database. "
       //    + "Please use updatePlayer in this instance.");
-    }else{
+    } else {
       dataMap.put(player.getId(), player);
     }
     return player.getId();
@@ -59,15 +62,15 @@ public class SimpleDataStore implements DataStore{
   /**
    * Updates a given player within the database
    *
-   * @param id     The ID of the player to be updated
+   * @param id The ID of the player to be updated
    * @param player The updated player to be put into the database
    * @throws NoItemFoundException Thrown if there is no such element within the database.
    */
   @Override
   public void updatePlayer(String id, Player player) throws NoItemFoundException {
-    if (!dataMap.containsKey(player.getId())){
+    if (!dataMap.containsKey(player.getId())) {
       throw new NoItemFoundException("No player to update. Please use addPlayer in this instance.");
-    }else{
+    } else {
       dataMap.put(player.getId(), player);
     }
   }
@@ -76,12 +79,12 @@ public class SimpleDataStore implements DataStore{
    * Deletes the player referenced by their ID.
    *
    * @param id A string containing the ID of the particular player we're referencing. Used primarily
-   *           for internal purposes.
+   *     for internal purposes.
    * @return The player that was just deleted. Null if there was no deleted player.
    */
   @Override
   public Player deleteItem(String id) {
-    if(dataMap.containsKey(id)){
+    if (dataMap.containsKey(id)) {
       // While I am aware that the standard HashMap returns null in these situations, it isn't
       // guaranteed. As of such I am adding a little bit of extra logic here.
       Player deletedPlayer = dataMap.get(id);
@@ -107,7 +110,5 @@ public class SimpleDataStore implements DataStore{
    * @param fileJson The file which is used to populate the database
    */
   @Override
-  public void parseFile(String fileJson) {
-
-  }
+  public void parseFile(String fileJson) {}
 }

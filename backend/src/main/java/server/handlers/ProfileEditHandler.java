@@ -1,6 +1,5 @@
 package server.handlers;
 
-import Matchmaking.IPlayer;
 import Matchmaking.Player;
 import Matchmaking.Position;
 import com.squareup.moshi.JsonAdapter;
@@ -19,7 +18,7 @@ public class ProfileEditHandler implements Route {
 
   private Server server;
 
-  public ProfileEditHandler(Server server){
+  public ProfileEditHandler(Server server) {
     this.server = server;
   }
 
@@ -38,7 +37,7 @@ public class ProfileEditHandler implements Route {
 
     String action;
     Player player;
-    try{
+    try {
       playerID = request.queryMap().get("id").value();
       playerName = request.queryMap().get("name").value();
       action = playerID = request.queryMap().get("action").value();
@@ -49,24 +48,29 @@ public class ProfileEditHandler implements Route {
       player = server.getDataStore().getPlayer(playerID);
       player = new Player(playerName, playerPosition);
 
-      if(action.equalsIgnoreCase("edit")){
+      if (action.equalsIgnoreCase("edit")) {
         server.getDataStore().updatePlayer(playerID, player);
-      }else if(action.equalsIgnoreCase("delete")){
+      } else if (action.equalsIgnoreCase("delete")) {
         server.getDataStore().deleteItem(playerID);
-      }else{
+      } else {
         responseMap.put("result", "error_bad_request");
-        responseMap.put("details", "action keyword must contain the word 'edit' or 'delete'. Any"
-            + "other word will result in an error");
+        responseMap.put(
+            "details",
+            "action keyword must contain the word 'edit' or 'delete'. Any"
+                + "other word will result in an error");
         responseMap.put("queries", request.queryParams());
         return adapter.toJson(responseMap);
       }
-    }catch(NoItemFoundException e){
+    } catch (NoItemFoundException e) {
       responseMap.put("result", "error_bad_request");
-      responseMap.put("details", "No item found within the database to edit"
-          + "please use add handler in this case: " + e.getMessage());
+      responseMap.put(
+          "details",
+          "No item found within the database to edit"
+              + "please use add handler in this case: "
+              + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
-    }catch(Exception e){
+    } catch (Exception e) {
       responseMap.put("result", "error_bad_contents");
       responseMap.put("details", "Error in editing player to database: " + e.getMessage());
       responseMap.put("queries", request.queryParams());

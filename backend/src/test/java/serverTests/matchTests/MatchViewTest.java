@@ -21,7 +21,6 @@ import spark.Spark;
 
 public class MatchViewTest {
 
-
   @BeforeAll
   public static void setupOnce() {
     // Pick an arbitrary free port
@@ -63,5 +62,4 @@ public class MatchViewTest {
     HttpURLConnection clientConnection = tryRequest("match-view");
     assertEquals(200, clientConnection.getResponseCode());
   }
-
 }

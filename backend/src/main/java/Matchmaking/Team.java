@@ -1,5 +1,6 @@
 package Matchmaking;
 
+
 import Matchmaking.Player;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,11 +18,13 @@ public class Team {
     this.avgSkill = 0;
     this.size = 0;
   }
-  public void addPlayer(Player player){
+
+  public void addPlayer(Player player) {
     this.players.add(player);
     this.size++;
     this.avgSkill = this.updateAvgSkill();
   }
+
   public List<Player> getPlayers() {
     return this.players;
   }
@@ -52,12 +55,12 @@ public class Team {
     return this.size;
   }
 
-  private float updateAvgSkill(){
+  private float updateAvgSkill() {
     float totalSkill = 0;
-    for(Player player: this.players){
+    for (Player player : this.players) {
       totalSkill += player.getSkillLevel();
     }
-    return totalSkill/this.size;
+    return totalSkill / this.size;
   }
 
   public float getAvgSkill() {

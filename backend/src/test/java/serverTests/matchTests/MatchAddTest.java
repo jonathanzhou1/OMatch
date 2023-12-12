@@ -21,7 +21,6 @@ import spark.Spark;
 
 public class MatchAddTest {
 
-
   @BeforeAll
   public static void setupOnce() {
     // Pick an arbitrary free port
@@ -63,5 +62,4 @@ public class MatchAddTest {
     HttpURLConnection clientConnection = tryRequest("match-add");
     assertEquals(200, clientConnection.getResponseCode());
   }
-
 }
