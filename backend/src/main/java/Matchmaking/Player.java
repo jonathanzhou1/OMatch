@@ -46,8 +46,10 @@ public class Player implements IPlayer {
 
     while (length < 20) {
       // get next int from 0 (inclusive) to length - 1 (exclusive)
+
       int nextCharInt = random.nextInt(initialChars.length() - 2);
       idBuilder.append(initialChars, nextCharInt , nextCharInt + 1);
+
       length++;
     }
     this.id = idBuilder.toString();
