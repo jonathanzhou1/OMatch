@@ -15,19 +15,16 @@ import spark.Route;
 
 public class MatchViewHandler implements Route {
 
-
   private Server server;
 
   /**
-   *
    * @param server
    */
-  public MatchViewHandler(Server server){
+  public MatchViewHandler(Server server) {
     this.server = server;
   }
 
   /**
-   *
    * @param request
    * @param response
    * @return
@@ -42,7 +39,7 @@ public class MatchViewHandler implements Route {
     HashMap<String, Object> responseMap = new HashMap<>();
 
     // Try viewing the matches
-    try{
+    try {
       // Make an ArrayList of the matches:
       ArrayList<IMatch> matches = server.getMatches();
 
@@ -51,7 +48,7 @@ public class MatchViewHandler implements Route {
       responseMap.put("queries", request.queryParams());
       responseMap.put("matches", matches);
       return adapter.toJson(responseMap);
-    }catch(Exception e){
+    } catch (Exception e) {
       responseMap.put("result", "internal_server_error");
       responseMap.put("details", "Error getting match data from the server: " + e.getMessage());
       responseMap.put("queries", request.queryParams());

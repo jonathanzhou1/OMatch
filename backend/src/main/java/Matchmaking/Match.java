@@ -7,6 +7,7 @@ public class Match implements IMatch {
   private String score;
   /**
    * Constructor for a match
+   *
    * @param team1, the first team
    * @param team2, the second team
    */
@@ -18,6 +19,7 @@ public class Match implements IMatch {
 
   /**
    * SetOutcome. Default = -1 = Not finished. 0 = Draw, 1 = Team 1 Wins, 2 = Team 2 Wins
+   *
    * @param outcome
    */
   public void setOutcome(int outcome) {
@@ -26,6 +28,7 @@ public class Match implements IMatch {
 
   /**
    * Getter for team1 players
+   *
    * @return team 1 players
    */
   public Team getTeam1() {
@@ -42,6 +45,7 @@ public class Match implements IMatch {
 
   /**
    * Getter for team 2 players
+   *
    * @return team 2 players
    */
   public Team getTeam2() {
@@ -50,6 +54,7 @@ public class Match implements IMatch {
 
   /**
    * Getter for the outcome
+   *
    * @return, outcome of the game
    */
   public int getOutcome() {

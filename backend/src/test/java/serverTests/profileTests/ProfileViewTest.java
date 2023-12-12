@@ -21,7 +21,6 @@ import spark.Spark;
 
 public class ProfileViewTest {
 
-
   @BeforeAll
   public static void setupOnce() {
     // Pick an arbitrary free port
@@ -63,5 +62,4 @@ public class ProfileViewTest {
     HttpURLConnection clientConnection = tryRequest("profile-view");
     assertEquals(200, clientConnection.getResponseCode());
   }
-
 }

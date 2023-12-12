@@ -12,11 +12,12 @@ public class SimpleMatchMaker implements IMatchMaker {
   /**
    * Simple matchmaking algorithm, splits up players alternatively without taking into account
    * skill. Then pairs teams together
+   *
    * @param players, a list of players who will play in the match
    * @return
    */
   public List<Match> matchmaker(List<Player> players, int numTeams) throws IOException {
-    if(numTeams % 2 != 0) {
+    if (numTeams % 2 != 0) {
       throw new IOException("Number of Teams Cannot Be Odd");
     }
     int teamSize = players.size() / numTeams;

@@ -4,13 +4,13 @@ import Matchmaking.IMatch;
 import Matchmaking.MatchAlgs.IMatchMaker;
 import Matchmaking.SkillCalculators.SkillUpdater;
 import datastorage.DataStore;
+import datastorage.SimpleDataStore;
 import java.util.ArrayList;
 import server.handlers.MatchViewHandler;
 import server.handlers.ProfileAddHandler;
 import server.handlers.ProfileEditHandler;
 import server.handlers.ProfileViewHandler;
 import spark.Spark;
-
 
 public class Server {
   static final int port = 3232;
@@ -20,13 +20,14 @@ public class Server {
   private IMatchMaker matchMaker;
   private SkillUpdater skillUpdater;
 
-
   // Shared state variables
 
-  /**
-   *
-   */
-  public Server(){
+  /** */
+  public Server() {
+
+    this.dataStore = new SimpleDataStore();
+
+    Spark.port(port);
 
     // Set up handlers:
     Spark.get("profile-add", new ProfileAddHandler(this));
@@ -35,7 +36,6 @@ public class Server {
     Spark.get("match-view", new MatchViewHandler(this));
 
     Spark.awaitInitialization();
-
 
     System.out.println("Server started at http://localhost:" + port);
 
@@ -50,34 +50,46 @@ public class Server {
 
   /**
    * Gets the list of current matches
+   *
    * @return The list of current matches
    */
-  public ArrayList<IMatch> getMatches(){
+  public ArrayList<IMatch> getMatches() {
     return this.matches;
   }
 
   /**
    * Gets the data store
+   *
    * @return The data store used by the server
    */
-  public DataStore getDataStore(){
+  public DataStore getDataStore() {
     return this.dataStore;
   }
 
   /**
    * Gets the skill updater used by this server
+   *
    * @return The skill updater used by this server
    */
-  public SkillUpdater getSkillUpdater(){
+  public SkillUpdater getSkillUpdater() {
     return this.skillUpdater;
   }
 
   /**
    * Gets the matchmaker used by this server
+   *
    * @return The matchmaker used by this server
    */
-  public IMatchMaker getMatchMaker(){
+  public IMatchMaker getMatchMaker() {
     return this.matchMaker;
   }
 
+
+  /**
+   * Main method. Run to initialize server.
+   * @param args
+   */
+  public static void main(String[] args) {
+    Server server = new Server();
+  }
 }

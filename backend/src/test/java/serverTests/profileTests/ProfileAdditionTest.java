@@ -7,18 +7,13 @@ import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.annotations.Test;
@@ -76,15 +71,15 @@ public class ProfileAdditionTest {
 
   /**
    * Test that the handler can handle thuosands of profiles being added - Simple database
+   *
    * @throws IOException
    */
   @Test
   public void testAPIProfileAdditionFuzz() throws IOException {
 
-
-    for(int i = 0; i < 1000; i++){
-      HttpURLConnection clientConnection = tryRequest(
-          "profile-add?name=john johnson?position=FRONT_GUARD");
+    for (int i = 0; i < 1000; i++) {
+      HttpURLConnection clientConnection =
+          tryRequest("profile-add?name=john johnson?position=FRONT_GUARD");
       assertEquals(200, clientConnection.getResponseCode());
 
       // The body of the string contains the proper data - "Success"
@@ -97,7 +92,4 @@ public class ProfileAdditionTest {
       assertEquals(20, body.get("playerID").toString().length());
     }
   }
-
-
-
 }

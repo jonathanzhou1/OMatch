@@ -12,17 +12,14 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-/**
- * Adds a player to the most fitting match for their skill levels
- */
+/** Adds a player to the most fitting match for their skill levels */
 public class MatchAddHandler implements Route {
   private Server server;
 
   /**
-   *
    * @param server
    */
-  public MatchAddHandler(Server server){
+  public MatchAddHandler(Server server) {
     this.server = server;
   }
 
@@ -36,15 +33,18 @@ public class MatchAddHandler implements Route {
 
     String playerName;
     Match match;
-    try{
+    try {
       playerName = request.queryMap().get("name").value();
       match = null;
-      // TODO: figure out how to match a specific player with a specific team, then use matchmaker to assign player.
+      // TODO: figure out how to match a specific player with a specific team, then use matchmaker
+      // to assign player.
 
-    }catch(Exception e){
+    } catch (Exception e) {
       responseMap.put("result", "error_bad_request");
-      responseMap.put("details", "action keyword must contain the word 'edit' or 'delete'. Any"
-          + "other word will result in an error");
+      responseMap.put(
+          "details",
+          "action keyword must contain the word 'edit' or 'delete'. Any"
+              + "other word will result in an error");
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     }

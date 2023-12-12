@@ -13,7 +13,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import okio.Buffer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.annotations.Test;
@@ -21,7 +20,6 @@ import server.Server;
 import spark.Spark;
 
 public class ProfileEditTest {
-
 
   @BeforeAll
   public static void setupOnce() {
@@ -64,5 +62,4 @@ public class ProfileEditTest {
     HttpURLConnection clientConnection = tryRequest("profile-edit");
     assertEquals(200, clientConnection.getResponseCode());
   }
-
 }
