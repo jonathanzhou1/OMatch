@@ -57,7 +57,7 @@ export default function SignInBox() {
   return (
     <div id="signIn">
       <h1 className="welcomeHeader">Sign In</h1>
-      <h2>Email</h2>
+      <h2 id="lessTopMargin">Email</h2>
       <input
         aria-label="emailInput"
         type="email"
