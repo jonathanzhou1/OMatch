@@ -5,6 +5,7 @@ import CreateAccountBox from "./signin/CreateAccountBox";
 import Dashboard from "./user/Dashboard";
 import ViewProfile from "./user/ViewProfile";
 import MatchTeam from "./user/MatchTeam";
+import EditProfile from "./user/EditProfile";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/view-profile" element={<ViewProfile />} />
           <Route path="/match-team" element={<MatchTeam />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
         </Routes>
       </BrowserRouter>
     </div>
