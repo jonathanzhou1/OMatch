@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "../../styles/index.css";
 import {
   sussy_baka_json,
@@ -55,11 +56,17 @@ export default function ViewProfile() {
           )}
           {!existingMock && <p>{profileInfo}</p>}
         </div>
+        <Link to="/edit-profile">
+          <button className="button singleButton" id="editProfileButton">
+            Edit Profile
+          </button>
+        </Link>
       </div>
     </div>
   );
 }
 
-function isString(temp: string | null): temp is string {
+//Type predicate for string
+export function isString(temp: string | null): temp is string {
   return typeof temp === "string";
 }
