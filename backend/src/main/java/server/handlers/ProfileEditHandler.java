@@ -128,7 +128,15 @@ public class ProfileEditHandler implements Route {
 
       // update the player with a new value and return a success
       player = new Player(playerName, playerPosition);
-      server.getDataStore().updatePlayer(playerID, player);
+      try {
+        server.getDataStore().updatePlayer(playerID, player);
+      }catch (NoItemFoundException e){
+        responseMap.put("result", "error_datastore");
+        responseMap.put(
+            "details", "Internal datastore error when updating player: " + e.getMessage());
+        responseMap.put("queries", request.queryParams());
+        return adapter.toJson(responseMap);
+      }
 
     }else{
       responseMap.put("result", "error_bad_request");

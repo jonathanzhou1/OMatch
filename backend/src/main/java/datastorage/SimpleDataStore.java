@@ -69,7 +69,7 @@ public class SimpleDataStore implements DataStore {
    */
   @Override
   public void updatePlayer(String id, Player player) throws NoItemFoundException {
-    if (!dataMap.containsKey(player.getId())) {
+    if (!dataMap.containsKey(id)) {
       throw new NoItemFoundException("No player to update. Please use addPlayer in this instance.");
     } else {
       dataMap.put(player.getId(), player);
