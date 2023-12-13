@@ -12,6 +12,8 @@ import server.handlers.ProfileEditHandler;
 import server.handlers.ProfileViewHandler;
 import spark.Spark;
 
+import static spark.Spark.after;
+
 public class Server {
   static final int port = 3232;
 
@@ -28,6 +30,11 @@ public class Server {
     this.dataStore = new SimpleDataStore();
 
     Spark.port(port);
+
+    after((request, response) -> {
+      response.header("Access-Control-Allow-Origin", "*");
+      response.header("Access-Control-Allow-Methods", "*");
+    });
 
     // Set up handlers:
     Spark.get("profile-add", new ProfileAddHandler(this));

@@ -24,6 +24,7 @@ export default function CreateAccountBox() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [position, setPosition] = useState("");
+  let uid = "";
 
   //navigate is for routing through various links
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function CreateAccountBox() {
   async function register() {
     //register email and password with firebase and create account
     await createUserWithEmailAndPassword(auth, registerEmail, registerPassword)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
         //create user profile -- eventually replace when integrated with backend
         const user = userCredential.user;
         const newProfile: UserProfile = {
@@ -40,16 +41,10 @@ export default function CreateAccountBox() {
           name: `${firstName} ${lastName}`,
           position: position,
         };
+        uid = user.uid;
         //remove console logs later
         console.log(user);
         console.log(newProfile);
-        //_______________________________KEEP BELOW//
-        //localStorage acts as a KV-store locally on the browser
-        //store user email and user id locally on browser for later access
-        localStorage.setItem("userEmail", registerEmail);
-        localStorage.setItem("userID", user.uid);
-        //go to dashboard upon successful account creation
-        return navigate("/dashboard");
       })
       .catch((error: AuthError) => {
         //upon error, check what type of error and return descriptive error message.
@@ -76,6 +71,39 @@ export default function CreateAccountBox() {
         setErrorStatus(true);
         //remove later
         console.log(error.message);
+        return;
+      });
+
+    //query backend
+    let hostname = "http://localhost";
+    let port = ":3232";
+    let createProfileQuery =
+      "/profile-add?name=" +
+      firstName +
+      "%20" +
+      lastName +
+      "&position=" +
+      position +
+      "&id=" +
+      uid;
+    await fetch(hostname + port + createProfileQuery)
+      .then((response) => response.json())
+      .then((responseObject) => {
+        if (responseObject.result !== "success") {
+          setErrorStatus(true);
+          setErrorMessage(responseObject.details);
+          console.log(errorMessage);
+        } else {
+          setErrorStatus(false);
+          //localStorage acts as a KV-store locally on the browser
+          //store user email and user id locally on browser for later access
+          localStorage.setItem("userEmail", registerEmail);
+          localStorage.setItem("userID", uid);
+          console.log(`user id: ${uid}`);
+          console.log("successful response from backend");
+          //go to dashboard upon successful account creation
+          return navigate("/dashboard");
+        }
       });
   }
 
