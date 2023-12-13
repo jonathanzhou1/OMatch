@@ -14,6 +14,11 @@ public class Court implements ICourt{
   private Match match;
   private LinkedList<Player> players;
 
+  public Court(){
+    this.match = null;
+    players = new LinkedList<>();
+  }
+
   /**
    * Gets the list of players currently assigned to the court.
    *
@@ -22,6 +27,21 @@ public class Court implements ICourt{
   @Override
   public LinkedList<Player> getPlayers() {
     return this.players;
+  }
+
+  /**
+   * Adds a player to the court when a match is not currently running.
+   *
+   * @param player A player object representing someone's account
+   */
+  @Override
+  public void addPlayer(Player player) throws IllegalStateException {
+    if(this.match == null){
+      throw new IllegalStateException("Match is currently going on, cannot currently "
+          + "add more players");
+    }else {
+      this.players.add(player);
+    }
   }
 
   /**

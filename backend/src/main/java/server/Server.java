@@ -1,7 +1,12 @@
 package server;
 
+import Matchmaking.CourtAssigners.CourtAssigner;
+import Matchmaking.CourtAssigners.ICourtAssigner;
 import Matchmaking.IMatch;
 import Matchmaking.MatchAlgs.IMatchMaker;
+import Matchmaking.MatchAlgs.SimpleMatchMaker;
+import Matchmaking.MatchAlgs.SortSkillMatchMaker;
+import Matchmaking.SkillCalculators.SimpleSkill;
 import Matchmaking.SkillCalculators.SkillUpdater;
 import datastorage.DataStore;
 import datastorage.SimpleDataStore;
@@ -16,16 +21,15 @@ public class Server {
   static final int port = 3232;
 
   private DataStore dataStore;
-  private ArrayList<IMatch> matches;
-  private IMatchMaker matchMaker;
-  private SkillUpdater skillUpdater;
+  private ICourtAssigner courtAssigner;
 
   // Shared state variables
 
   /** */
-  public Server() {
+  public Server(DataStore dataStore, ICourtAssigner courtAssigner) {
 
-    this.dataStore = new SimpleDataStore();
+    this.dataStore = dataStore;
+    this.courtAssigner = courtAssigner;
 
     Spark.port(port);
 
@@ -53,8 +57,8 @@ public class Server {
    *
    * @return The list of current matches
    */
-  public ArrayList<IMatch> getMatches() {
-    return this.matches;
+  public ICourtAssigner getCourtAssigner() {
+    return this.courtAssigner;
   }
 
   /**
@@ -67,29 +71,13 @@ public class Server {
   }
 
   /**
-   * Gets the skill updater used by this server
-   *
-   * @return The skill updater used by this server
-   */
-  public SkillUpdater getSkillUpdater() {
-    return this.skillUpdater;
-  }
-
-  /**
-   * Gets the matchmaker used by this server
-   *
-   * @return The matchmaker used by this server
-   */
-  public IMatchMaker getMatchMaker() {
-    return this.matchMaker;
-  }
-
-
-  /**
-   * Main method. Run to initialize server.
+   * Main method. Run to initialize server. Instantiates the server with a mocked data store,
+   * court assigner, matchmaker, and skill assigner.
    * @param args
    */
   public static void main(String[] args) {
-    Server server = new Server();
+    Server server = new Server(
+        new SimpleDataStore(),
+        new CourtAssigner(6,new SimpleMatchMaker(), new SimpleSkill()));
   }
 }

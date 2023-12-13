@@ -18,6 +18,12 @@ public interface ICourt {
   public LinkedList<Player> getPlayers();
 
   /**
+   * Adds a player to the court when a match is not currently running.
+   * @param player A player object representing someone's account
+   */
+  public void addPlayer(Player player) throws IllegalStateException;
+
+  /**
    *
    * @return the current match that is going on.
    * @throws NoSuchElementException Thrown when the match hasn't been created yet
