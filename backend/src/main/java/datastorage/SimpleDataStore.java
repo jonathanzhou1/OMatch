@@ -3,7 +3,9 @@ package datastorage;
 import Matchmaking.Player;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import server.exceptions.ItemAlreadyExistsException;
 import server.exceptions.NoItemFoundException;
 
@@ -14,9 +16,10 @@ import server.exceptions.NoItemFoundException;
 public class SimpleDataStore implements DataStore {
 
   private HashMap<String, Player> dataMap;
-
+  private Queue<Player> playerQueue;
   public SimpleDataStore(){
     this.dataMap = new HashMap<>();
+    this.playerQueue = new LinkedList<>();
   }
 
   /**
@@ -109,4 +112,19 @@ public class SimpleDataStore implements DataStore {
    */
   @Override
   public void parseFile(String fileJson) {}
+
+  /**
+   * Method that adds a player to the queue
+   * @param ID, player to be added to the queue
+   */
+  public Player addQueue(String ID) throws NoItemFoundException {
+    try {
+      Player player = this.getPlayer(ID);
+      this.playerQueue.add(player);
+      return player;
+    } catch (NoItemFoundException e) {
+      throw new NoItemFoundException("Cannot Add Player To Queue, No ID Found");
+    }
+  }
 }
+

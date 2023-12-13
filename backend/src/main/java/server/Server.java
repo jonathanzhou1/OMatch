@@ -15,6 +15,7 @@ import server.handlers.MatchViewHandler;
 import server.handlers.ProfileAddHandler;
 import server.handlers.ProfileEditHandler;
 import server.handlers.ProfileViewHandler;
+import server.handlers.QueueAddHandler;
 import spark.Spark;
 
 public class Server {
@@ -38,6 +39,7 @@ public class Server {
     Spark.get("profile-edit", new ProfileEditHandler(this));
     Spark.get("profile-view", new ProfileViewHandler(this));
     Spark.get("match-view", new MatchViewHandler(this));
+    Spark.get("queue-add", new QueueAddHandler(this));
 
     Spark.awaitInitialization();
 
