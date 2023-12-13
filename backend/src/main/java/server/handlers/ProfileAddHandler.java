@@ -73,7 +73,6 @@ public class ProfileAddHandler implements Route {
     }
     try{
 
-
       if(request.queryMap().hasKey("position")) {
         playerPosition = Position.valueOf(request.queryMap().get("position").value());
       }else{
