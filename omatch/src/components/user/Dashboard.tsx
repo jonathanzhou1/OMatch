@@ -12,13 +12,15 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  //have dashboard update accordingly whenever changes are mande
+  //have dashboard update accordingly whenever changes are made
   useEffect(() => {
-    if (userEmail == null) {
-      console.log(`Dashboard currentUser: ${userEmail}`);
+    if (localStorage.getItem("userEmail") == null) {
+      console.log(
+        `Dashboard currentUser: ${localStorage.getItem("userEmail")}`
+      );
       navigate("/");
     }
-  }, [location, userEmail, localStorage]);
+  }, [location, navigate]);
 
   //log out functionality -- make sure to sign out from firebase, reset local storage
   async function logOut() {

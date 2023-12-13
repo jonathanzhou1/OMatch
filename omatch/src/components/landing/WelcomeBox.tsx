@@ -2,21 +2,26 @@ import "../../styles/index.css";
 import { Link } from "react-router-dom";
 import { auth } from "../../firebase-config";
 import { onAuthStateChanged } from "firebase/auth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function WelcomeBox() {
   //react state variable keeping track of which user is currently logged in
-  const [loggedInUser, setLoggedInUser] = useState(auth.currentUser);
+  // const [loggedInUser, setLoggedInUser] = useState(auth.currentUser);
+  let loggedInUser = localStorage.getItem("userEmail");
 
   //remove console logs later
   console.log("before entering observer");
   console.log(loggedInUser);
-  onAuthStateChanged(auth, (user) => {
-    setLoggedInUser(user);
-    //remove console logs later
-    console.log("entered onAuthStateChanged function");
-    console.log(user);
-  });
+  // onAuthStateChanged(auth, (user) => {
+  //   setLoggedInUser(user);
+  //   //remove console logs later
+  //   console.log("entered onAuthStateChanged function");
+  //   console.log(user);
+  // });
+
+  useEffect(() => {
+    loggedInUser = localStorage.getItem("userEmail");
+  }, [localStorage.getItem("userEmail")]);
 
   return (
     <div id="welcome">
@@ -46,7 +51,7 @@ export default function WelcomeBox() {
       <p>
         {" "}
         {loggedInUser
-          ? `${loggedInUser.email} is logged in.`
+          ? `${loggedInUser} is logged in.`
           : "You are not logged in."}{" "}
       </p>
     </div>
