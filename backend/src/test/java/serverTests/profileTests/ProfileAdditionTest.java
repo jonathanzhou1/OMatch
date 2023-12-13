@@ -109,11 +109,16 @@ public class ProfileAdditionTest {
    */
   @Test
   public void testFiveAdditionsCorrectPlayers() throws IOException, NoItemFoundException {
-    HttpURLConnection clientConnection1 = tryRequest("profile-add?name=john johnson?position=FRONT_GUARD");
-    HttpURLConnection clientConnection2 = tryRequest("profile-add?name=Back McBackend?position=CENTER");
-    HttpURLConnection clientConnection3 = tryRequest("profile-add?name=Nim Telson?position=SMALL_FORWARD");
-    HttpURLConnection clientConnection4 = tryRequest("profile-add?name=Hoop Hoopington?position=POWER_FORWARD");
-    HttpURLConnection clientConnection5 = tryRequest("profile-add?name=aaaa?position=CENTER");
+    HttpURLConnection clientConnection1 = tryRequest(
+        "profile-add?name=john johnson?position=FRONT_GUARD&id=1234567");
+    HttpURLConnection clientConnection2 = tryRequest(
+        "profile-add?name=Back McBackend?position=CENTER&id=siufgb2ihb");
+    HttpURLConnection clientConnection3 = tryRequest(
+        "profile-add?name=Nim Telson?position=SMALL_FORWARD&id=soduvbwi234");
+    HttpURLConnection clientConnection4 = tryRequest(
+        "profile-add?name=Hoop Hoopington?position=POWER_FORWARD&id=q932rfbsabBEWOB3");
+    HttpURLConnection clientConnection5 = tryRequest(
+        "profile-add?name=aaaa?position=CENTER&id=FE7DF3esfDFF");
     assertEquals(200, clientConnection1.getResponseCode());
     assertEquals(200, clientConnection2.getResponseCode());
     assertEquals(200, clientConnection3.getResponseCode());

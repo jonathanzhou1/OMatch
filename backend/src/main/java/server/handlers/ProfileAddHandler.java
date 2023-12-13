@@ -38,9 +38,11 @@ public class ProfileAddHandler implements Route {
     HashMap<String, Object> responseMap = new HashMap<>();
 
     // Try getting the queryparams
+    String playerID;
     String playerName;
     Position playerPosition;
     try {
+      playerID = request.queryMap().get("id").value();
       playerName = request.queryMap().get("name").value();
       playerPosition = Position.valueOf(request.queryMap().get("position").value());
     } catch (Exception e) {
@@ -55,6 +57,7 @@ public class ProfileAddHandler implements Route {
     // Now that we have the queryparams, we can update the server with this new information:
     try {
       newPlayer = new Player(playerName, playerPosition);
+      newPlayer.setId(playerID);
       server.getDataStore().addPlayer(newPlayer);
     } catch (ItemAlreadyExistsException e) {
       responseMap.put("result", "error_bad_request");

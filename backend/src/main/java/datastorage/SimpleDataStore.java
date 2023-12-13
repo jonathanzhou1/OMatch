@@ -49,10 +49,8 @@ public class SimpleDataStore implements DataStore {
       // ID is already in database, we can't be reasonably sure that this player already
       // exists within the database, or that two IDs are the same, so we change the ID of one of the
       // players and recurse.
-      player.generateID();
-      this.addPlayer(player);
-      // throw new ItemAlreadyExistsException("Player to be added already exists within database. "
-      //    + "Please use updatePlayer in this instance.");
+      throw new ItemAlreadyExistsException("Player to be added already exists within database. "
+          + "Please use updatePlayer in this instance.");
     } else {
       dataMap.put(player.getId(), player);
     }

@@ -35,20 +35,23 @@ public class ProfileViewHandler implements Route {
     HashMap<String, Object> responseMap = new HashMap<>();
 
     String playerID;
-
-    try {
-      playerID = request.queryMap().get("id").value();
-      responseMap.put("player", server.getDataStore().getPlayer(playerID));
-    } catch (NoItemFoundException e) {
-      responseMap.put("result", "error_bad_request");
-      responseMap.put("details", "No item found within the database: " + e.getMessage());
-      responseMap.put("queries", request.queryParams());
-      return adapter.toJson(responseMap);
-    } catch (Exception e) {
-      responseMap.put("result", "error_datastore");
-      responseMap.put("details", "Datastore Error: " + e.getMessage());
-      responseMap.put("queries", request.queryParams());
-      return adapter.toJson(responseMap);
+    if(request.queryMap().get("id").value() == null){
+      responseMap.put("player", server.getDataStore().getPlayers());
+    }else{
+      try {
+        playerID = request.queryMap().get("id").value();
+        responseMap.put("player", server.getDataStore().getPlayer(playerID));
+      } catch (NoItemFoundException e) {
+        responseMap.put("result", "error_bad_request");
+        responseMap.put("details", "No item found within the database: " + e.getMessage());
+        responseMap.put("queries", request.queryParams());
+        return adapter.toJson(responseMap);
+      } catch (Exception e) {
+        responseMap.put("result", "error_datastore");
+        responseMap.put("details", "Datastore Error: " + e.getMessage());
+        responseMap.put("queries", request.queryParams());
+        return adapter.toJson(responseMap);
+      }
     }
 
     // Success. Return success message
