@@ -59,4 +59,10 @@ public interface DataStore {
    * @param fileJson The file which is used to populate the database
    */
   public void parseFile(String fileJson);
+
+  /**
+   * Method that adds a player to the Queue
+   * @param ID, player to be added to the queue
+   */
+  public Player addQueue(String ID) throws NoItemFoundException;
 }
