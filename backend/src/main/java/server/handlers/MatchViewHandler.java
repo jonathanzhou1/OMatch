@@ -41,12 +41,12 @@ public class MatchViewHandler implements Route {
     // Try viewing the matches
     try {
       // Make an ArrayList of the matches:
-      ArrayList<IMatch> matches = server.getMatches();
+      //ArrayList<IMatch> matches = server.getMatches();
 
       // Success. Return success message
       responseMap.put("result", "success");
       responseMap.put("queries", request.queryParams());
-      responseMap.put("matches", matches);
+      //responseMap.put("matches", matches);
       return adapter.toJson(responseMap);
     } catch (Exception e) {
       responseMap.put("result", "internal_server_error");
