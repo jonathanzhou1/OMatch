@@ -18,11 +18,12 @@
           1. `profile-add?name=Josh Joshington&position=SMALL_FORWARD` --> {"result":"success","playerID":"a0Xd2wuFh9oGb3aJuv4K","queries":["name","position"]}
           2. `profile-add?name=Baka Sussy&position=CENTER` --> {"result":"success","playerID":"awWo0cH6jw4Ib8fD9Fgi","queries":["name","position"]}
 2. `profile-view <id>`
-   1. The profile view handler retrieves all relevant data to the player, including, name, position, ELO ranking, and W/L ratio.
-   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
+   1. The profile view handler retrieves all relevant data to the player, including, name, position, ELO ranking, and W/L ratio. 
+   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long. If no `id` keyword is present, the handler will return the list of all players
    3. Example Queries:
         1. `profile-view?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","player":{"id":"a0Xd2wuFh9oGb3aJuv4K","name":"Josh Joshington","skillLevel":9001.112,"wins":12,"losses":0,"Position":"SMALL_FORWARD"},"queries":["id"]}
         2. `profile-view?id=awWo0cH6jw4Ib8fD9Fgi` --> {"result":"success","player":{"id":"awWo0cH6jw4Ib8fD9Fgi","name":"Baka Sussy","skillLevel":235,"wins":6,"losses":29,"Position":"CENTER"},"queries":["id"]}
+        3. `profile-view` --> {"result":"success","players":{"a0Xd2wuFh9oGb3aJuv4K":{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0},"awWo0cH6jw4Ib8fD9Fgi":{"id":"awWo0cH6jw4Ib8fD9Fgi","losses":0,"name":Baka Sussy","position":"CENTER","skillLevel":10.0,"wins":0}},"queries":[]}
 3. `profile-edit <action> <id> (name) (position)`
    1. The profile edit handler manages the editing and/or deleting of players.
    2. The `action` query has to do with whether the player in question is being edited or deleted. As of such, it can be one of two strings, "edit" or "delete". These strings are not case-sensitive
@@ -45,3 +46,8 @@
    1. Returns a list of match objects, each containing details about the court the match is taking place on, as well as teams and their respective players.
    2. Example Queries:
       1. `match-view` --> {"result":"success","matches":[{filler},{filler},{filler},{filler},{filler},{filler}],"queries":[]}
+5. `queue-view`
+   1. Returns either the queue or the position of a player within the queue
+   2. Example Queries:
+      1. `queue-view` --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
+      2. `queue-view` --> {"result":"success","playerPosition":1,"queries":["id"]}
