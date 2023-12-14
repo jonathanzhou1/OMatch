@@ -1,12 +1,15 @@
 package server.handlers;
 
+import Matchmaking.CourtAssigners.ICourt;
 import Matchmaking.IMatch;
+import Matchmaking.Match;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import server.Server;
 import spark.Request;
@@ -40,8 +43,19 @@ public class MatchViewHandler implements Route {
 
     // Try viewing the matches
     try {
-      // Make an ArrayList of the matches:
-      //ArrayList<IMatch> matches = server.getMatches();
+      // Make an Array of the courts:
+      ICourt[] courts = server.getCourtAssigner().getCourts();
+      LinkedList<Match> matches = new LinkedList<>();
+
+      for(ICourt i: courts){
+        Match match;
+        try{
+          match = i.getMatch();
+          matches.add(match);
+        }catch(IllegalStateException ignored){}
+      }
+      responseMap.put("matches", matches);
+
 
       // Success. Return success message
       responseMap.put("result", "success");

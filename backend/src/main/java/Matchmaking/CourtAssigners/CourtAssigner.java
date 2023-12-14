@@ -5,6 +5,7 @@ import Matchmaking.MatchAlgs.IMatchMaker;
 import Matchmaking.Player;
 import Matchmaking.SkillCalculators.SkillUpdater;
 import java.util.LinkedList;
+import java.util.List;
 
 public class CourtAssigner implements ICourtAssigner{
 
@@ -29,12 +30,21 @@ public class CourtAssigner implements ICourtAssigner{
    * Takes in a new player and uses its positioning and skill level to add it to the most fitting
    * team.
    *
-   * @param newPlayer The new player being added to a match ahead of time.
+   * @param newPlayers The new player being added to a match ahead of time.
    * @return The court containing the added player.
    */
   @Override
-  public Court addPlayer(Player newPlayer) {
-    // TODO: Add a court assignment algorithm here.
+  public Court addPlayers(List<Player> newPlayers) {
     return null;
+  }
+
+  /**
+   * Returns the array of courts in the assigner
+   *
+   * @return the array of courts in the assigner
+   */
+  @Override
+  public ICourt[] getCourts() {
+    return new ICourt[0];
   }
 }
