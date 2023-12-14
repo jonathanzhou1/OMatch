@@ -244,8 +244,3 @@ select {
 #lessTopMargin {
   margin-top: -2vh;
 }
-
-/**Show Matches Margin**/
-#showMatches {
-  margin-top: 3vh;
-}
