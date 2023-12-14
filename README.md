@@ -44,17 +44,22 @@
       1. `match-add?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","matchAdded":{Note: this is a very large object and I am not entirely sure yet what of it I should realistically send to the frontend, as of such I am holding off on setting in stone what is returned here},"queries":["id"]}
 5. `match-view`
    1. Returns a list of match objects, each containing details about the court the match is taking place on, as well as teams and their respective players.
-   2. Example Queries:
-      1. `match-view` --> {"result":"success","matches":[{filler},{filler},{filler},{filler},{filler},{filler}],"queries":[]}
+   2. Example Queries (for a matchmaker with a limit of 3 matches). Each `matchN` here represents the following structure: {"result":"success","matches":[{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},null,null,null,null,null],"queries":[]}. Each `playerN` value represents the following:  `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
+      1. `match-view` --> {"result":"success","matches":[{match1},{match2},{match3}],"queries":[]}
 5. `queue-view`
    1. Returns either the queue or the position of a player within the queue
    2. Example Queries:
       1. `queue-view` --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
       2. `queue-view` --> {"result":"success","playerPosition":1,"queries":["id"]}
 6. `queue-add <id>`
-   1. Adds a player to the matchmaking queue.
+   1. Adds a player to the matchmaking queue. When the queue length is 10, the first 10 players in the queue will be dequeued into a match. Whether this has happened will be represented by the NewCourtAdded boolean, which will be true if a new court has been added, and false otherwise.
    2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
    3. Example Queries:
-      1. `queue-add?id=1234567890` --> {"result":"success","Message":"Player added to queue","addedID":"1234567890"}
-      2. `queue-add?id=1234567890 (second time)` --> "result":"error_bad_request","details":"Player has already been added to queue.","queries":["id"]}
-      3. `queue-add?id=incorrectID` --> {"result":"error_bad_request","details":"Player Not Found: No Player found with corresponding ID","queries":["id"]}
+      1. `queue-add?id=1234567890` --> {"result":"success","Message":"Player added to queue","newCourtMade":false,"addedID":"1234567890"} 
+      2. `queue-add?id=1234567890 (second time)` --> "result":"error_bad_request","details":"Player has already been added to queue.","newCourtMade":false,"queries":["id"]}
+      3. `queue-add?id=incorrectID` --> {"result":"error_bad_request","details":"Player Not Found: No Player found with corresponding ID","newCourtMade":false,"queries":["id"]}
+   4. Example Query For Successful Match Creation. Every `{playerN}` here represents a different player (including the one just added) such as this: `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
+      5. `queue-add?id=1` --> {"result":"success","Message":"Player added to queue","newCourtMade":true,"addedID":"1","court":{"match":{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},"players":[{player1},{player2},{player3},{player4},{player5},{player6},{player7},{player8},{player9},{player10}]}}
+   5. Additionally, there exist the following errors:
+       1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
+       2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
