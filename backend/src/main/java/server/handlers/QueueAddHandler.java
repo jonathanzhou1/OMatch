@@ -51,11 +51,24 @@ public class QueueAddHandler implements Route {
     }
     Player player;
     try {
-      player = this.server.getDataStore().addQueue(playerID);
+      player = server.getDataStore().getPlayer(playerID);
+      if(!server.getDataStore().getQueue().contains(player)){
+        player = this.server.getDataStore().addQueue(playerID);
+      }else{
+        throw new Exception("Player has already been added to queue.");
+      }
+
+
     } catch (NoItemFoundException e) {
       responseMap.put("result", "error_bad_request");
       responseMap.put(
           "details", "Player Not Found: " + e.getMessage());
+      responseMap.put("queries", request.queryParams());
+      return adapter.toJson(responseMap);
+    } catch (Exception e){
+      responseMap.put("result", "error_bad_request");
+      responseMap.put(
+          "details", e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     }
