@@ -129,5 +129,15 @@ public class SimpleDataStore implements DataStore {
       throw new NoItemFoundException("Cannot Add Player To Queue, No ID Found");
     }
   }
+
+  /**
+   * Returns the queue for getting player data
+   *
+   * @return The queue representing the current matchmaking queue
+   */
+  @Override
+  public Queue<Player> getQueue() {
+    return this.playerQueue;
+  }
 }
 

@@ -2,6 +2,7 @@ package datastorage;
 
 import Matchmaking.Player;
 import java.util.Map;
+import java.util.Queue;
 import server.exceptions.ItemAlreadyExistsException;
 import server.exceptions.NoItemFoundException;
 
@@ -67,4 +68,10 @@ public interface DataStore {
    * @param ID, player to be added to the queue
    */
   public Player addQueue(String ID) throws NoItemFoundException;
+
+  /**
+   * Returns the queue for getting player data
+   * @return The queue representing the current matchmaking queue
+   */
+  public Queue<Player> getQueue();
 }

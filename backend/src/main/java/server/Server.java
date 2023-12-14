@@ -16,6 +16,7 @@ import server.handlers.ProfileAddHandler;
 import server.handlers.ProfileEditHandler;
 import server.handlers.ProfileViewHandler;
 import server.handlers.QueueAddHandler;
+import server.handlers.QueueViewHandler;
 import spark.Spark;
 
 public class Server {
@@ -40,6 +41,7 @@ public class Server {
     Spark.get("profile-view", new ProfileViewHandler(this));
     Spark.get("match-view", new MatchViewHandler(this));
     Spark.get("queue-add", new QueueAddHandler(this));
+    Spark.get("queue-view", new QueueViewHandler(this));
 
     Spark.awaitInitialization();
 
@@ -52,6 +54,8 @@ public class Server {
     System.out.println("For Profile Editing:  http://localhost:" + port + "/profile-edit");
     System.out.println("For Match Editing:    http://localhost:" + port + "/match-edit");
     System.out.println("For Match Viewing:    http://localhost:" + port + "/match-view");
+    System.out.println("For Queue Viewing:    http://localhost:" + port + "/queue-view");
+    System.out.println("For Queue Adding:     http://localhost:" + port + "/queue-add");
   }
 
   /**
