@@ -36,4 +36,6 @@ public interface ICourt {
    */
   public void setMatch(Match newMatch);
 
+  public boolean endGame()
+
 }

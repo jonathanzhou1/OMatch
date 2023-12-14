@@ -13,13 +13,13 @@ import spark.Response;
 import spark.Route;
 
 /** Adds a player to the most fitting match for their skill levels */
-public class MatchAddHandler implements Route {
+public class MatchEndHandler implements Route {
   private Server server;
 
   /**
    * @param server
    */
-  public MatchAddHandler(Server server) {
+  public MatchEndHandler(Server server) {
     this.server = server;
   }
 
@@ -31,27 +31,35 @@ public class MatchAddHandler implements Route {
     JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapStringObject);
     HashMap<String, Object> responseMap = new HashMap<>();
 
-    String playerName;
-    Match match;
+    // Get the player ID and if they won
+    String playerID;
+    boolean playerWon;
     try {
-      playerName = request.queryMap().get("name").value();
-      match = null;
-      // TODO: figure out how to match a specific player with a specific team, then use matchmaker
-      // to assign player.
-
+      playerID = request.queryMap().get("id").value();
     } catch (Exception e) {
       responseMap.put("result", "error_bad_request");
       responseMap.put(
           "details",
-          "action keyword must contain the word 'edit' or 'delete'. Any"
-              + "other word will result in an error");
+          "Error in specifying 'id' variable: ");
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     }
+    try {
+      playerWon = Boolean.parseBoolean(request.queryMap().get("playerWon").value());
+    } catch (Exception e) {
+      responseMap.put("result", "error_bad_request");
+      responseMap.put(
+          "details",
+          "Error in specifying 'playerWon' variable. Variable must be true or false");
+      responseMap.put("queries", request.queryParams());
+      return adapter.toJson(responseMap);
+    }
+
+
+
     // Success. Return success message
     responseMap.put("result", "success");
     responseMap.put("queries", request.queryParams());
-    responseMap.put("matchAdded", match);
     return adapter.toJson(responseMap);
   }
 }
