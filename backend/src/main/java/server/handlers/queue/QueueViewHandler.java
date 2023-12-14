@@ -1,4 +1,4 @@
-package server.handlers;
+package server.handlers.queue;
 
 import Matchmaking.Player;
 import com.squareup.moshi.JsonAdapter;

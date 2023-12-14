@@ -2,21 +2,16 @@ package server;
 
 import Matchmaking.CourtAssigners.CourtAssigner;
 import Matchmaking.CourtAssigners.ICourtAssigner;
-import Matchmaking.IMatch;
-import Matchmaking.MatchAlgs.IMatchMaker;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
-import Matchmaking.MatchAlgs.SortSkillMatchMaker;
 import Matchmaking.SkillCalculators.SimpleSkill;
-import Matchmaking.SkillCalculators.SkillUpdater;
 import datastorage.DataStore;
 import datastorage.SimpleDataStore;
-import java.util.ArrayList;
-import server.handlers.MatchViewHandler;
-import server.handlers.ProfileAddHandler;
-import server.handlers.ProfileEditHandler;
-import server.handlers.ProfileViewHandler;
-import server.handlers.QueueAddHandler;
-import server.handlers.QueueViewHandler;
+import server.handlers.match.MatchViewHandler;
+import server.handlers.profile.ProfileAddHandler;
+import server.handlers.profile.ProfileEditHandler;
+import server.handlers.profile.ProfileViewHandler;
+import server.handlers.queue.QueueAddHandler;
+import server.handlers.queue.QueueViewHandler;
 import spark.Spark;
 
 import static spark.Spark.after;
