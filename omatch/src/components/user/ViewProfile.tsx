@@ -94,7 +94,19 @@ export default function ViewProfile() {
         .then(async (_curUserCredential) => {
           //delete newly authenticated user
           await deleteUser(curUser)
-            .then(() => {
+            .then(async () => {
+              //remove data from backend
+              let hostname = "http://localhost";
+              let port = ":3232";
+              let deleteProfileQuery =
+                "/profile-edit?action=delete&id=" + userID;
+              //even if backend fails to delete, still continue
+              //because account is still deleted by firebase
+              await fetch(hostname + port + deleteProfileQuery);
+
+              //DELETE AFTER
+              console.log("FINISHED DELETE FROM BACKEND!");
+
               //remove local storage data
               localStorage.removeItem("userEmail");
               localStorage.removeItem("userID");
