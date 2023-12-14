@@ -43,8 +43,10 @@ public interface DataStore {
    * @param id A string containing the ID of the particular player we're referencing. Used primarily
    *     for internal purposes.
    * @return The player that was just deleted. Null if there was no deleted player.
+   * @throws NoItemFoundException In case no player has been deleted, throw an exception to notify
+   *    * the caller of this
    */
-  public Player deleteItem(String id);
+  public Player deleteItem(String id) throws NoItemFoundException;
 
   /**
    * Gets a Map of players.

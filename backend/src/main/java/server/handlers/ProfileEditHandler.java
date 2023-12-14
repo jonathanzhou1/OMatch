@@ -75,14 +75,32 @@ public class ProfileEditHandler implements Route {
     // Now check the action:
 
     if(action.equalsIgnoreCase("delete")){
-      server.getDataStore().deleteItem(playerID);
+      try{
+        server.getDataStore().deleteItem(playerID);
+      }catch(NoItemFoundException e){
+        responseMap.put("result", "error_bad_request");
+        responseMap.put(
+            "details", "No item found to delete: " + e.getMessage());
+        responseMap.put("queries", request.queryParams());
+        return adapter.toJson(responseMap);
+    }
     }else if(action.equalsIgnoreCase("edit")){
 
       // get the player ID and/or player Position, if they're not there, then just use the old value
 
       boolean playerNamePresent = false;
       boolean playerPositionPresent = false;
-      player = server.getDataStore().getPlayer(playerID);
+
+
+      try{
+        player = server.getDataStore().getPlayer(playerID);
+      }catch(NoItemFoundException e){
+        responseMap.put("result", "error_bad_request");
+        responseMap.put(
+            "details", "No item found to edit: " + e.getMessage());
+        responseMap.put("queries", request.queryParams());
+        return adapter.toJson(responseMap);
+      }
 
       // Check for player name
 
@@ -96,7 +114,7 @@ public class ProfileEditHandler implements Route {
       } catch (Exception e) {
         responseMap.put("result", "error_bad_request");
         responseMap.put(
-            "details", "Error in specifying 'id' variable: " + e.getMessage());
+            "details", "Error in specifying 'name' variable: " + e.getMessage());
         responseMap.put("queries", request.queryParams());
         return adapter.toJson(responseMap);
       }
@@ -111,7 +129,7 @@ public class ProfileEditHandler implements Route {
       } catch (Exception e) {
         responseMap.put("result", "error_bad_request");
         responseMap.put(
-            "details", "Error in specifying 'id' variable: " + e.getMessage());
+            "details", "Error in specifying 'position' variable: " + e.getMessage());
         responseMap.put("queries", request.queryParams());
         return adapter.toJson(responseMap);
       }
@@ -130,6 +148,7 @@ public class ProfileEditHandler implements Route {
       player = new Player(playerName, playerPosition);
       try {
         server.getDataStore().updatePlayer(playerID, player);
+        System.out.println(server.getDataStore().getPlayers().toString());
       }catch (NoItemFoundException e){
         responseMap.put("result", "error_datastore");
         responseMap.put(

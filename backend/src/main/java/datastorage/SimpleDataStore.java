@@ -72,7 +72,7 @@ public class SimpleDataStore implements DataStore {
     if (!dataMap.containsKey(id)) {
       throw new NoItemFoundException("No player to update. Please use addPlayer in this instance.");
     } else {
-      dataMap.put(player.getId(), player);
+      dataMap.put(id, player);
     }
   }
 
@@ -81,18 +81,21 @@ public class SimpleDataStore implements DataStore {
    *
    * @param id A string containing the ID of the particular player we're referencing. Used primarily
    *     for internal purposes.
-   * @return The player that was just deleted. Null if there was no deleted player.
+   * @return The player that was just deleted.
+   * @throws NoItemFoundException In case no player has been deleted, throw an exception to notify
+   * the caller of this
    */
   @Override
-  public Player deleteItem(String id) {
+  public Player deleteItem(String id) throws NoItemFoundException{
     if (dataMap.containsKey(id)) {
       // While I am aware that the standard HashMap returns null in these situations, it isn't
       // guaranteed. As of such I am adding a little bit of extra logic here.
       Player deletedPlayer = dataMap.get(id);
       dataMap.remove(id);
       return deletedPlayer;
+    }else{
+      throw new NoItemFoundException("No item found within the database to delete.");
     }
-    return null;
   }
 
   /**
