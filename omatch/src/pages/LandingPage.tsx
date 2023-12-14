@@ -15,7 +15,10 @@ export default function LandingPage() {
 
   //if user is already logged in, automatically go to dashboard
   useEffect(() => {
-    if (localStorage.getItem("userEmail") !== null) {
+    if (
+      localStorage.getItem("userEmail") !== null &&
+      localStorage.getItem("userID") !== null
+    ) {
       navigate("/dashboard");
     }
   }, [location, navigate]);
