@@ -42,14 +42,13 @@ public class QueueViewHandler implements Route {
         playerID = request.queryMap().get("id").value();
         // Get an array representation of the queue
 
-        int queuePosition = 0;
+        int queuePosition = -1;
         for (Player i : queuePlayers) {
           if(playerID != i.getId()){
             queuePosition++;
           }else{
             break;
           }
-
         }
         responseMap.put("playerPosition",queuePosition);
       }else{
