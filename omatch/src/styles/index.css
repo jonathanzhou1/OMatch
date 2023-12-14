@@ -26,7 +26,8 @@ body {
   padding-top: 3vh;
 }
 
-#editProfileHeader {
+#editProfileHeader,
+#viewProfileHeader {
   padding-top: 5vh;
 }
 
@@ -62,13 +63,13 @@ h2 {
 }
 
 #signIn,
-#viewProfile,
 #editProfile {
   height: 70vh;
   min-height: 400px;
 }
 
-#createAccount {
+#createAccount,
+#viewProfile {
   height: 90vh;
   min-height: 750px;
 }
@@ -135,6 +136,14 @@ select {
 
 .threeButtons {
   width: 25%;
+}
+
+#deleteProfileButton {
+  margin-top: 3vh;
+}
+
+#submitPassword {
+  margin-top: 3vh;
 }
 
 /* BUTTON CSS FROM DUOLINGO */
