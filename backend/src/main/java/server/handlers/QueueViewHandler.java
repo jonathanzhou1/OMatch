@@ -1,5 +1,6 @@
 package server.handlers;
 
+import Matchmaking.Player;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
@@ -12,11 +13,11 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class ProfileViewHandler implements Route {
+public class QueueViewHandler implements Route {
 
   private Server server;
 
-  public ProfileViewHandler(Server server) {
+  public QueueViewHandler(Server server) {
     this.server = server;
   }
 
@@ -36,17 +37,23 @@ public class ProfileViewHandler implements Route {
 
     String playerID;
     try{
+      Player[] queuePlayers = server.getDataStore().getQueue().toArray(new Player[0]);
       if(request.queryMap().hasKey("id")) {
         playerID = request.queryMap().get("id").value();
-        responseMap.put("player", server.getDataStore().getPlayer(playerID));
+        // Get an array representation of the queue
+
+        int queuePosition = -1;
+        for (Player i : queuePlayers) {
+          if(playerID != i.getId()){
+            queuePosition++;
+          }else{
+            break;
+          }
+        }
+        responseMap.put("playerPosition",queuePosition);
       }else{
-        responseMap.put("players", server.getDataStore().getPlayers());
+        responseMap.put("PlayerQueue", queuePlayers);
       }
-    } catch (NoItemFoundException e) {
-      responseMap.put("result", "error_bad_request");
-      responseMap.put("details", "No item found within the database: " + e.getMessage());
-      responseMap.put("queries", request.queryParams());
-      return adapter.toJson(responseMap);
     } catch (Exception e) {
       responseMap.put("result", "error_datastore");
       responseMap.put("details", "Datastore Error: " + e.getMessage());
@@ -57,6 +64,8 @@ public class ProfileViewHandler implements Route {
     // Success. Return success message
     responseMap.put("result", "success");
     responseMap.put("queries", request.queryParams());
+    System.out.println(server.getDataStore().getQueue());
     return adapter.toJson(responseMap);
   }
+
 }

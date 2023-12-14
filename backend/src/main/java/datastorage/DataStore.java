@@ -2,6 +2,7 @@ package datastorage;
 
 import Matchmaking.Player;
 import java.util.Map;
+import java.util.Queue;
 import server.exceptions.ItemAlreadyExistsException;
 import server.exceptions.NoItemFoundException;
 
@@ -43,8 +44,10 @@ public interface DataStore {
    * @param id A string containing the ID of the particular player we're referencing. Used primarily
    *     for internal purposes.
    * @return The player that was just deleted. Null if there was no deleted player.
+   * @throws NoItemFoundException In case no player has been deleted, throw an exception to notify
+   *    * the caller of this
    */
-  public Player deleteItem(String id);
+  public Player deleteItem(String id) throws NoItemFoundException;
 
   /**
    * Gets a Map of players.
@@ -59,4 +62,16 @@ public interface DataStore {
    * @param fileJson The file which is used to populate the database
    */
   public void parseFile(String fileJson);
+
+  /**
+   * Method that adds a player to the Queue
+   * @param ID, player to be added to the queue
+   */
+  public Player addQueue(String ID) throws NoItemFoundException;
+
+  /**
+   * Returns the queue for getting player data
+   * @return The queue representing the current matchmaking queue
+   */
+  public Queue<Player> getQueue();
 }

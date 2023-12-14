@@ -3,7 +3,9 @@ package datastorage;
 import Matchmaking.Player;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import server.exceptions.ItemAlreadyExistsException;
 import server.exceptions.NoItemFoundException;
 
@@ -14,9 +16,10 @@ import server.exceptions.NoItemFoundException;
 public class SimpleDataStore implements DataStore {
 
   private HashMap<String, Player> dataMap;
-
+  private Queue<Player> playerQueue;
   public SimpleDataStore(){
     this.dataMap = new HashMap<>();
+    this.playerQueue = new LinkedList<>();
   }
 
   /**
@@ -66,10 +69,10 @@ public class SimpleDataStore implements DataStore {
    */
   @Override
   public void updatePlayer(String id, Player player) throws NoItemFoundException {
-    if (!dataMap.containsKey(player.getId())) {
+    if (!dataMap.containsKey(id)) {
       throw new NoItemFoundException("No player to update. Please use addPlayer in this instance.");
     } else {
-      dataMap.put(player.getId(), player);
+      dataMap.put(id, player);
     }
   }
 
@@ -78,18 +81,21 @@ public class SimpleDataStore implements DataStore {
    *
    * @param id A string containing the ID of the particular player we're referencing. Used primarily
    *     for internal purposes.
-   * @return The player that was just deleted. Null if there was no deleted player.
+   * @return The player that was just deleted.
+   * @throws NoItemFoundException In case no player has been deleted, throw an exception to notify
+   * the caller of this
    */
   @Override
-  public Player deleteItem(String id) {
+  public Player deleteItem(String id) throws NoItemFoundException{
     if (dataMap.containsKey(id)) {
       // While I am aware that the standard HashMap returns null in these situations, it isn't
       // guaranteed. As of such I am adding a little bit of extra logic here.
       Player deletedPlayer = dataMap.get(id);
       dataMap.remove(id);
       return deletedPlayer;
+    }else{
+      throw new NoItemFoundException("No item found within the database to delete.");
     }
-    return null;
   }
 
   /**
@@ -109,4 +115,29 @@ public class SimpleDataStore implements DataStore {
    */
   @Override
   public void parseFile(String fileJson) {}
+
+  /**
+   * Method that adds a player to the queue
+   * @param ID, player to be added to the queue
+   */
+  public Player addQueue(String ID) throws NoItemFoundException {
+    try {
+      Player player = this.getPlayer(ID);
+      this.playerQueue.add(player);
+      return player;
+    } catch (NoItemFoundException e) {
+      throw new NoItemFoundException("Cannot Add Player To Queue, No ID Found");
+    }
+  }
+
+  /**
+   * Returns the queue for getting player data
+   *
+   * @return The queue representing the current matchmaking queue
+   */
+  @Override
+  public Queue<Player> getQueue() {
+    return this.playerQueue;
+  }
 }
+

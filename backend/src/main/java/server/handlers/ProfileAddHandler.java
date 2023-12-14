@@ -38,17 +38,52 @@ public class ProfileAddHandler implements Route {
     HashMap<String, Object> responseMap = new HashMap<>();
 
     // Try getting the queryparams
-    String playerID;
-    String playerName;
-    Position playerPosition;
-    try {
-      playerID = request.queryMap().get("id").value();
-      playerName = request.queryMap().get("name").value();
-      playerPosition = Position.valueOf(request.queryMap().get("position").value());
+    String playerID = "problem";
+    String playerName = "problem";
+    Position playerPosition = null;
+
+    // Run a check on each queryparam
+
+    // TODO: Run this in a for loop for brevity
+    try{
+      if(request.queryMap().hasKey("id")) {
+        playerID = request.queryMap().get("id").value();
+      }else{
+        throw new Exception("id neccesary");
+      }
     } catch (Exception e) {
       responseMap.put("result", "error_bad_request");
       responseMap.put(
-          "details", "Error in specifying 'name' and 'position' variables: " + e.getMessage());
+          "details", "Error in specifying 'id' variable: " + e.getMessage());
+      responseMap.put("queries", request.queryParams());
+      return adapter.toJson(responseMap);
+    }
+    try{
+      if(request.queryMap().hasKey("name")) {
+        playerName = request.queryMap().get("name").value();
+      }else{
+        throw new Exception("name neccesary");
+      }
+    } catch (Exception e) {
+      responseMap.put("result", "error_bad_request");
+      responseMap.put(
+          "details", "Error in specifying 'id' variable: " + e.getMessage());
+      responseMap.put("queries", request.queryParams());
+      return adapter.toJson(responseMap);
+    }
+    try{
+
+      if(request.queryMap().hasKey("position")) {
+        playerPosition = Position.valueOf(request.queryMap().get("position").value());
+      }else{
+        throw new Exception("position query neccesary");
+      }
+    } catch (Exception e) {
+      responseMap.put("result", "error_bad_request");
+      responseMap.put(
+          "details", "Error in specifying 'id' variable. Please use 'POINT_GUARD', "
+              + "'SHOOTING_GUARD', 'SMALL_FORWARD', 'POWER_FORWARD', or 'CENTER' in your "
+              + "position query:  " + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     }
