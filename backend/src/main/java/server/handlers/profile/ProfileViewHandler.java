@@ -1,29 +1,22 @@
-package server.handlers;
+package server.handlers.profile;
 
-import Matchmaking.CourtAssigners.ICourt;
-import Matchmaking.IMatch;
-import Matchmaking.Match;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import server.Server;
+import server.exceptions.NoItemFoundException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-public class MatchViewHandler implements Route {
+public class ProfileViewHandler implements Route {
 
   private Server server;
 
-  /**
-   * @param server
-   */
-  public MatchViewHandler(Server server) {
+  public ProfileViewHandler(Server server) {
     this.server = server;
   }
 
@@ -41,32 +34,29 @@ public class MatchViewHandler implements Route {
     JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapStringObject);
     HashMap<String, Object> responseMap = new HashMap<>();
 
-    // Try viewing the matches
-    try {
-      // Make an Array of the courts:
-      ICourt[] courts = server.getCourtAssigner().getCourts();
-      LinkedList<Match> matches = new LinkedList<>();
-
-      for(ICourt i: courts){
-        Match match;
-        try{
-          match = i.getMatch();
-          matches.add(match);
-        }catch(IllegalStateException ignored){}
+    String playerID;
+    try{
+      if(request.queryMap().hasKey("id")) {
+        playerID = request.queryMap().get("id").value();
+        responseMap.put("player", server.getDataStore().getPlayer(playerID));
+      }else{
+        responseMap.put("players", server.getDataStore().getPlayers());
       }
-      responseMap.put("matches", matches);
-
-
-      // Success. Return success message
-      responseMap.put("result", "success");
+    } catch (NoItemFoundException e) {
+      responseMap.put("result", "error_bad_request");
+      responseMap.put("details", "No item found within the database: " + e.getMessage());
       responseMap.put("queries", request.queryParams());
-      //responseMap.put("matches", matches);
       return adapter.toJson(responseMap);
     } catch (Exception e) {
-      responseMap.put("result", "internal_server_error");
-      responseMap.put("details", "Error getting match data from the server: " + e.getMessage());
+      responseMap.put("result", "error_datastore");
+      responseMap.put("details", "Datastore Error: " + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     }
+
+    // Success. Return success message
+    responseMap.put("result", "success");
+    responseMap.put("queries", request.queryParams());
+    return adapter.toJson(responseMap);
   }
 }

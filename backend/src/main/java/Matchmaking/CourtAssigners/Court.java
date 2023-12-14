@@ -3,6 +3,7 @@ package Matchmaking.CourtAssigners;
 import Matchmaking.Match;
 import Matchmaking.Player;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -12,11 +13,16 @@ import java.util.NoSuchElementException;
 public class Court implements ICourt{
 
   private Match match;
-  private LinkedList<Player> players;
+  private List<Player> players;
 
   public Court(){
     this.match = null;
     players = new LinkedList<>();
+  }
+
+  public Court(Match match, List<Player> players){
+    this.match = match;
+    this.players = players;
   }
 
   /**
@@ -25,7 +31,7 @@ public class Court implements ICourt{
    * @return The list of players
    */
   @Override
-  public LinkedList<Player> getPlayers() {
+  public List<Player> getPlayers() {
     return this.players;
   }
 

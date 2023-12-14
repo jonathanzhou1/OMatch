@@ -1,4 +1,4 @@
-package server.handlers;
+package server.handlers.profile;
 
 import Matchmaking.Player;
 import Matchmaking.Position;

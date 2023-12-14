@@ -3,6 +3,7 @@ package Matchmaking.CourtAssigners;
 import Matchmaking.Match;
 import Matchmaking.Player;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -15,7 +16,7 @@ public interface ICourt {
    * Gets the list of players currently assigned to the court.
    * @return The list of players
    */
-  public LinkedList<Player> getPlayers();
+  public List<Player> getPlayers();
 
   /**
    * Adds a player to the court when a match is not currently running.
