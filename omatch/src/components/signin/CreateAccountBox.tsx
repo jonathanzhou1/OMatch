@@ -66,9 +66,9 @@ export default function CreateAccountBox() {
       });
 
     //query backend
-    let hostname = "http://localhost";
-    let port = ":3232";
-    let createProfileQuery =
+    const hostname = "http://localhost";
+    const port = ":3232";
+    const createProfileQuery =
       "/profile-add?name=" +
       firstName +
       "%20" +
