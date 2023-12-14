@@ -7,7 +7,6 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
-import UserProfile from "../user/mock-data/MockProfiles";
 
 // This page uses Google Firebase Authentication to allow users to create accounts and sign in
 
@@ -36,15 +35,7 @@ export default function CreateAccountBox() {
       .then(async (userCredential) => {
         //create user profile -- eventually replace when integrated with backend
         const user = userCredential.user;
-        const newProfile: UserProfile = {
-          id: user.uid,
-          name: `${firstName} ${lastName}`,
-          position: position,
-        };
         uid = user.uid;
-        //remove console logs later
-        console.log(user);
-        console.log(newProfile);
       })
       .catch((error: AuthError) => {
         //upon error, check what type of error and return descriptive error message.
