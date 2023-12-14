@@ -51,3 +51,10 @@
    2. Example Queries:
       1. `queue-view` --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
       2. `queue-view` --> {"result":"success","playerPosition":1,"queries":["id"]}
+6. `queue-add <id>`
+   1. Adds a player to the matchmaking queue.
+   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
+   3. Example Queries:
+      1. `queue-add?id=1234567890` --> {"result":"success","Message":"Player added to queue","addedID":"1234567890"}
+      2. `queue-add?id=1234567890 (second time)` --> "result":"error_bad_request","details":"Player has already been added to queue.","queries":["id"]}
+      3. `queue-add?id=incorrectID` --> {"result":"error_bad_request","details":"Player Not Found: No Player found with corresponding ID","queries":["id"]}
