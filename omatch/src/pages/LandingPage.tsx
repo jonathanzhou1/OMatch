@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import WelcomeBox from "../components/landing/WelcomeBox";
-import { auth } from "../firebase-config";
 import { useNavigate } from "react-router";
-import { onAuthStateChanged } from "firebase/auth";
 import { useLocation } from "react-router-dom";
 
 export default function LandingPage() {
@@ -15,11 +13,12 @@ export default function LandingPage() {
   //   }
   // });
 
+  //if user is already logged in, automatically go to dashboard
   useEffect(() => {
     if (localStorage.getItem("userEmail") !== null) {
       navigate("/dashboard");
     }
-  }, [location, navigate])
+  }, [location, navigate]);
 
   return (
     <div>
