@@ -5,7 +5,7 @@ import {
   joemungus_burger_json,
   tingus_pingus_json,
 } from "./mock-data/MockProfiles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AuthError,
   AuthErrorCodes,
@@ -15,18 +15,7 @@ import {
   reauthenticateWithCredential,
 } from "firebase/auth";
 
-export default function ViewProfile() {
-  //React state variable to keep track of password
-  const [password, setPassword] = useState("");
-  const [needPassword, setNeedPassword] = useState(false);
-  //React state variables for delete profile confirmation
-  const [displayDeleteConfirmation, setDisplayDeleteConfirmation] =
-    useState(false);
-  //redMessage = errorMessage
-  const [displayRedMessage, setDisplayRedMessage] = useState(false);
-  const [redMessage, setRedMessage] = useState("");
-
-  const navigate = useNavigate();
+function MockView() {
   //get user id and make sure it is valid using type predicates
   let userID: string | null = localStorage.getItem("userID");
   let userEmail: string | null = localStorage.getItem("userEmail");
@@ -59,6 +48,54 @@ export default function ViewProfile() {
     name = parsedJSON.name;
     position = parsedJSON.position;
   }
+}
+
+export default function ViewProfile() {
+  //React state variable to keep track of password
+  const [password, setPassword] = useState("");
+  const [needPassword, setNeedPassword] = useState(false);
+  //React state variables for delete profile confirmation
+  const [displayDeleteConfirmation, setDisplayDeleteConfirmation] =
+    useState(false);
+  //redMessage = errorMessage
+  const [displayRedMessage, setDisplayRedMessage] = useState(false);
+  const [redMessage, setRedMessage] = useState("");
+  //React state variable to keep track of profile info
+  const [name, setName] = useState("");
+  const [wins, setWins] = useState("");
+  const [position, setPosition] = useState("");
+  const [losses, setLosses] = useState("");
+
+  const navigate = useNavigate();
+  //get user id and make sure it is valid using type predicates
+  let userID: string | null = localStorage.getItem("userID");
+  let userEmail: string | null = localStorage.getItem("userEmail");
+
+  useEffect(() => {
+    //load profile information from backend
+    //initialize variables used
+    const localhost = "http://localhost";
+    const port = ":3232";
+    const viewQuery = "/profile-view?id=" + userID;
+    fetch(localhost + port + viewQuery)
+      .then((response) => response.json())
+      .then((responseJSON) => {
+        console.log(responseJSON);
+        if (responseJSON.result !== "success") {
+          setDisplayRedMessage(true);
+          setRedMessage(responseJSON.details);
+        } else {
+          setDisplayRedMessage(false);
+          setName(responseJSON.player.name);
+          setWins(responseJSON.player.wins);
+          setLosses(responseJSON.player.losses);
+          setPosition(responseJSON.player.position);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   //ask for confirmation to delete
   function doubleCheckDelete() {
@@ -104,9 +141,6 @@ export default function ViewProfile() {
               //because account is still deleted by firebase
               await fetch(hostname + port + deleteProfileQuery);
 
-              //DELETE AFTER
-              console.log("FINISHED DELETE FROM BACKEND!");
-
               //remove local storage data
               localStorage.removeItem("userEmail");
               localStorage.removeItem("userID");
@@ -143,6 +177,7 @@ export default function ViewProfile() {
     <div id="viewProfile">
       <h1 id="viewProfileHeader">VIEW PROFILE!</h1>
       <div id="buttonContainer">
+        {/* *USE FOR MOCKS
         <p>NOTE: Mocked Profile</p>
         <div id="profileInfo">
           <h3>User Info</h3>
@@ -154,6 +189,18 @@ export default function ViewProfile() {
             </p>
           )}
           {!existingMock && <p>{profileInfo}</p>}
+        </div> */}
+        <div id="profileInfo">
+          <h3>User Info</h3>
+          <p>
+            <b>Name: </b> {name}
+            <br></br>
+            <b>Position: </b> {position}
+            <br></br>
+            <b>Wins: </b> {wins}
+            <br></br>
+            <b>Losses: </b> {losses}
+          </p>
         </div>
         <div>
           <Link to="/edit-profile">
