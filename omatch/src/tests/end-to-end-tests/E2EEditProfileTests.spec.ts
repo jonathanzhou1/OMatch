@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import { createAccountTestHelper } from "../mock-tests/MockCreateAccountTests.spec";
+import { createAccountTestHelper } from "../helper-functions/Create-Account.spec";
 
 // /**
 //  * Helper function for testing edit profile functionality. This function assumes that page starts on the Dashboard page.
