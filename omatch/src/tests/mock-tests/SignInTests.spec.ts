@@ -1,21 +1,14 @@
 import { test, expect } from "@playwright/test";
-import {
-  signInTestHelper,
-  signOutTestHelper,
-} from "../mock-tests/MockSignInTests.spec";
+import { signInTestHelper } from "../helper-functions/SignIn.spec";
+import { signOutTestHelper } from "../helper-functions/SignOut.spec";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:5173/");
 });
 
-test("E2E: sign into an existing user account", async ({ page }) => {
+test("Sign into an existing user account", async ({ page }) => {
   const email = "test@gmail.com";
   const password = "1234567";
-
-  // Get to the "Sign In" page from landing page
-  const toSignInButton = page.getByRole("button", { name: "Sign In" });
-  await expect(toSignInButton).toBeVisible();
-  await toSignInButton.click();
 
   // Sign in
   await signInTestHelper(page, email, password);
@@ -27,7 +20,7 @@ test("E2E: sign into an existing user account", async ({ page }) => {
   await signOutTestHelper(page);
 });
 
-test("E2E: sign out successfully", async ({ page }) => {
+test("Sign out successfully", async ({ page }) => {
   await signInTestHelper(page, "test@gmail.com", "1234567");
   await signOutTestHelper(page);
 

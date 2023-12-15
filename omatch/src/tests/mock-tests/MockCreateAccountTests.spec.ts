@@ -1,5 +1,6 @@
-import { test, expect, Page } from "@playwright/test";
-import { signInTestHelper } from "./MockSignInTests.spec";
+import { test, expect } from "@playwright/test";
+import { createAccountTestHelper } from "../helper-functions/Create-Account.spec";
+import { signInTestHelper } from "../helper-functions/SignIn.spec";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:5173/");
