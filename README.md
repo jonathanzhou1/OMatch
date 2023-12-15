@@ -63,3 +63,23 @@
    5. Additionally, there exist the following errors:
        1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
        2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
+## Backend Player, Team, and Matches
+Each user in omatch will be assigned a Player class. This class will contain their specific user ID, skill level, W/L record, position, and other necessary information. 
+
+Players are assigned to teams in our matchmaking algorithms (described below). The teams class contains information about the average skill of the team itself.
+
+Two teams are assigned to a Match class. The match class keeps track of ongoing games and the outcome of said games. Based on the outcome, the skills will be adjusted accordingly.
+
+## Matchmaking
+
+The IMatchMaker interface implements the matchmaking method, which will take in a list of players, divide them into teams and return matches based on those teams. Based on the input, the matchmaking algorithm can divide players into any EVEN number of teams. More matchmaking algorithms can  be implemented with this interface in the future. 
+1. SimpleMatchMaker - This algorithm does not take into account skill. Rather, it just splits players up 1 by 1 onto separate teams. It then combines teams two by two into matches.
+2. SortSkillMatchmaker - This algorithm sorts each player based on skill level. Then, it splits players 1 by 1 onto separate teams. Once this is complete, the teams are sorted again based on average skill to ensure more parity. The teams most similar in skill are then paired together, from highest to lowest rank.
+3. PositionMatchMaker - This algorithm sorts players on skill level, but prioritizes making sure each team has players from each position. First the players are split up into their respective positions, and then split up evenly amongst all teams to minimize the overlap of positions and ensure teams are as balanced as possibles. The remaining players are split up based on skill like in SortSkillMatchmaker.
+
+## Skill Level
+
+Skill-Level(SL) is set at 1500 when a player profile is created, and modulated based on their performance in future games. The SkillUpdater interface implements the skillupdater function, which takes in a completed match and updates the skill levels of the players in the match depending if they win or loss. Like with matchmaking, we implemented three algorithms of increasing complexity.
+1. SimpleSkill - This algorithm substracts 1 point from all players that loss the game and adds 1 point to all players that win the game.
+2. WLSKill - This algorithm sets the skill level of each player to their W/L ratio.
+3. EloSkill - This algorithm implements a generalized version of the EloAlgorithm over a teams approach. The expected outcome is determined beforehand, and a team's skilllevel is adjusted depending on how likely or unlikely they were to win a game. For example if a weak-ranked team beats a much higher ranked team, they would see a dramatic increase in their collective skill levels. However, if a highly ranked team beats a team that is much lower ranked then them, there skill levels will only increase by a marginal amount. More information about the ELO algorithm can be found at this link: https://en.wikipedia.org/wiki/Elo_rating_system

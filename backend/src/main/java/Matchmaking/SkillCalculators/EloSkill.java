@@ -11,7 +11,7 @@ public class EloSkill implements SkillUpdater {
   /**
    * Method to update the skill of all players in a match according to the Elo algoritm Elo is a 1 v
    * 1 algorithm so averages were used across teams and then players skills were adjusted based on
-   * those averages
+   * those averages.
    *
    * @param match
    */
