@@ -11,6 +11,7 @@ import Matchmaking.SkillCalculators.SimpleSkill;
 import datastorage.DataStore;
 import datastorage.SimpleDataStore;
 import server.exceptions.ItemAlreadyExistsException;
+import server.exceptions.NoItemFoundException;
 import server.handlers.match.MatchViewHandler;
 import server.handlers.profile.ProfileAddHandler;
 import server.handlers.profile.ProfileEditHandler;
@@ -91,7 +92,7 @@ public class Server {
    *             string, in which case the server will start out with 9 profiles already added in
    *             the simple configuration
    */
-  public static void main(String[] args) throws ItemAlreadyExistsException {
+  public static void main(String[] args) throws ItemAlreadyExistsException, NoItemFoundException {
 
     if(args.length > 0){
       if(args[0].equalsIgnoreCase("complex")){
@@ -112,6 +113,7 @@ public class Server {
           Player temp = new Player("Josh Joshington", positions[i]);
           temp.setId(ids[i]);
           simple.addPlayer(temp);
+          simple.addQueue(ids[i]);
         }
         Server server = new Server(
             simple,
