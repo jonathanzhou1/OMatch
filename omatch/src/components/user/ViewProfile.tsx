@@ -244,6 +244,12 @@ export default function ViewProfile() {
               onChange={(event) => {
                 setPassword(event.target.value);
               }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  deleteProfile();
+                }
+              }}
             ></input>
             <button
               className="button singleButton"
