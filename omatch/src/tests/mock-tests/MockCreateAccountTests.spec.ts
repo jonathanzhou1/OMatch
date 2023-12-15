@@ -10,7 +10,7 @@ import { signInTestHelper } from "./MockSignInTests.spec";
  * @param lastName
  * @param position
  */
-export default async function createAccountTestHelper(
+export async function createAccountTestHelper(
   page: Page,
   email: string,
   password: string,

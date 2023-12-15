@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import createAccountTestHelper from "../mock-tests/MockCreateAccountTests.spec";
+import { createAccountTestHelper } from "../mock-tests/MockCreateAccountTests.spec";
 
 // /**
 //  * Helper function for testing edit profile functionality. This function assumes that page starts on the Dashboard page.
@@ -24,7 +24,7 @@ test("E2E, integration: create account + edit profile", async ({ page }) => {
   await createAccountTestHelper(
     page,
     "giannis@gmail.com",
-    "giannis",
+    "1234567",
     "Giannis",
     "Antetokounmpo",
     "CENTER"
@@ -78,6 +78,6 @@ test("E2E, integration: create account + edit profile", async ({ page }) => {
   const submitPasswordButton = page.getByRole("button", {
     name: "Submit Password",
   });
-  await passwordVerification.fill("giannis");
+  await passwordVerification.fill("1234567");
   await submitPasswordButton.click();
 });
