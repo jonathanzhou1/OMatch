@@ -1,7 +1,17 @@
-# OMatch
+# OMatch!
 ## Fall 2023 Software Engineering Final Project
 *Jonathan Zhou, Michael Tu, Andrew Boyaciliger, Jake Stifelman*
+<br><br>
+<b>Repository Link:</b> https://github.com/jonathanzhou1/OMatch
 <hr>
+
+## OMatch! Description
+OMatch! is a platform dedicated to creating fun and competitive 5 v 5 basketball games at the OMAC. The frontend interface allows users to create persistent profiles to store their information such as name, basketball position, and keep track of win-loss records, and find 5 v 5 matches with people of similar skill levels to them based on ELO rating and matchmaking algorithms on the backend. Through this, we hope that students and community members in Providence will be enabled to have optimized, fun games that they can plan out ahead of time with players that are less intimidating because of similar skill levels.
+
+## How to Run Program
+Currently, you will have to start the backend server by running the main program in 'Server.java'. You should see a message saying that `Server started at http://localhost:3232`. Then, run the frontend interface by going into the 'OMatch/omatch' directory and running `npm run dev` and going to `http://localhost:5173`.
+<br><br>
+*Note: For matchmaking, you will need a minimum of 10 users queued.*
 
 ## Backend Handlers
 
@@ -44,10 +54,42 @@
       1. `match-add?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","matchAdded":{Note: this is a very large object and I am not entirely sure yet what of it I should realistically send to the frontend, as of such I am holding off on setting in stone what is returned here},"queries":["id"]}
 5. `match-view`
    1. Returns a list of match objects, each containing details about the court the match is taking place on, as well as teams and their respective players.
-   2. Example Queries:
-      1. `match-view` --> {"result":"success","matches":[{filler},{filler},{filler},{filler},{filler},{filler}],"queries":[]}
+   2. Example Queries (for a matchmaker with a limit of 3 matches). Each `matchN` here represents the following structure: {"result":"success","matches":[{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},null,null,null,null,null],"queries":[]}. Each `playerN` value represents the following:  `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
+      1. `match-view` --> {"result":"success","matches":[{match1},{match2},{match3}],"queries":[]}
 5. `queue-view`
    1. Returns either the queue or the position of a player within the queue
    2. Example Queries:
       1. `queue-view` --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
       2. `queue-view` --> {"result":"success","playerPosition":1,"queries":["id"]}
+6. `queue-add <id>`
+   1. Adds a player to the matchmaking queue. When the queue length is 10, the first 10 players in the queue will be dequeued into a match. Whether this has happened will be represented by the NewCourtAdded boolean, which will be true if a new court has been added, and false otherwise.
+   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
+   3. Example Queries:
+      1. `queue-add?id=1234567890` --> {"result":"success","Message":"Player added to queue","newCourtMade":false,"addedID":"1234567890"} 
+      2. `queue-add?id=1234567890 (second time)` --> "result":"error_bad_request","details":"Player has already been added to queue.","newCourtMade":false,"queries":["id"]}
+      3. `queue-add?id=incorrectID` --> {"result":"error_bad_request","details":"Player Not Found: No Player found with corresponding ID","newCourtMade":false,"queries":["id"]}
+   4. Example Query For Successful Match Creation. Every `{playerN}` here represents a different player (including the one just added) such as this: `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
+      5. `queue-add?id=1` --> {"result":"success","Message":"Player added to queue","newCourtMade":true,"addedID":"1","court":{"match":{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},"players":[{player1},{player2},{player3},{player4},{player5},{player6},{player7},{player8},{player9},{player10}]}}
+   5. Additionally, there exist the following errors:
+       1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
+       2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
+## Backend Player, Team, and Matches
+Each user in omatch will be assigned a Player class. This class will contain their specific user ID, skill level, W/L record, position, and other necessary information. 
+
+Players are assigned to teams in our matchmaking algorithms (described below). The teams class contains information about the average skill of the team itself.
+
+Two teams are assigned to a Match class. The match class keeps track of ongoing games and the outcome of said games. Based on the outcome, the skills will be adjusted accordingly.
+
+## Matchmaking
+
+The IMatchMaker interface implements the matchmaking method, which will take in a list of players, divide them into teams and return matches based on those teams. Based on the input, the matchmaking algorithm can divide players into any EVEN number of teams. More matchmaking algorithms can  be implemented with this interface in the future. 
+1. SimpleMatchMaker - This algorithm does not take into account skill. Rather, it just splits players up 1 by 1 onto separate teams. It then combines teams two by two into matches.
+2. SortSkillMatchmaker - This algorithm sorts each player based on skill level. Then, it splits players 1 by 1 onto separate teams. Once this is complete, the teams are sorted again based on average skill to ensure more parity. The teams most similar in skill are then paired together, from highest to lowest rank.
+3. PositionMatchMaker - This algorithm sorts players on skill level, but prioritizes making sure each team has players from each position. First the players are split up into their respective positions, and then split up evenly amongst all teams to minimize the overlap of positions and ensure teams are as balanced as possibles. The remaining players are split up based on skill like in SortSkillMatchmaker.
+
+## Skill Level
+
+Skill-Level(SL) is set at 1500 when a player profile is created, and modulated based on their performance in future games. The SkillUpdater interface implements the skillupdater function, which takes in a completed match and updates the skill levels of the players in the match depending if they win or loss. Like with matchmaking, we implemented three algorithms of increasing complexity.
+1. SimpleSkill - This algorithm substracts 1 point from all players that loss the game and adds 1 point to all players that win the game.
+2. WLSKill - This algorithm sets the skill level of each player to their W/L ratio.
+3. EloSkill - This algorithm implements a generalized version of the EloAlgorithm over a teams approach. The expected outcome is determined beforehand, and a team's skilllevel is adjusted depending on how likely or unlikely they were to win a game. For example if a weak-ranked team beats a much higher ranked team, they would see a dramatic increase in their collective skill levels. However, if a highly ranked team beats a team that is much lower ranked then them, there skill levels will only increase by a marginal amount. More information about the ELO algorithm can be found at this link: https://en.wikipedia.org/wiki/Elo_rating_system

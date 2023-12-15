@@ -1,17 +1,12 @@
 import "../../styles/index.css";
 import { Link } from "react-router-dom";
-import { auth } from "../../firebase-config";
-import { onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function WelcomeBox() {
   //react state variable keeping track of which user is currently logged in
   // const [loggedInUser, setLoggedInUser] = useState(auth.currentUser);
   let loggedInUser = localStorage.getItem("userEmail");
 
-  //remove console logs later
-  console.log("before entering observer");
-  console.log(loggedInUser);
   // onAuthStateChanged(auth, (user) => {
   //   setLoggedInUser(user);
   //   //remove console logs later

@@ -2,9 +2,12 @@ import "../../styles/index.css";
 import { useState } from "react";
 import UserProfile from "./mock-data/MockProfiles";
 import { isString } from "./ViewProfile";
+import { useNavigate } from "react-router-dom";
 
 export default function EditProfile() {
-  //Errorhandling react state variables
+  const navigate = useNavigate();
+
+  // Errorhandling react state variables
   const [errorStatus, setErrorStatus] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -13,7 +16,7 @@ export default function EditProfile() {
   const [lastName, setLastName] = useState("");
   const [position, setPosition] = useState("");
 
-  function edit() {
+  async function edit() {
     let userID = localStorage.getItem("userID");
     if (!isString(userID)) {
       //how is this possible?? ERR
@@ -23,7 +26,6 @@ export default function EditProfile() {
       setErrorStatus(true);
       setErrorMessage("Please a select valid position");
     } else {
-      setErrorStatus(false);
       //TEMP FUNCTION UNTIL WE CAN ACTUALLY UPDATE BACKEND
       const editedProfile: UserProfile = {
         id: userID,
@@ -31,6 +33,29 @@ export default function EditProfile() {
         position: position,
       };
       console.log(editedProfile);
+      const hostname = "http://localhost";
+      const port = ":3232";
+      const editProfileQuery =
+        "/profile-edit?action=edit" +
+        "&id=" +
+        userID +
+        "&name=" +
+        `${firstName}%20${lastName}` +
+        "&position=" +
+        position;
+      await fetch(hostname + port + editProfileQuery)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          if (responseJson.result !== "success") {
+            setErrorStatus(true);
+            setErrorMessage(responseJson.details);
+            console.log(responseJson.details);
+          } else {
+            setErrorStatus(false);
+            console.log("successful response from backend");
+            return navigate("/view-profile");
+          }
+        });
     }
   }
 
