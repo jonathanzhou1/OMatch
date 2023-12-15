@@ -19,20 +19,20 @@ public class EloSkill implements SkillUpdater {
   public void skillUpdater(Match match) throws IOException {
 
     Outcome outcome = match.getOutcome();
-    if(outcome == Outcome.ONGOING){
+    if (outcome == Outcome.ONGOING) {
       throw new IOException("Cannot Update Skills, Match is Incomplete.");
     }
-    if(outcome == Outcome.TIE) {
+    if (outcome == Outcome.TIE) {
       return;
     }
-    if(outcome == Outcome.TEAM1WIN){
+    if (outcome == Outcome.TEAM1WIN) {
       Team team1 = match.getTeam1();
       Team team2 = match.getTeam2();
       this.EloHelper(team1, team2);
       return;
     }
 
-    if(outcome == Outcome.TEAM2WIN){
+    if (outcome == Outcome.TEAM2WIN) {
       Team team1 = match.getTeam1();
       Team team2 = match.getTeam2();
       this.EloHelper(team2, team1);
@@ -45,10 +45,10 @@ public class EloSkill implements SkillUpdater {
     float wOldRank = wTeam.getAvgSkill();
     float lOldRank = lTeam.getAvgSkill();
 
-    double wExpected = 1/(1+ Math.pow(10, (lOldRank - wOldRank) / 400.0));
-    double lExpected = 1/(1+ Math.pow(10, (wOldRank - lOldRank) / 400.0));
-    double wNewRank = wOldRank + (30 *(1 - wExpected));
-    double lNewRank = lOldRank + (30*(0 - lExpected));
+    double wExpected = 1 / (1 + Math.pow(10, (lOldRank - wOldRank) / 400.0));
+    double lExpected = 1 / (1 + Math.pow(10, (wOldRank - lOldRank) / 400.0));
+    double wNewRank = wOldRank + (30 * (1 - wExpected));
+    double lNewRank = lOldRank + (30 * (0 - lExpected));
     float wAdd = (float) wNewRank - wOldRank;
     float lSubtract = lOldRank - (float) lNewRank;
     for (Player player : wTeam.getPlayers()) {
@@ -56,7 +56,7 @@ public class EloSkill implements SkillUpdater {
       player.setSkillLevel(oldSkill + wAdd);
     }
 
-    for (Player player: lTeam.getPlayers()){
+    for (Player player : lTeam.getPlayers()) {
       float oldSkill = player.getSkillLevel();
       player.setSkillLevel(oldSkill - lSubtract);
     }

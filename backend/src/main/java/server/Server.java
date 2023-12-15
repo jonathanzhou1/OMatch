@@ -1,5 +1,7 @@
 package server;
 
+import static spark.Spark.after;
+
 import Matchmaking.CourtAssigners.CourtAssigner;
 import Matchmaking.CourtAssigners.ICourtAssigner;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
@@ -14,8 +16,6 @@ import server.handlers.profile.ProfileViewHandler;
 import server.handlers.queue.QueueAddHandler;
 import server.handlers.queue.QueueViewHandler;
 import spark.Spark;
-
-import static spark.Spark.after;
 
 public class Server {
   static final int port = 3232;
@@ -33,10 +33,11 @@ public class Server {
 
     Spark.port(port);
 
-    after((request, response) -> {
-      response.header("Access-Control-Allow-Origin", "*");
-      response.header("Access-Control-Allow-Methods", "*");
-    });
+    after(
+        (request, response) -> {
+          response.header("Access-Control-Allow-Origin", "*");
+          response.header("Access-Control-Allow-Methods", "*");
+        });
 
     // Set up handlers:
     Spark.get("profile-add", new ProfileAddHandler(this));
@@ -81,13 +82,14 @@ public class Server {
   }
 
   /**
-   * Main method. Run to initialize server. Instantiates the server with a mocked data store,
-   * court assigner, matchmaker, and skill assigner.
+   * Main method. Run to initialize server. Instantiates the server with a mocked data store, court
+   * assigner, matchmaker, and skill assigner.
+   *
    * @param args
    */
   public static void main(String[] args) {
-    Server server = new Server(
-        new SimpleDataStore(),
-        new CourtAssigner(6,new SimpleMatchMaker(), new SimpleSkill()));
+    Server server =
+        new Server(
+            new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
   }
 }

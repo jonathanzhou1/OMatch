@@ -17,7 +17,8 @@ public class SimpleDataStore implements DataStore {
 
   private HashMap<String, Player> dataMap;
   private Queue<Player> playerQueue;
-  public SimpleDataStore(){
+
+  public SimpleDataStore() {
     this.dataMap = new HashMap<>();
     this.playerQueue = new LinkedList<>();
   }
@@ -52,8 +53,9 @@ public class SimpleDataStore implements DataStore {
       // ID is already in database, we can't be reasonably sure that this player already
       // exists within the database, or that two IDs are the same, so we change the ID of one of the
       // players and recurse.
-      throw new ItemAlreadyExistsException("Player to be added already exists within database. "
-          + "Please use updatePlayer in this instance.");
+      throw new ItemAlreadyExistsException(
+          "Player to be added already exists within database. "
+              + "Please use updatePlayer in this instance.");
     } else {
       dataMap.put(player.getId(), player);
     }
@@ -72,6 +74,7 @@ public class SimpleDataStore implements DataStore {
     if (!dataMap.containsKey(id)) {
       throw new NoItemFoundException("No player to update. Please use addPlayer in this instance.");
     } else {
+      player.setId(id);
       dataMap.put(id, player);
     }
   }
@@ -83,17 +86,17 @@ public class SimpleDataStore implements DataStore {
    *     for internal purposes.
    * @return The player that was just deleted.
    * @throws NoItemFoundException In case no player has been deleted, throw an exception to notify
-   * the caller of this
+   *     the caller of this
    */
   @Override
-  public Player deleteItem(String id) throws NoItemFoundException{
+  public Player deleteItem(String id) throws NoItemFoundException {
     if (dataMap.containsKey(id)) {
       // While I am aware that the standard HashMap returns null in these situations, it isn't
       // guaranteed. As of such I am adding a little bit of extra logic here.
       Player deletedPlayer = dataMap.get(id);
       dataMap.remove(id);
       return deletedPlayer;
-    }else{
+    } else {
       throw new NoItemFoundException("No item found within the database to delete.");
     }
   }
@@ -118,6 +121,7 @@ public class SimpleDataStore implements DataStore {
 
   /**
    * Method that adds a player to the queue
+   *
    * @param ID, player to be added to the queue
    */
   public Player addQueue(String ID) throws NoItemFoundException {
@@ -140,4 +144,3 @@ public class SimpleDataStore implements DataStore {
     return this.playerQueue;
   }
 }
-

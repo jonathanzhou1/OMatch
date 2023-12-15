@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import server.Server;
-import server.exceptions.NoItemFoundException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -36,22 +35,22 @@ public class QueueViewHandler implements Route {
     HashMap<String, Object> responseMap = new HashMap<>();
 
     String playerID;
-    try{
+    try {
       Player[] queuePlayers = server.getDataStore().getQueue().toArray(new Player[0]);
-      if(request.queryMap().hasKey("id")) {
+      if (request.queryMap().hasKey("id")) {
         playerID = request.queryMap().get("id").value();
         // Get an array representation of the queue
 
         int queuePosition = -1;
         for (Player i : queuePlayers) {
-          if(playerID != i.getId()){
+          if (playerID != i.getId()) {
             queuePosition++;
-          }else{
+          } else {
             break;
           }
         }
-        responseMap.put("playerPosition",queuePosition);
-      }else{
+        responseMap.put("playerPosition", queuePosition);
+      } else {
         responseMap.put("PlayerQueue", queuePlayers);
       }
     } catch (Exception e) {
@@ -67,5 +66,4 @@ public class QueueViewHandler implements Route {
     System.out.println(server.getDataStore().getQueue());
     return adapter.toJson(responseMap);
   }
-
 }

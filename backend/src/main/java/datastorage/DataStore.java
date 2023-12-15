@@ -44,8 +44,8 @@ public interface DataStore {
    * @param id A string containing the ID of the particular player we're referencing. Used primarily
    *     for internal purposes.
    * @return The player that was just deleted. Null if there was no deleted player.
-   * @throws NoItemFoundException In case no player has been deleted, throw an exception to notify
-   *    * the caller of this
+   * @throws NoItemFoundException In case no player has been deleted, throw an exception to notify *
+   *     the caller of this
    */
   public Player deleteItem(String id) throws NoItemFoundException;
 
@@ -65,12 +65,14 @@ public interface DataStore {
 
   /**
    * Method that adds a player to the Queue
+   *
    * @param ID, player to be added to the queue
    */
   public Player addQueue(String ID) throws NoItemFoundException;
 
   /**
    * Returns the queue for getting player data
+   *
    * @return The queue representing the current matchmaking queue
    */
   public Queue<Player> getQueue();

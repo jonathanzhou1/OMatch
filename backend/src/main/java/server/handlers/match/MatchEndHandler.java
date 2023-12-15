@@ -1,7 +1,6 @@
 package server.handlers.match;
 
 import Matchmaking.CourtAssigners.ICourt;
-import Matchmaking.Match;
 import Matchmaking.Player;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -42,18 +41,16 @@ public class MatchEndHandler implements Route {
       player = this.server.getDataStore().getPlayer(playerID);
     } catch (Exception e) {
       responseMap.put("result", "error_bad_request");
-      responseMap.put(
-          "details",
-          "Error in specifying 'id' variable: ");
+      responseMap.put("details", "Error in specifying 'id' variable: ");
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     }
     try {
       // If the playerWon value is correct, move onto the next step.
       playerWon = request.queryMap().get("playerWon").value();
-      if(!(playerWon.equalsIgnoreCase("win") ||
-          playerWon.equalsIgnoreCase("tie") ||
-          playerWon.equalsIgnoreCase("lose"))){
+      if (!(playerWon.equalsIgnoreCase("win")
+          || playerWon.equalsIgnoreCase("tie")
+          || playerWon.equalsIgnoreCase("lose"))) {
         throw new Exception();
       }
     } catch (Exception e) {
@@ -69,12 +66,12 @@ public class MatchEndHandler implements Route {
     // to the court's internal tally
     ICourt[] courts = this.server.getCourtAssigner().getCourts();
 
-    for(int i = 0; i < courts.length; i++){
-      if(courts[i].getPlayers().contains(player)){
-        if(courts[i].tryEndGame(player,playerWon)){
+    for (int i = 0; i < courts.length; i++) {
+      if (courts[i].getPlayers().contains(player)) {
+        if (courts[i].tryEndGame(player, playerWon)) {
           // This court has done its job and can now be removed.
           Map<String, Player> playerMap = server.getCourtAssigner().removeInternalCourt(i);
-          for(String pID: playerMap.keySet()){
+          for (String pID : playerMap.keySet()) {
             server.getDataStore().updatePlayer(pID, playerMap.get(pID));
           }
         }

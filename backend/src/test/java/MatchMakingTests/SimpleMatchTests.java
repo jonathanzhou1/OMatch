@@ -8,25 +8,26 @@ import Matchmaking.Team;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testng.Assert;
 
 public class SimpleMatchTests {
   private SimpleMatchMaker smm;
+
   public List<Player> makePlayers(int playerCount) {
     List<Player> players = new ArrayList<>();
     Position[] positions = Position.values();
-    for (int i = 0; i < playerCount; i ++) {
+    for (int i = 0; i < playerCount; i++) {
       Position position = positions[i % 5];
       Player player = new Player(Integer.toString(i), position);
       players.add(player);
     }
     return players;
   }
+
   @Test
-  public void testMakePlayers(){
+  public void testMakePlayers() {
     List<Player> players = makePlayers(10);
     Position[] positions = Position.values();
     for (int i = 0; i < players.size(); i++) {
@@ -35,10 +36,12 @@ public class SimpleMatchTests {
       System.out.println(players.get(i).getPosition());
     }
   }
+
   @BeforeEach
   public void setup() {
     this.smm = new SimpleMatchMaker();
   }
+
   @Test
   public void testSimpleMatch() throws IOException {
     List<Player> tenPLayers = this.makePlayers(10);
@@ -50,17 +53,18 @@ public class SimpleMatchTests {
     Assert.assertEquals(team1.getSize(), 5);
     Assert.assertEquals(team2.getSize(), 5);
   }
+
   @Test
   public void unevenTeams() throws IOException {
     List<Player> tenPlayers = this.makePlayers(10);
     try {
       List<Match> matches = this.smm.matchmaker(tenPlayers, 3);
-    }
-    catch (IOException e){
+    } catch (IOException e) {
       return;
     }
     throw new AssertionError("Error Not Thrown");
   }
+
   @Test
   public void multiTeams() throws IOException {
     List<Player> twentyPLayers = this.makePlayers(20);

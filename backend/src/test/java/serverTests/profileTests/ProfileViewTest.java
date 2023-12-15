@@ -2,11 +2,15 @@ package serverTests.profileTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import Matchmaking.CourtAssigners.CourtAssigner;
+import Matchmaking.MatchAlgs.SimpleMatchMaker;
 import Matchmaking.Player;
 import Matchmaking.Position;
+import Matchmaking.SkillCalculators.SimpleSkill;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import datastorage.SimpleDataStore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -43,7 +47,9 @@ public class ProfileViewTest {
   @BeforeEach
   public void setup() throws FileNotFoundException {
 
-    server = new Server();
+    server =
+        new Server(
+            new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
 
     Spark.init();
     Spark.awaitInitialization();
@@ -73,6 +79,7 @@ public class ProfileViewTest {
   /**
    * Checks that any items within the database that can be recalled via a get query to the database
    * can be retrieved via a view query to the API.
+   *
    * @throws ItemAlreadyExistsException
    * @throws IOException
    */
