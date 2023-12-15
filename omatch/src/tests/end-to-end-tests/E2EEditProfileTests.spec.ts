@@ -1,5 +1,5 @@
 import { test, expect, Page } from "@playwright/test";
-import createAccountTestHelper from "../mock-tests/MockCreateAccountTests.spec";
+import { createAccountTestHelper } from "../mock-tests/MockCreateAccountTests.spec";
 
 // /**
 //  * Helper function for testing edit profile functionality. This function assumes that page starts on the Dashboard page.
@@ -24,7 +24,7 @@ test("E2E, integration: create account + edit profile", async ({ page }) => {
   await createAccountTestHelper(
     page,
     "giannis@gmail.com",
-    "giannis",
+    "1234567",
     "Giannis",
     "Antetokounmpo",
     "CENTER"
@@ -63,4 +63,21 @@ test("E2E, integration: create account + edit profile", async ({ page }) => {
   await expect(page).toHaveURL("http://localhost:5173/view-profile");
   await expect(page.getByText("Name: Greek Freak")).toBeVisible();
   await expect(page.getByText("Position: POWER_FORWARD")).toBeVisible();
+
+  // Delete profile
+  const deleteProfileButton = page.getByRole("button", {
+    name: "Delete Profile",
+  });
+  await expect(deleteProfileButton).toBeVisible();
+  await deleteProfileButton.click();
+
+  const yesButton = page.getByRole("button", { name: "Yes" });
+  await yesButton.click();
+
+  const passwordVerification = page.getByLabel("passwordInput");
+  const submitPasswordButton = page.getByRole("button", {
+    name: "Submit Password",
+  });
+  await passwordVerification.fill("1234567");
+  await submitPasswordButton.click();
 });
