@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../../styles/index.css";
+import { match } from "assert";
 
 export default function MatchTeam() {
   //react state variable to display all matches
@@ -20,7 +21,6 @@ export default function MatchTeam() {
     let hostname = "http://localhost";
     let port = ":3232";
     let addMatchQuery = "/queue-add?id=" + userID;
-    console.log(hostname + port + addMatchQuery);
     await fetch(hostname + port + addMatchQuery)
       .then((response) => response.json())
       .then((responseJSON) => {
@@ -47,12 +47,47 @@ export default function MatchTeam() {
       .then((response) => response.json())
       .then((responseJSON) => {
         const curMatches = responseJSON.matches;
-        //if no current matches, say that
-        if (curMatches === "") {
-          setMatches("There are no current matches");
+        let liveMatches = [];
+        for (let courtIndex = 0; courtIndex < 6; courtIndex++) {
+          if (curMatches[courtIndex] !== null) {
+            liveMatches.push(curMatches[courtIndex]);
+          }
+        }
+        let matchDescription: string = "";
+        //iterate through all live matches
+        for (
+          let matchIndex = 0;
+          matchIndex < liveMatches.length;
+          matchIndex++
+        ) {
+          const curMatch = liveMatches[matchIndex];
+          const status: string = curMatch.outcome;
+          //get players from both teams and display
+          let team1players: string[] = [];
+          let team2players: string[] = [];
+          for (
+            let playerIndex = 0;
+            playerIndex < curMatch.team1.players.length;
+            playerIndex++
+          ) {
+            team1players.push(curMatch.team1.players[playerIndex].name);
+            team2players.push(curMatch.team2.players[playerIndex].name);
+          }
+          //set descriptive match string
+          matchDescription = matchDescription.concat(
+            "MATCH STATUS: " +
+              status +
+              ", TEAM 1 PLAYERS: " +
+              team1players +
+              ", TEAM 2 PLAYERS: " +
+              team2players +
+              "; "
+          );
+        }
+        if (matchDescription === "") {
+          setMatches("No matches yet!");
         } else {
-          //display the list of matches returned from backend
-          setMatches(curMatches);
+          setMatches(matchDescription);
         }
         setShowMatches(true);
       });
