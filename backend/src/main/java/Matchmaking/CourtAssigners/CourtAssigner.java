@@ -5,8 +5,10 @@ import Matchmaking.MatchAlgs.IMatchMaker;
 import Matchmaking.Player;
 import Matchmaking.SkillCalculators.SkillUpdater;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import server.exceptions.NoItemMadeException;
 
@@ -73,6 +75,28 @@ public class CourtAssigner implements ICourtAssigner{
   }
 
   /**
+   * Takes in an index and overwrites the court at that location, before updating the players based
+   * on how that match went.
+   * @param index the index of the court to be overwritten
+   * @return The list of newly updated players
+   */
+  @Override
+  public Map<String,Player> removeInternalCourt(int index) {
+    // Update all the players before adding them into the system.
+    try{
+      Match match = this.courts[index].getMatch();
+      this.skillUpdater.skillUpdater(match);
+    }catch(Exception ignored){}
+
+    Map<String,Player> playerMap = new HashMap<>();
+    for(Player i: this.courts[index].getPlayers()){
+      playerMap.put(i.getId(),i);
+    }
+    this.courts[index] = new Court();
+    return playerMap;
+  }
+
+  /**
    * Takes in a court and adds it into the list of courts
    * @param court The court to be added
    * @return The index in the array where the court was added. -1 if addition was unsuccessful.
@@ -89,4 +113,6 @@ public class CourtAssigner implements ICourtAssigner{
     }
     return courtAddedIndex;
   }
+
+
 }

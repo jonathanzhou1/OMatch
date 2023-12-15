@@ -1,10 +1,12 @@
 package Matchmaking.CourtAssigners;
 
 import Matchmaking.Match;
+import Matchmaking.Outcome;
 import Matchmaking.Player;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import server.exceptions.NoItemFoundException;
 
 /**
  * Representation of a court containing players. Encapsulates match data with other data like
@@ -36,6 +38,12 @@ public interface ICourt {
    */
   public void setMatch(Match newMatch);
 
-  public boolean endGame()
-
+  /**
+   * Takes a player and uses their data to vote to end the game.
+   *
+   * @param player The player voting to end the game
+   * @param playerWon Whether the player won that particular game. Can be "win", "tie", or "loss".
+   * @return Whether their vote was enough to end the game.
+   */
+  boolean tryEndGame(Player player, String playerWon) throws Exception;
 }
