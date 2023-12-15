@@ -11,7 +11,7 @@ public class SimpleMatchMaker implements IMatchMaker {
 
   /**
    * Simple matchmaking algorithm, splits up players alternatively without taking into account
-   * skill. Then pairs teams together
+   * skill. Then pairs teams together.
    *
    * @param players, a list of players who will play in the match
    * @return

@@ -30,7 +30,7 @@ public class Player implements IPlayer {
   public Player(String name, Position position) {
     this.name = name;
     this.position = position;
-    this.skillLevel = 10;
+    this.skillLevel = 1500;
     this.wins = 0;
   }
 
