@@ -3,9 +3,14 @@ package server;
 import Matchmaking.CourtAssigners.CourtAssigner;
 import Matchmaking.CourtAssigners.ICourtAssigner;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
+import Matchmaking.MatchAlgs.SortSkillMatchMaker;
+import Matchmaking.Player;
+import Matchmaking.Position;
+import Matchmaking.SkillCalculators.EloSkill;
 import Matchmaking.SkillCalculators.SimpleSkill;
 import datastorage.DataStore;
 import datastorage.SimpleDataStore;
+import server.exceptions.ItemAlreadyExistsException;
 import server.handlers.match.MatchViewHandler;
 import server.handlers.profile.ProfileAddHandler;
 import server.handlers.profile.ProfileEditHandler;
@@ -81,11 +86,42 @@ public class Server {
   /**
    * Main method. Run to initialize server. Instantiates the server with a mocked data store,
    * court assigner, matchmaker, and skill assigner.
-   * @param args
+   * @param args The first index in args represents how the server is built. Can be empty for a
+   *             simple configuration, 'complex' for the final planned implementation, or any other
+   *             string, in which case the server will start out with 9 profiles already added in
+   *             the simple configuration
    */
-  public static void main(String[] args) {
-    Server server = new Server(
+  public static void main(String[] args) throws ItemAlreadyExistsException {
+
+    if(args.length > 0){
+      if(args[0].equalsIgnoreCase("complex")){
+        Server server = new Server(
         new SimpleDataStore(),
-        new CourtAssigner(6,new SimpleMatchMaker(), new SimpleSkill()));
+            new CourtAssigner(6,new SortSkillMatchMaker(), new EloSkill()));
+      }else{
+        SimpleDataStore simple = new SimpleDataStore();
+
+        // This is kinda bad tbh
+        String[] ids = {
+            "1234567890","123456789","12345678","1234567","123456","12345","1234","123","12","1"};
+        Position[] positions = {
+            Position.CENTER,Position.POINT_GUARD,Position.SHOOTING_GUARD,Position.SMALL_FORWARD,
+            Position.POWER_FORWARD,Position.CENTER,Position.POINT_GUARD,Position.SHOOTING_GUARD,
+            Position.SMALL_FORWARD,Position.POWER_FORWARD};
+        for(int i = 0; i < 9; i++){
+          Player temp = new Player("Josh Joshington", positions[i]);
+          temp.setId(ids[i]);
+          simple.addPlayer(temp);
+        }
+        Server server = new Server(
+            simple,
+            new CourtAssigner(6,new SimpleMatchMaker(), new SimpleSkill()));
+      }
+    }else{
+      Server server = new Server(
+          new SimpleDataStore(),
+          new CourtAssigner(6,new SimpleMatchMaker(), new SimpleSkill()));
+    }
+
   }
 }

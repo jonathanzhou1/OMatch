@@ -72,6 +72,7 @@ public class SimpleDataStore implements DataStore {
     if (!dataMap.containsKey(id)) {
       throw new NoItemFoundException("No player to update. Please use addPlayer in this instance.");
     } else {
+      player.setId(id);
       dataMap.put(id, player);
     }
   }
