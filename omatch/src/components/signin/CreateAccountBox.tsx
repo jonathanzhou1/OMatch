@@ -4,6 +4,9 @@ import {
   createUserWithEmailAndPassword,
   AuthErrorCodes,
   AuthError,
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  deleteUser,
 } from "firebase/auth";
 import { auth } from "../../firebase-config";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +17,7 @@ export default function CreateAccountBox() {
   //react state variables to store email and password
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  let uid = "";
 
   //react state variables to store error message + manage error status
   const [errorStatus, setErrorStatus] = useState(false);
@@ -23,7 +27,6 @@ export default function CreateAccountBox() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [position, setPosition] = useState("");
-  let uid = "";
 
   //navigate is for routing through various links
   const navigate = useNavigate();
@@ -79,11 +82,52 @@ export default function CreateAccountBox() {
       uid;
     await fetch(hostname + port + createProfileQuery)
       .then((response) => response.json())
-      .then((responseObject) => {
+      .then(async (responseObject) => {
         if (responseObject.result !== "success") {
           setErrorStatus(true);
-          setErrorMessage(responseObject.details);
-          console.log(errorMessage);
+          setErrorMessage(
+            "Please make sure to fill out every field in your profile."
+          );
+          console.log(responseObject.details);
+          console.log(createProfileQuery);
+
+          // delete the account just created
+
+          const curUser = auth.currentUser;
+          const curCredential = EmailAuthProvider.credential(
+            registerEmail,
+            registerPassword
+          );
+          if (curUser != null) {
+            //reauthenticate with email and password
+            await reauthenticateWithCredential(curUser, curCredential)
+              .then(async (_curUserCredential) => {
+                //delete newly authenticated user
+                await deleteUser(curUser)
+                  .then(async () => {
+                    //remove data from backend
+                    const hostname = "http://localhost";
+                    const port = ":3232";
+                    const deleteProfileQuery =
+                      "/profile-edit?action=delete&id=" + uid;
+                    //even if backend fails to delete, still continue
+                    //because account is still deleted by firebase
+                    await fetch(hostname + port + deleteProfileQuery);
+
+                    //remove local storage data
+                    localStorage.removeItem("userEmail");
+                    localStorage.removeItem("userID");
+
+                    // remove later
+                    console.log("user deleted");
+                  })
+                  .catch(() => setErrorMessage("Failed to delete user."));
+              })
+              .catch((error: AuthError) => {
+                setErrorMessage("Account reauthentication failed.");
+                setErrorStatus(true);
+              });
+          }
         } else {
           setErrorStatus(false);
           //localStorage acts as a KV-store locally on the browser

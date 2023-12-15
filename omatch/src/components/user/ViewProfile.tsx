@@ -11,9 +11,9 @@ import {
   AuthErrorCodes,
   EmailAuthProvider,
   deleteUser,
-  getAuth,
   reauthenticateWithCredential,
 } from "firebase/auth";
+import { auth } from "../../firebase-config";
 
 function MockView() {
   //get user id and make sure it is valid using type predicates
@@ -119,7 +119,6 @@ export default function ViewProfile() {
 
   //function that runs only upon password being submitted
   async function deleteProfile() {
-    const auth = getAuth();
     const curUser = auth.currentUser;
     if (!isString(userEmail)) {
       userEmail = "";

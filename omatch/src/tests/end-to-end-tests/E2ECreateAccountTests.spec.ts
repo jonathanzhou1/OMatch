@@ -22,12 +22,15 @@ test("create a new account + confirm by signing in again", async ({ page }) => {
   // Log in to confirm that the account actually exists
   await signInTestHelper(page, email, password);
   await expect(page.getByText(email)).toBeVisible();
+
+  // Delete account
+  await deleteAccountTestHelper(page);
 });
 
 test("E2E, integration: create a new account w/ no name + confirm that it is successful", async ({
   page,
 }) => {
-  const email = "newaccount@gmail.com";
+  const email = "noname@gmail.com";
   const password = "1234567";
   const position = "POINT_GUARD";
 
@@ -43,6 +46,9 @@ test("E2E, integration: create a new account w/ no name + confirm that it is suc
   await expect(page.getByText("Position: POINT_GUARD")).toBeVisible();
   await expect(page.getByText("Wins: 0")).toBeVisible();
   await expect(page.getByText("Losses: 0")).toBeVisible();
+
+  // Delete account
+  await deleteAccountTestHelper(page);
 });
 
 test("E2E, integration: create a new account w/ name & position + confirm profile", async ({
@@ -64,6 +70,11 @@ test("E2E, integration: create a new account w/ name & position + confirm profil
     position
   );
 
+  // Ensure that we have navigated to the "Dashboard" page
+  await page.waitForURL("http://localhost:5173/dashboard");
+  await expect(page).toHaveURL("http://localhost:5173/dashboard");
+  await expect(page.getByText(email)).toBeVisible();
+
   // View profile
   const viewProfileButton = page.getByRole("button", { name: "View Profile" });
   await expect(viewProfileButton).toBeVisible();
@@ -75,8 +86,43 @@ test("E2E, integration: create a new account w/ name & position + confirm profil
   await expect(page.getByText(`Position: ${position}`)).toBeVisible();
   await expect(page.getByText("Wins: 0")).toBeVisible();
   await expect(page.getByText("Losses: 0")).toBeVisible();
-});
 
-test.afterEach(async ({ page }) => {
+  // Delete account
   await deleteAccountTestHelper(page);
 });
+
+test("ERROR: create an account without incomplete profile", async ({
+  page,
+}) => {
+  // Create an account
+  await createAccountTestHelper(page, "tingy@gmail.com", "1234567", "", "", "");
+  const createAccountButton = page.getByRole("button", {
+    name: "Create Account",
+  });
+  await createAccountButton.click();
+
+  // Check for error message
+  let errorMessage = page.getByText(
+    "Please make sure to fill out every field in your profile."
+  );
+  await expect(errorMessage).toBeVisible();
+
+  // Confirm that you cannot sign in
+  await page.goto("http://localhost:5173/");
+  let signInButton = page.getByRole("button", { name: "Sign In" });
+  await signInButton.click();
+
+  const emailInput = page.getByLabel("emailInput");
+  const passwordInput = page.getByLabel("passwordInput");
+  signInButton = page.getByRole("button", { name: "Sign In" });
+  await emailInput.fill("tingy@gmail.com");
+  await passwordInput.fill("1234567");
+  await signInButton.click();
+
+  errorMessage = page.getByText("Invalid login. Please try again!");
+  await expect(errorMessage).toBeVisible();
+});
+
+// test.afterEach(async ({ page }) => {
+//   await deleteAccountTestHelper(page);
+// });
