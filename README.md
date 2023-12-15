@@ -1,7 +1,17 @@
-# OMatch
+# OMatch!
 ## Fall 2023 Software Engineering Final Project
 *Jonathan Zhou, Michael Tu, Andrew Boyaciliger, Jake Stifelman*
+<br><br>
+<b>Repository Link:</b> https://github.com/jonathanzhou1/OMatch
 <hr>
+
+## OMatch! Description
+OMatch! is a platform dedicated to creating fun and competitive 5 v 5 basketball games at the OMAC. The frontend interface allows users to create persistent profiles to store their information such as name, basketball position, and keep track of win-loss records, and find 5 v 5 matches with people of similar skill levels to them based on ELO rating and matchmaking algorithms on the backend. Through this, we hope that students and community members in Providence will be enabled to have optimized, fun games that they can plan out ahead of time with players that are less intimidating because of similar skill levels.
+
+## How to Run Program
+Currently, you will have to start the backend server by running the main program in 'Server.java'. You should see a message saying that `Server started at http://localhost:3232`. Then, run the frontend interface by going into the 'OMatch/omatch' directory and running `npm run dev` and going to `http://localhost:5173`.
+<br><br>
+*Note: For matchmaking, you will need a minimum of 10 users queued.*
 
 ## Backend Handlers
 
