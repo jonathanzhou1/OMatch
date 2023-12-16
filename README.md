@@ -51,9 +51,6 @@ Currently, you will have to start the backend server by running the main program
 For the sake of brevity, some example queries will have the following two aliases instead of the entire object. This is because these objects are either very large, repititious, or both; and, therefore need to be aliased under a smaller name. They are the following:
 
 
-Note: Each `matchN` here represents the following structure: {"result":"success","matches":[{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},null,null,null,null,null],"queries":[]}. Each `playerN` value represents the following:  `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
-
-
 1. `playerN`
 
 ```
