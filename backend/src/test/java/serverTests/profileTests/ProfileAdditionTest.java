@@ -43,7 +43,6 @@ import spark.Spark;
  */
 public class ProfileAdditionTest {
   @BeforeAll
-
   public static void setupOnce() {
     // Pick an arbitrary free port
     Spark.port(0);

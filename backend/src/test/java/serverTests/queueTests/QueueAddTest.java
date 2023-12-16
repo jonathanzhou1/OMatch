@@ -33,7 +33,6 @@ import spark.Spark;
 
 public class QueueAddTest {
   @BeforeAll
-
   public static void setupOnce() {
     // Pick an arbitrary free port
     Spark.port(0);
@@ -95,5 +94,4 @@ public class QueueAddTest {
     HttpURLConnection clientConnection = tryRequest("queue-add");
     assertEquals(200, clientConnection.getResponseCode());
   }
-
 }

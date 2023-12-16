@@ -194,15 +194,14 @@ public class ProfileEditTest {
         body.get("details"));
 
     // profile-edit
-    clientConnection = tryRequest("profile-edit?id=abab&action=edit&name=TimTelson&"
-        + "position=SMALL_FORWARD");
+    clientConnection =
+        tryRequest("profile-edit?id=abab&action=edit&name=TimTelson&" + "position=SMALL_FORWARD");
     assertEquals(200, clientConnection.getResponseCode());
 
     body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     assert body != null;
     assertEquals("error_bad_request", body.get("result"));
     assertEquals(
-        "No item found to edit: No Player found with corresponding ID",
-        body.get("details"));
+        "No item found to edit: No Player found with corresponding ID", body.get("details"));
   }
 }

@@ -31,7 +31,7 @@ import server.handlers.queue.QueueAddHandler;
 import server.handlers.queue.QueueViewHandler;
 import spark.Spark;
 
-public class MatchAddTest {
+public class MatchEndTest {
 
   @BeforeAll
   public static void setupOnce() {
@@ -93,7 +93,7 @@ public class MatchAddTest {
 
   @Test
   public void testAPICode200() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("match-add");
+    HttpURLConnection clientConnection = tryRequest("match-end");
     assertEquals(200, clientConnection.getResponseCode());
   }
 }
