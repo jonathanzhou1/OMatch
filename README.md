@@ -248,7 +248,7 @@ failure condition. the result is `error_bad_request` and the corresponding excep
     {
         "result":"success",
         "matchAdded":
-            {Note: this is a very large object and I am not entirely sure yet what of it I should realistically send to the frontend, as of such I am holding off on setting in stone what is returned here},
+            {match1},
         "queries":["id"]
     }
 ```
@@ -297,12 +297,60 @@ failure condition. the result is `error_bad_request` and the corresponding excep
     }
 ```
 #### `queue-add <id>`
-   3. Example Queries:
-      1. queue-add?id=1234567890 --> {"result":"success","Message":"Player added to queue","newCourtMade":false,"addedID":"1234567890"} 
-      2. queue-add?id=1234567890 (second time) --> "result":"error_bad_request","details":"Player has already been added to queue.","newCourtMade":false,"queries":["id"]}
-      3. queue-add?id=incorrectID --> {"result":"error_bad_request","details":"Player Not Found: No Player found with corresponding ID","newCourtMade":false,"queries":["id"]}
-   4. Example Query For Successful Match Creation. Every `{playerN}` here represents a different player (including the one just added) such as this: `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
-      5. queue-add?id=1 --> {"result":"success","Message":"Player added to queue","newCourtMade":true,"addedID":"1","court":{"match":{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},"players":[{player1},{player2},{player3},{player4},{player5},{player6},{player7},{player8},{player9},{player10}]}}
+
+1. queue-add?id=1234567890
+```
+    {
+        "result":"success",
+        "Message":"Player added to queue",
+        "newCourtMade":false,
+        "addedID":"1234567890"
+    }
+```
+2. queue-add?id=1234567890 (second time)
+```
+    {
+        "result":"error_bad_request",
+        "details":"Player has already been added to queue.",
+        "newCourtMade":false,
+        "queries":["id"]
+    }
+```
+3. queue-add?id=incorrectID
+```
+    {
+        "result":"error_bad_request",
+        "details":"Player Not Found: No Player found with corresponding ID",
+        "newCourtMade":false,
+        "queries":["id"]
+    }
+```
+5. queue-add?id=1
+```
+    {
+        "result":"success",
+        "Message":"Player added to queue",
+        "newCourtMade":true,
+        "addedID":"1",
+        "court":
+            {
+                "match":{match1},
+                "players":
+                    [
+                        {player1},
+                        {player2},
+                        {player3},
+                        {player4},
+                        {player5},
+                        {player6},
+                        {player7},
+                        {player8},
+                        {player9},
+                        {player10}
+                    ]
+            }
+    }
+```
    5. Additionally, there exist the following errors:
        1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
        2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
