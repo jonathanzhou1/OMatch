@@ -101,6 +101,10 @@ Note: Each `matchN` here represents the following structure: {"result":"success"
 ```
 
 #### `profile-add <name> <position> <id>`
+
+<details>
+    <summary>Successful requests</summary>
+    <br>
 1. profile-add?name=Josh Joshington&position=SMALL_FORWARD&id=a0Xd2wuFh9oGb3aJuv4K
 
 
@@ -123,8 +127,13 @@ Note: Each `matchN` here represents the following structure: {"result":"success"
             ["name","position"]
     }
 ```
+</details>
+
 #### `profile-view <id>`
 
+<details>
+    <summary>Successful requests</summary>
+    <br>
 1. profile-view?id=a0Xd2wuFh9oGb3aJuv4K
 
 ```
@@ -189,9 +198,15 @@ Note: Each `matchN` here represents the following structure: {"result":"success"
         "queries":[]
     }
 ```
+</details>
 
 #### `profile-edit <action> <id> (name) (position)`
+
+<details>
+    <summary>Successful requests</summary>
+    <br>
 1. profile-edit?action=delete&id=a0Xd2wuFh9oGb3aJuv4K
+
 ```
     {
         "result":"success",
@@ -201,6 +216,7 @@ Note: Each `matchN` here represents the following structure: {"result":"success"
 ```
 
 2. profile-edit?action=eDiT&id=awWo0cH6jw4Ib8fD9Fgi&name=Sussy Baka&position=SHOOTING_GUARD
+
 ```
     {
         "result":"success",
@@ -210,6 +226,7 @@ Note: Each `matchN` here represents the following structure: {"result":"success"
 ```
 
 3. profile-edit?action=EDIT&id=awWo0cH6jw4Ib8fD9Fgi&position=SHOOTING_GUARD
+
 ```
     {
         "result":"success",
@@ -218,6 +235,7 @@ Note: Each `matchN` here represents the following structure: {"result":"success"
 ```
 
 4. profile-edit?action=edit&id=a0Xd2wuFh9oGb3aJuv4K&name=Bosh Boshington
+
 ```
     {
         "result":"success",
@@ -226,11 +244,13 @@ Note: Each `matchN` here represents the following structure: {"result":"success"
 ```
 
 5. profile-edit?action=edit&id=definitelynotaplayerid&name=Bames Jond&position=SHOOTING_GUARD
+
 ```
 failure condition. the result is `error_bad_request` and the corresponding exception sent back is a `NoItemFoundException`
 ```
 
 6. profile-edit?id=definitelynotaplayerid&name=Jond, Bames Jond&position=SHOOTING_GUARD
+
 ```
     {
         "result":"error_bad_request",
@@ -238,10 +258,13 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":["id","name","position"]
     }
 ```
+</details>
 
 #### `match-add <id>`
 
-
+<details>
+    <summary>Successful requests</summary>
+    <br>
 1. match-add?id=a0Xd2wuFh9oGb3aJuv4K
 
 ```
@@ -252,8 +275,13 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":["id"]
     }
 ```
+</details>
 
 #### `match-view`
+
+<details>
+    <summary>Successful requests</summary>
+    <br>
 1. match-view (Shown here with 3 matches but this number is configurable)
 
 ```
@@ -268,9 +296,15 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":[]
     }
 ```
+</details>
 
 #### `queue-view`
+
+<details>
+    <summary>Successful requests</summary>
+    <br>
 1. queue-view
+
 ```
     {
         "result":"success",
@@ -288,6 +322,7 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":[]
     }
 ```
+    
 2. queue-view?id=a0Xd2wuFh9oGb3aJuv4K
 ```
     {
@@ -296,9 +331,15 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":["id"]
     }
 ```
+</details>
+
 #### `queue-add <id>`
 
+<details>
+    <summary>Successful requests</summary>
+    <br>
 1. queue-add?id=1234567890
+
 ```
     {
         "result":"success",
@@ -307,7 +348,9 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "addedID":"1234567890"
     }
 ```
+
 2. queue-add?id=1234567890 (second time)
+
 ```
     {
         "result":"error_bad_request",
@@ -316,7 +359,9 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":["id"]
     }
 ```
+
 3. queue-add?id=incorrectID
+
 ```
     {
         "result":"error_bad_request",
@@ -325,7 +370,9 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":["id"]
     }
 ```
+
 5. queue-add?id=1
+
 ```
     {
         "result":"success",
@@ -351,6 +398,8 @@ failure condition. the result is `error_bad_request` and the corresponding excep
             }
     }
 ```
+</details>
+
    5. Additionally, there exist the following errors:
        1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
        2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
