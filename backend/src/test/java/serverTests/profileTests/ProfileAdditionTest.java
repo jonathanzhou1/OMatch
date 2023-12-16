@@ -2,21 +2,23 @@ package serverTests.profileTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import Matchmaking.CourtAssigners.CourtAssigner;
+import Matchmaking.MatchAlgs.SimpleMatchMaker;
 import Matchmaking.Position;
+import Matchmaking.SkillCalculators.SimpleSkill;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
+import datastorage.SimpleDataStore;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.bytebuddy.dynamic.scaffold.MethodGraph.Linked;
 import okio.Buffer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +51,9 @@ public class ProfileAdditionTest {
   @BeforeEach
   public void setup() throws FileNotFoundException {
 
-    server = new Server();
+    server =
+        new Server(
+            new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
 
     Spark.init();
     Spark.awaitInitialization();
@@ -77,7 +81,8 @@ public class ProfileAdditionTest {
   }
 
   /**
-   * Test that the handler can handle potentially thousands of profiles being added - Simple database
+   * Test that the handler can handle potentially thousands of profiles being added - Simple
+   * database
    *
    * @throws IOException
    */
@@ -104,21 +109,22 @@ public class ProfileAdditionTest {
    * Tests that the profile-add handler correctly adds a player to the database through established
    * methods in the database interface. Additionally, it checks that the IDs are correct both within
    * the player object and how it is referenced through the map.
+   *
    * @throws IOException
    * @throws NoItemFoundException
    */
   @Test
   public void testFiveAdditionsCorrectPlayers() throws IOException, NoItemFoundException {
-    HttpURLConnection clientConnection1 = tryRequest(
-        "profile-add?name=john johnson?position=FRONT_GUARD&id=1234567");
-    HttpURLConnection clientConnection2 = tryRequest(
-        "profile-add?name=Back McBackend?position=CENTER&id=siufgb2ihb");
-    HttpURLConnection clientConnection3 = tryRequest(
-        "profile-add?name=Nim Telson?position=SMALL_FORWARD&id=soduvbwi234");
-    HttpURLConnection clientConnection4 = tryRequest(
-        "profile-add?name=Hoop Hoopington?position=POWER_FORWARD&id=q932rfbsabBEWOB3");
-    HttpURLConnection clientConnection5 = tryRequest(
-        "profile-add?name=aaaa?position=CENTER&id=FE7DF3esfDFF");
+    HttpURLConnection clientConnection1 =
+        tryRequest("profile-add?name=john johnson?position=FRONT_GUARD&id=1234567");
+    HttpURLConnection clientConnection2 =
+        tryRequest("profile-add?name=Back McBackend?position=CENTER&id=siufgb2ihb");
+    HttpURLConnection clientConnection3 =
+        tryRequest("profile-add?name=Nim Telson?position=SMALL_FORWARD&id=soduvbwi234");
+    HttpURLConnection clientConnection4 =
+        tryRequest("profile-add?name=Hoop Hoopington?position=POWER_FORWARD&id=q932rfbsabBEWOB3");
+    HttpURLConnection clientConnection5 =
+        tryRequest("profile-add?name=aaaa?position=CENTER&id=FE7DF3esfDFF");
     assertEquals(200, clientConnection1.getResponseCode());
     assertEquals(200, clientConnection2.getResponseCode());
     assertEquals(200, clientConnection3.getResponseCode());
@@ -126,17 +132,14 @@ public class ProfileAdditionTest {
     assertEquals(200, clientConnection5.getResponseCode());
 
     HttpURLConnection[] clientConnections = {
-        clientConnection1,
-        clientConnection2,
-        clientConnection3,
-        clientConnection4,
-        clientConnection5};
+      clientConnection1, clientConnection2, clientConnection3, clientConnection4, clientConnection5
+    };
 
     LinkedList<Map<String, Object>> bodies = new LinkedList<>();
 
     String[] ids = new String[5];
 
-    for(int i = 0; i < clientConnections.length; i++){
+    for (int i = 0; i < clientConnections.length; i++) {
       bodies.add(adapter.fromJson(new Buffer().readFrom(clientConnections[i].getInputStream())));
       assert bodies.get(i) != null;
       assertEquals("success", bodies.get(i).get("result"));
@@ -146,17 +149,19 @@ public class ProfileAdditionTest {
 
     // Now that we have the players added, we can check their validity.
 
-    assertEquals("john johnson",server.getDataStore().getPlayer(ids[0]).getName());
-    assertEquals("Back McBackend",server.getDataStore().getPlayer(ids[1]).getName());
-    assertEquals("Nim Telson",server.getDataStore().getPlayer(ids[2]).getName());
-    assertEquals("Hoop Hoopington",server.getDataStore().getPlayer(ids[3]).getName());
-    assertEquals("aaaa",server.getDataStore().getPlayer(ids[4]).getName());
+    assertEquals("john johnson", server.getDataStore().getPlayer(ids[0]).getName());
+    assertEquals("Back McBackend", server.getDataStore().getPlayer(ids[1]).getName());
+    assertEquals("Nim Telson", server.getDataStore().getPlayer(ids[2]).getName());
+    assertEquals("Hoop Hoopington", server.getDataStore().getPlayer(ids[3]).getName());
+    assertEquals("aaaa", server.getDataStore().getPlayer(ids[4]).getName());
 
-    assertEquals(Position.valueOf("FRONT_GUARD"),server.getDataStore().getPlayer(ids[0]).getPosition());
-    assertEquals(Position.valueOf("CENTER"),server.getDataStore().getPlayer(ids[1]).getPosition());
-    assertEquals(Position.valueOf("SMALL_FORWARD"),server.getDataStore().getPlayer(ids[2]).getPosition());
-    assertEquals(Position.valueOf("POWER_FORWARD"),server.getDataStore().getPlayer(ids[3]).getPosition());
-    assertEquals(Position.valueOf("CENTER"),server.getDataStore().getPlayer(ids[4]).getPosition());
+    assertEquals(
+        Position.valueOf("FRONT_GUARD"), server.getDataStore().getPlayer(ids[0]).getPosition());
+    assertEquals(Position.valueOf("CENTER"), server.getDataStore().getPlayer(ids[1]).getPosition());
+    assertEquals(
+        Position.valueOf("SMALL_FORWARD"), server.getDataStore().getPlayer(ids[2]).getPosition());
+    assertEquals(
+        Position.valueOf("POWER_FORWARD"), server.getDataStore().getPlayer(ids[3]).getPosition());
+    assertEquals(Position.valueOf("CENTER"), server.getDataStore().getPlayer(ids[4]).getPosition());
   }
-
 }

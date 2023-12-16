@@ -18,20 +18,20 @@ public class WLSkill implements SkillUpdater {
   public void skillUpdater(Match match) throws IOException {
 
     Outcome outcome = match.getOutcome();
-    if(outcome == Outcome.ONGOING){
+    if (outcome == Outcome.ONGOING) {
       throw new IOException("Cannot Update Skills, Match is Incomplete.");
     }
-    if(outcome == Outcome.TIE){
+    if (outcome == Outcome.TIE) {
       return;
     }
-    if (outcome == Outcome.TEAM1WIN){
+    if (outcome == Outcome.TEAM1WIN) {
       List<Player> team1Players = match.getTeam1().getPlayers();
       List<Player> team2Players = match.getTeam2().getPlayers();
       WLHelper(team1Players, team2Players);
       return;
     }
 
-    if (outcome == Outcome.TEAM2WIN){
+    if (outcome == Outcome.TEAM2WIN) {
       List<Player> team1Players = match.getTeam1().getPlayers();
       List<Player> team2Players = match.getTeam2().getPlayers();
       WLHelper(team2Players, team1Players);

@@ -35,11 +35,11 @@ public class ProfileViewHandler implements Route {
     HashMap<String, Object> responseMap = new HashMap<>();
 
     String playerID;
-    try{
-      if(request.queryMap().hasKey("id")) {
+    try {
+      if (request.queryMap().hasKey("id")) {
         playerID = request.queryMap().get("id").value();
         responseMap.put("player", server.getDataStore().getPlayer(playerID));
-      }else{
+      } else {
         responseMap.put("players", server.getDataStore().getPlayers());
       }
     } catch (NoItemFoundException e) {
