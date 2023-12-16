@@ -20,11 +20,19 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.testng.annotations.Test;
-import server.Server;
+import org.junit.jupiter.api.Test;
+import server.ServerSharedState;
 import server.exceptions.NoItemFoundException;
+import server.handlers.match.MatchEndHandler;
+import server.handlers.match.MatchViewHandler;
+import server.handlers.profile.ProfileAddHandler;
+import server.handlers.profile.ProfileEditHandler;
+import server.handlers.profile.ProfileViewHandler;
+import server.handlers.queue.QueueAddHandler;
+import server.handlers.queue.QueueViewHandler;
 import spark.Spark;
 
 /**
@@ -33,8 +41,6 @@ import spark.Spark;
  * firebase for example)
  */
 public class ProfileAdditionTest {
-
-  Server server;
 
   @BeforeAll
   public static void setupOnce() {
@@ -48,12 +54,19 @@ public class ProfileAdditionTest {
       Types.newParameterizedType(Map.class, String.class, Object.class);
   private JsonAdapter<Map<String, Object>> adapter;
 
+  private final ServerSharedState sharedState =
+      new ServerSharedState(
+          new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+
   @BeforeEach
   public void setup() throws FileNotFoundException {
-
-    server =
-        new Server(
-            new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+    Spark.get("profile-add", new ProfileAddHandler(sharedState));
+    Spark.get("profile-edit", new ProfileEditHandler(sharedState));
+    Spark.get("profile-view", new ProfileViewHandler(sharedState));
+    Spark.get("match-end", new MatchEndHandler(sharedState));
+    Spark.get("match-view", new MatchViewHandler(sharedState));
+    Spark.get("queue-add", new QueueAddHandler(sharedState));
+    Spark.get("queue-view", new QueueViewHandler(sharedState));
 
     Spark.init();
     Spark.awaitInitialization();
@@ -64,7 +77,7 @@ public class ProfileAdditionTest {
 
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
     // Configure the connection (but don't actually send the request yet)
-    URL requestURL = new URL("http://localhost:" + "3232" + "/" + apiCall);
+    URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
     // The request body contains a Json object
     clientConnection.setRequestProperty("Content-Type", "application/json");
@@ -72,6 +85,18 @@ public class ProfileAdditionTest {
     clientConnection.setRequestProperty("Accept", "application/json");
     clientConnection.connect();
     return clientConnection;
+  }
+
+  @AfterEach
+  public void teardown() {
+    Spark.unmap("profile-add");
+    Spark.unmap("profile-edit");
+    Spark.unmap("profile-view");
+    Spark.unmap("match-end");
+    Spark.unmap("match-view");
+    Spark.unmap("queue-add");
+    Spark.unmap("queue-view");
+    Spark.awaitStop();
   }
 
   @Test
@@ -144,24 +169,29 @@ public class ProfileAdditionTest {
       assert bodies.get(i) != null;
       assertEquals("success", bodies.get(i).get("result"));
       ids[i] = bodies.get(i).get("id").toString();
-      assertEquals(ids[i], server.getDataStore().getPlayer(ids[i]).getId());
+      assertEquals(ids[i], sharedState.getDataStore().getPlayer(ids[i]).getId());
     }
 
     // Now that we have the players added, we can check their validity.
 
-    assertEquals("john johnson", server.getDataStore().getPlayer(ids[0]).getName());
-    assertEquals("Back McBackend", server.getDataStore().getPlayer(ids[1]).getName());
-    assertEquals("Nim Telson", server.getDataStore().getPlayer(ids[2]).getName());
-    assertEquals("Hoop Hoopington", server.getDataStore().getPlayer(ids[3]).getName());
-    assertEquals("aaaa", server.getDataStore().getPlayer(ids[4]).getName());
+    assertEquals("john johnson", sharedState.getDataStore().getPlayer(ids[0]).getName());
+    assertEquals("Back McBackend", sharedState.getDataStore().getPlayer(ids[1]).getName());
+    assertEquals("Nim Telson", sharedState.getDataStore().getPlayer(ids[2]).getName());
+    assertEquals("Hoop Hoopington", sharedState.getDataStore().getPlayer(ids[3]).getName());
+    assertEquals("aaaa", sharedState.getDataStore().getPlayer(ids[4]).getName());
 
     assertEquals(
-        Position.valueOf("FRONT_GUARD"), server.getDataStore().getPlayer(ids[0]).getPosition());
-    assertEquals(Position.valueOf("CENTER"), server.getDataStore().getPlayer(ids[1]).getPosition());
+        Position.valueOf("FRONT_GUARD"),
+        sharedState.getDataStore().getPlayer(ids[0]).getPosition());
     assertEquals(
-        Position.valueOf("SMALL_FORWARD"), server.getDataStore().getPlayer(ids[2]).getPosition());
+        Position.valueOf("CENTER"), sharedState.getDataStore().getPlayer(ids[1]).getPosition());
     assertEquals(
-        Position.valueOf("POWER_FORWARD"), server.getDataStore().getPlayer(ids[3]).getPosition());
-    assertEquals(Position.valueOf("CENTER"), server.getDataStore().getPlayer(ids[4]).getPosition());
+        Position.valueOf("SMALL_FORWARD"),
+        sharedState.getDataStore().getPlayer(ids[2]).getPosition());
+    assertEquals(
+        Position.valueOf("POWER_FORWARD"),
+        sharedState.getDataStore().getPlayer(ids[3]).getPosition());
+    assertEquals(
+        Position.valueOf("CENTER"), sharedState.getDataStore().getPlayer(ids[4]).getPosition());
   }
 }

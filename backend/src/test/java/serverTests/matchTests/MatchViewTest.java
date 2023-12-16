@@ -17,10 +17,18 @@ import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.testng.annotations.Test;
-import server.Server;
+import org.junit.jupiter.api.Test;
+import server.ServerSharedState;
+import server.handlers.match.MatchEndHandler;
+import server.handlers.match.MatchViewHandler;
+import server.handlers.profile.ProfileAddHandler;
+import server.handlers.profile.ProfileEditHandler;
+import server.handlers.profile.ProfileViewHandler;
+import server.handlers.queue.QueueAddHandler;
+import server.handlers.queue.QueueViewHandler;
 import spark.Spark;
 
 public class MatchViewTest {
@@ -37,12 +45,20 @@ public class MatchViewTest {
       Types.newParameterizedType(Map.class, String.class, Object.class);
   private JsonAdapter<Map<String, Object>> adapter;
 
+  private final ServerSharedState sharedState =
+      new ServerSharedState(
+          new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+
   @BeforeEach
   public void setup() throws FileNotFoundException {
 
-    Server server =
-        new Server(
-            new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+    Spark.get("profile-add", new ProfileAddHandler(sharedState));
+    Spark.get("profile-edit", new ProfileEditHandler(sharedState));
+    Spark.get("profile-view", new ProfileViewHandler(sharedState));
+    Spark.get("match-end", new MatchEndHandler(sharedState));
+    Spark.get("match-view", new MatchViewHandler(sharedState));
+    Spark.get("queue-add", new QueueAddHandler(sharedState));
+    Spark.get("queue-view", new QueueViewHandler(sharedState));
 
     Spark.init();
     Spark.awaitInitialization();
@@ -53,7 +69,7 @@ public class MatchViewTest {
 
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
     // Configure the connection (but don't actually send the request yet)
-    URL requestURL = new URL("http://localhost:" + "3232" + "/" + apiCall);
+    URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
     // The request body contains a Json object
     clientConnection.setRequestProperty("Content-Type", "application/json");
@@ -61,6 +77,18 @@ public class MatchViewTest {
     clientConnection.setRequestProperty("Accept", "application/json");
     clientConnection.connect();
     return clientConnection;
+  }
+
+  @AfterEach
+  public void teardown() {
+    Spark.unmap("profile-add");
+    Spark.unmap("profile-edit");
+    Spark.unmap("profile-view");
+    Spark.unmap("match-end");
+    Spark.unmap("match-view");
+    Spark.unmap("queue-add");
+    Spark.unmap("queue-view");
+    Spark.awaitStop();
   }
 
   @Test
