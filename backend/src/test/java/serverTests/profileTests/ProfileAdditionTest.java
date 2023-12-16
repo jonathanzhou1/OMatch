@@ -42,8 +42,8 @@ import spark.Spark;
  * firebase for example)
  */
 public class ProfileAdditionTest {
-
   @BeforeAll
+
   public static void setupOnce() {
     // Pick an arbitrary free port
     Spark.port(0);
@@ -146,8 +146,7 @@ public class ProfileAdditionTest {
         body.get("details"));
 
     // profile-add - correct
-    clientConnection =
-        tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
+    clientConnection = tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
     assertEquals(200, clientConnection.getResponseCode());
 
     body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
@@ -155,17 +154,16 @@ public class ProfileAdditionTest {
     assertEquals("success", body.get("result"));
 
     // profile-add - correct
-    clientConnection =
-        tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
+    clientConnection = tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
     assertEquals(200, clientConnection.getResponseCode());
     body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     assert body != null;
     assertEquals("error_bad_request", body.get("result"));
-    assertEquals("Player already exists in the database, please use edit handler instead: "
-        + "Player to be added already exists within database. Please use updatePlayer in this "
-        + "instance.", body.get("details"));
-
-
+    assertEquals(
+        "Player already exists in the database, please use edit handler instead: "
+            + "Player to be added already exists within database. Please use updatePlayer in this "
+            + "instance.",
+        body.get("details"));
   }
 
   /**
@@ -176,12 +174,11 @@ public class ProfileAdditionTest {
    */
   @Test
   public void testAPIProfileAdditionFuzz() throws IOException {
-    Player IDMaker = new Player("a",Position.CENTER);
+    Player IDMaker = new Player("a", Position.CENTER);
     String request = "";
     for (int i = 0; i < 1000; i++) {
       request = "profile-add?name=johnjohnson&position=POINT_GUARD&id=" + IDMaker.generateID();
-      HttpURLConnection clientConnection =
-          tryRequest(request);
+      HttpURLConnection clientConnection = tryRequest(request);
       assertEquals(200, clientConnection.getResponseCode());
 
       // The body of the string contains the proper data - "Success"
@@ -191,9 +188,9 @@ public class ProfileAdditionTest {
 
       // Checks that the player has been added or that the request had an ID the same as another one
 
-      if(body.get("result").equals("success")){
+      if (body.get("result").equals("success")) {
         assertEquals("success", body.get("result"));
-      }else{
+      } else {
         assertEquals("error_bad_request", body.get("result"));
       }
       assertEquals(20, body.get("playerID").toString().length());

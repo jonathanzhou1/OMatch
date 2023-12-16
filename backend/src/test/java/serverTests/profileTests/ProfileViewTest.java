@@ -1,6 +1,5 @@
 package serverTests.profileTests;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -20,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -119,14 +117,11 @@ public class ProfileViewTest {
   @Test
   public void testAPIRetrievesCorrectPlayer() throws ItemAlreadyExistsException, IOException {
     LinkedList<Player> players = new LinkedList<>();
-    players.add(new Player("Nim Telson",
-        Position.valueOf("CENTER"), "asdf"));
-    players.add(new Player("Josh Joshington",
-        Position.valueOf("SMALL_FORWARD"), "qwer"));
-    players.add(new Player("Bas Ketball",
-        Position.valueOf("POWER_FORWARD"), "hjkl"));
+    players.add(new Player("Nim Telson", Position.valueOf("CENTER"), "asdf"));
+    players.add(new Player("Josh Joshington", Position.valueOf("SMALL_FORWARD"), "qwer"));
+    players.add(new Player("Bas Ketball", Position.valueOf("POWER_FORWARD"), "hjkl"));
 
-    for(int i = 0; i < 3; i++){
+    for (int i = 0; i < 3; i++) {
       sharedState.getDataStore().addPlayer(players.get(i));
     }
 
@@ -172,13 +167,14 @@ public class ProfileViewTest {
 
   /**
    * Tests that the API doesn't catastrophically fail upon an incorrect get request
+   *
    * @throws IOException
    * @throws ItemAlreadyExistsException
    */
   @Test
   public void testAPIFailureStates() throws IOException, ItemAlreadyExistsException {
 
-    sharedState.getDataStore().addPlayer(new Player("Nim Telson",Position.CENTER,"aaaa"));
+    sharedState.getDataStore().addPlayer(new Player("Nim Telson", Position.CENTER, "aaaa"));
 
     // profile-view
     HttpURLConnection clientConnection = tryRequest("profile-view?id=aaaa");
@@ -198,12 +194,14 @@ public class ProfileViewTest {
     body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
     assert body != null;
     assertEquals("error_bad_request", body.get("result"));
-    assertEquals("No item found within the database: No Player found with corresponding ID",
+    assertEquals(
+        "No item found within the database: No Player found with corresponding ID",
         body.get("details"));
   }
 
   /**
    * Tests that the API returns all the players in the datastore when there is no id specified
+   *
    * @throws IOException
    * @throws ItemAlreadyExistsException
    */
@@ -213,8 +211,7 @@ public class ProfileViewTest {
     HttpURLConnection clientConnection =
         tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
     assertEquals(200, clientConnection.getResponseCode());
-    clientConnection =
-        tryRequest("profile-add?name=BackMcBackend&position=CENTER&id=siufgb2ihb");
+    clientConnection = tryRequest("profile-add?name=BackMcBackend&position=CENTER&id=siufgb2ihb");
     assertEquals(200, clientConnection.getResponseCode());
     clientConnection =
         tryRequest("profile-add?name=NimTelson&position=SMALL_FORWARD&id=soduvbwi234");
@@ -222,8 +219,7 @@ public class ProfileViewTest {
     clientConnection =
         tryRequest("profile-add?name=HoopHoopington&position=POWER_FORWARD&id=q932rfbsabBEWOB3");
     assertEquals(200, clientConnection.getResponseCode());
-    clientConnection =
-        tryRequest("profile-add?name=aaaa&position=CENTER&id=FE7DF3esfDFF");
+    clientConnection = tryRequest("profile-add?name=aaaa&position=CENTER&id=FE7DF3esfDFF");
     assertEquals(200, clientConnection.getResponseCode());
 
     // profile-view - Test that the players are all getting retrieved by the database
