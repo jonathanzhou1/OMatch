@@ -46,6 +46,19 @@ Currently, you will have to start the backend server by running the main program
    1. Adds a player to the matchmaking queue. When the queue length is 10, the first 10 players in the queue will be dequeued into a match. Whether this has happened will be represented by the NewCourtAdded boolean, which will be true if a new court has been added, and false otherwise.
    2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
      
+### Results
+
+There are 6 various response and error codes from the backend API.
+
+| Result | Meaning |
+| ------ | ------- |
+| `success` | The operation was parsed correctly and there were no issues, internal or external, with your request. |
+| `error_bad_request` | The most common error. This is thrown when a query is missing or when the contents of the query do not meet the specificationg of the API. More information is shown in the `details` portion of the response. |
+| `error_server` | There has been an internal server error while processing your request. Possible diagnostics include sending the request again or sending angry messages to the developers, which is the less preferred option. |
+| `error_datastore` | There was a failure in the datastore portion of the server. The recommended course of action here is to check over your datastore object and test its functionality. |
+| `matchmaking_error` | There has been an internal matchmaker error. Additional testing and review of matchmakers will allay this error. |
+| `matchmaking_full` | Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space. |
+
 ### Example Queries
 
 For the sake of brevity, some example queries will have the following two aliases instead of the entire object. This is because these objects are either very large, repititious, or both; and, therefore need to be aliased under a smaller name. They are the following:
@@ -240,6 +253,12 @@ For the sake of brevity, some example queries will have the following two aliase
     }
 ```
 
+</details>
+
+<details>
+    <summary>Unsuccessful requests</summary>
+    <br>
+
 5. profile-edit?action=edit&id=definitelynotaplayerid&name=Bames Jond&position=SHOOTING_GUARD
 
 ```
@@ -272,6 +291,7 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":["id"]
     }
 ```
+
 </details>
 
 #### `match-view`
@@ -346,29 +366,7 @@ failure condition. the result is `error_bad_request` and the corresponding excep
     }
 ```
 
-2. queue-add?id=1234567890 (second time)
-
-```
-    {
-        "result":"error_bad_request",
-        "details":"Player has already been added to queue.",
-        "newCourtMade":false,
-        "queries":["id"]
-    }
-```
-
-3. queue-add?id=incorrectID
-
-```
-    {
-        "result":"error_bad_request",
-        "details":"Player Not Found: No Player found with corresponding ID",
-        "newCourtMade":false,
-        "queries":["id"]
-    }
-```
-
-5. queue-add?id=1
+2. queue-add?id=1
 
 ```
     {
@@ -397,9 +395,33 @@ failure condition. the result is `error_bad_request` and the corresponding excep
 ```
 </details>
 
-   5. Additionally, there exist the following errors:
-       1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
-       2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
+<details>
+    <summary>Unsuccessful requests</summary>
+    <br>
+
+2. queue-add?id=1234567890 (second time)
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"Player has already been added to queue.",
+        "newCourtMade":false,
+        "queries":["id"]
+    }
+```
+
+3. queue-add?id=incorrectID
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"Player Not Found: No Player found with corresponding ID",
+        "newCourtMade":false,
+        "queries":["id"]
+    }
+```
+
+</details>
 
 ## Backend Player, Team, and Matches
 Each user in omatch will be assigned a Player class. This class will contain their specific user ID, skill level, W/L record, position, and other necessary information. 
