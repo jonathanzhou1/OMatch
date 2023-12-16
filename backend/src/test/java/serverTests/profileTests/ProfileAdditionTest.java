@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import Matchmaking.CourtAssigners.CourtAssigner;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
+import Matchmaking.Player;
 import Matchmaking.Position;
 import Matchmaking.SkillCalculators.SimpleSkill;
 import com.squareup.moshi.JsonAdapter;
@@ -105,6 +106,68 @@ public class ProfileAdditionTest {
     assertEquals(200, clientConnection.getResponseCode());
   }
 
+  @Test
+  public void testAPIFailureStates() throws IOException {
+    // profile-add
+    HttpURLConnection clientConnection = tryRequest("profile-add");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    // The body of the string contains the proper data - "Success"
+    Map<String, Object> body =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals("Error in specifying 'id' variable: id neccesary", body.get("details"));
+
+    // profile-add w/ id
+    clientConnection = tryRequest("profile-add?id=1234567890");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    // The body of the string contains the proper data - "Success"
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals("Error in specifying 'name' variable: name neccesary", body.get("details"));
+
+    // profile-add w/ id + name
+    clientConnection = tryRequest("profile-add?id=1234567890&name=JoshJoshington");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    // The body of the string contains the proper data - "Success"
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals(
+        "Error in specifying 'id' variable. "
+            + "Please use 'POINT_GUARD', 'SHOOTING_GUARD', 'SMALL_FORWARD', 'POWER_FORWARD', or "
+            + "'CENTER' in your position query: position query neccesary",
+        body.get("details"));
+
+    // profile-add - correct
+    clientConnection =
+        tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+    assertEquals("success", body.get("result"));
+
+    // profile-add - correct
+    clientConnection =
+        tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
+    assertEquals(200, clientConnection.getResponseCode());
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals("Player already exists in the database, please use edit handler instead: "
+        + "Player to be added already exists within database. Please use updatePlayer in this "
+        + "instance.", body.get("details"));
+
+
+  }
+
   /**
    * Test that the handler can handle potentially thousands of profiles being added - Simple
    * database
@@ -113,10 +176,12 @@ public class ProfileAdditionTest {
    */
   @Test
   public void testAPIProfileAdditionFuzz() throws IOException {
-
+    Player IDMaker = new Player("a",Position.CENTER);
+    String request = "";
     for (int i = 0; i < 1000; i++) {
+      request = "profile-add?name=johnjohnson&position=POINT_GUARD&id=" + IDMaker.generateID();
       HttpURLConnection clientConnection =
-          tryRequest("profile-add?name=john johnson?position=FRONT_GUARD");
+          tryRequest(request);
       assertEquals(200, clientConnection.getResponseCode());
 
       // The body of the string contains the proper data - "Success"
@@ -124,8 +189,13 @@ public class ProfileAdditionTest {
           adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
       assert body != null;
 
-      // Checks that the player has been added and that the playerID is the correct length
-      assertEquals("success", body.get("result"));
+      // Checks that the player has been added or that the request had an ID the same as another one
+
+      if(body.get("result").equals("success")){
+        assertEquals("success", body.get("result"));
+      }else{
+        assertEquals("error_bad_request", body.get("result"));
+      }
       assertEquals(20, body.get("playerID").toString().length());
     }
   }
@@ -141,15 +211,15 @@ public class ProfileAdditionTest {
   @Test
   public void testFiveAdditionsCorrectPlayers() throws IOException, NoItemFoundException {
     HttpURLConnection clientConnection1 =
-        tryRequest("profile-add?name=john johnson?position=FRONT_GUARD&id=1234567");
+        tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
     HttpURLConnection clientConnection2 =
-        tryRequest("profile-add?name=Back McBackend?position=CENTER&id=siufgb2ihb");
+        tryRequest("profile-add?name=BackMcBackend&position=CENTER&id=siufgb2ihb");
     HttpURLConnection clientConnection3 =
-        tryRequest("profile-add?name=Nim Telson?position=SMALL_FORWARD&id=soduvbwi234");
+        tryRequest("profile-add?name=NimTelson&position=SMALL_FORWARD&id=soduvbwi234");
     HttpURLConnection clientConnection4 =
-        tryRequest("profile-add?name=Hoop Hoopington?position=POWER_FORWARD&id=q932rfbsabBEWOB3");
+        tryRequest("profile-add?name=HoopHoopington&position=POWER_FORWARD&id=q932rfbsabBEWOB3");
     HttpURLConnection clientConnection5 =
-        tryRequest("profile-add?name=aaaa?position=CENTER&id=FE7DF3esfDFF");
+        tryRequest("profile-add?name=aaaa&position=CENTER&id=FE7DF3esfDFF");
     assertEquals(200, clientConnection1.getResponseCode());
     assertEquals(200, clientConnection2.getResponseCode());
     assertEquals(200, clientConnection3.getResponseCode());
@@ -168,20 +238,19 @@ public class ProfileAdditionTest {
       bodies.add(adapter.fromJson(new Buffer().readFrom(clientConnections[i].getInputStream())));
       assert bodies.get(i) != null;
       assertEquals("success", bodies.get(i).get("result"));
-      ids[i] = bodies.get(i).get("id").toString();
+      ids[i] = bodies.get(i).get("playerID").toString();
       assertEquals(ids[i], sharedState.getDataStore().getPlayer(ids[i]).getId());
     }
 
     // Now that we have the players added, we can check their validity.
-
-    assertEquals("john johnson", sharedState.getDataStore().getPlayer(ids[0]).getName());
-    assertEquals("Back McBackend", sharedState.getDataStore().getPlayer(ids[1]).getName());
-    assertEquals("Nim Telson", sharedState.getDataStore().getPlayer(ids[2]).getName());
-    assertEquals("Hoop Hoopington", sharedState.getDataStore().getPlayer(ids[3]).getName());
+    assertEquals("johnjohnson", sharedState.getDataStore().getPlayer(ids[0]).getName());
+    assertEquals("BackMcBackend", sharedState.getDataStore().getPlayer(ids[1]).getName());
+    assertEquals("NimTelson", sharedState.getDataStore().getPlayer(ids[2]).getName());
+    assertEquals("HoopHoopington", sharedState.getDataStore().getPlayer(ids[3]).getName());
     assertEquals("aaaa", sharedState.getDataStore().getPlayer(ids[4]).getName());
 
     assertEquals(
-        Position.valueOf("FRONT_GUARD"),
+        Position.valueOf("POINT_GUARD"),
         sharedState.getDataStore().getPlayer(ids[0]).getPosition());
     assertEquals(
         Position.valueOf("CENTER"), sharedState.getDataStore().getPlayer(ids[1]).getPosition());

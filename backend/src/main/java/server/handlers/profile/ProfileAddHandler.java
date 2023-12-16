@@ -81,7 +81,7 @@ public class ProfileAddHandler implements Route {
           "details",
           "Error in specifying 'id' variable. Please use 'POINT_GUARD', "
               + "'SHOOTING_GUARD', 'SMALL_FORWARD', 'POWER_FORWARD', or 'CENTER' in your "
-              + "position query:  "
+              + "position query: "
               + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
