@@ -48,40 +48,172 @@ Currently, you will have to start the backend server by running the main program
      
 ### Example Queries
 
-1. `profile-add <name> <position>`
-    5. Example Queries:
-          1. `profile-add?name=Josh Joshington&position=SMALL_FORWARD` --> {"result":"success","playerID":"a0Xd2wuFh9oGb3aJuv4K","queries":["name","position"]}
-          2. `profile-add?name=Baka Sussy&position=CENTER` --> {"result":"success","playerID":"awWo0cH6jw4Ib8fD9Fgi","queries":["name","position"]}
-2. `profile-view <id>`
-   3. Example Queries:
-        1. `profile-view?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","player":{"id":"a0Xd2wuFh9oGb3aJuv4K","name":"Josh Joshington","skillLevel":9001.112,"wins":12,"losses":0,"Position":"SMALL_FORWARD"},"queries":["id"]}
-        2. `profile-view?id=awWo0cH6jw4Ib8fD9Fgi` --> {"result":"success","player":{"id":"awWo0cH6jw4Ib8fD9Fgi","name":"Baka Sussy","skillLevel":235,"wins":6,"losses":29,"Position":"CENTER"},"queries":["id"]}
-        3. `profile-view` --> {"result":"success","players":{"a0Xd2wuFh9oGb3aJuv4K":{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0},"awWo0cH6jw4Ib8fD9Fgi":{"id":"awWo0cH6jw4Ib8fD9Fgi","losses":0,"name":Baka Sussy","position":"CENTER","skillLevel":10.0,"wins":0}},"queries":[]}
-3. `profile-edit <action> <id> (name) (position)`
-   6. Example Queries:
-      1. `profile-edit?action=delete&id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","queries":["action","id"]}
-      2. `profile-edit?action=eDiT&id=awWo0cH6jw4Ib8fD9Fgi&name=Sussy Baka&position=SHOOTING_GUARD` --> {"result":"success","queries":["action","id","name","position"]}
-      3. `profile-edit?action=EDIT&id=awWo0cH6jw4Ib8fD9Fgi&position=SHOOTING_GUARD` --> {"result":"success","queries":["action","id","position"]}
-      4. `profile-edit?action=edit&id=a0Xd2wuFh9oGb3aJuv4K&name=Bosh Boshington` --> {"result":"success","queries":["action","id",'name"]}
-      5. `profile-edit?action=edit&id=definitelynotaplayerid&name=Bames Jond&position=SHOOTING_GUARD` --> failure condition. the result is `error_bad_request` and the corresponding exception sent back is a `NoItemFoundException`
-      6. `profile-edit?id=definitelynotaplayerid&name=Jond, Bames Jond&position=SHOOTING_GUARD` --> {"result":"error_bad_request","details":"action keyword must contain the word 'edit' or 'delete'. Any other word will result in an error","queries":["id","name","position"]}
-4. `match-add <id>`
-   3. Example Queries:
-      1. `match-add?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","matchAdded":{Note: this is a very large object and I am not entirely sure yet what of it I should realistically send to the frontend, as of such I am holding off on setting in stone what is returned here},"queries":["id"]}
-5. `match-view`
+#### `profile-add <name> <position> <id>`
+1. profile-add?name=Josh Joshington&position=SMALL_FORWARD&id=a0Xd2wuFh9oGb3aJuv4K
+
+
+```
+    {
+        "result":"success",
+        "playerID":"a0Xd2wuFh9oGb3aJuv4K",
+        "queries":
+            ["name","position"]
+    }
+```
+
+2. profile-add?name=Baka Sussy&position=CENTER&id=awWo0cH6jw4Ib8fD9Fgi
+
+```
+    {
+        "result":"success",
+        "playerID":"awWo0cH6jw4Ib8fD9Fgi",
+        "queries":
+            ["name","position"]
+    }
+```
+#### `profile-view <id>`
+
+1. profile-view?id=a0Xd2wuFh9oGb3aJuv4K
+
+```
+    {
+        "result":"success",
+        "player":
+            {
+                "id":"a0Xd2wuFh9oGb3aJuv4K",
+                "name":"Josh Joshington",
+                "skillLevel":9001.112,
+                "wins":12,
+                "losses":0,
+                "Position":"SMALL_FORWARD"
+            },
+        "queries":
+            ["id"]
+    }
+```
+
+2. profile-view?id=awWo0cH6jw4Ib8fD9Fgi
+
+```
+    {
+        "result":"success",
+        "player":
+            {
+                "id":"awWo0cH6jw4Ib8fD9Fgi",
+                "name":"Baka Sussy",
+                "skillLevel":235,
+                "wins":6,
+                "losses":29,
+                "Position":"CENTER"
+            },
+        "queries": ["id"]
+    }
+```
+
+3. profile-view
+
+```
+    {
+        "result":"success",
+        "players":
+            {
+                "a0Xd2wuFh9oGb3aJuv4K":
+                    {
+                        "id":"a0Xd2wuFh9oGb3aJuv4K",
+                        "losses":0,
+                        "name":"Josh Joshington",
+                        "position":"SMALL_FORWARD",
+                        "skillLevel":10.0,
+                        "wins":0},
+                "awWo0cH6jw4Ib8fD9Fgi":
+                    {
+                        "id":"awWo0cH6jw4Ib8fD9Fgi",
+                        "losses":0,
+                        "name":Baka Sussy",
+                        "position":"CENTER",
+                        "skillLevel":10.0,"wins":0
+                    }
+            },
+        "queries":[]
+    }
+```
+
+#### `profile-edit <action> <id> (name) (position)`
+1. profile-edit?action=delete&id=a0Xd2wuFh9oGb3aJuv4K
+```
+    {
+        "result":"success",
+        "queries":
+            ["action","id"]
+    }
+```
+
+2. profile-edit?action=eDiT&id=awWo0cH6jw4Ib8fD9Fgi&name=Sussy Baka&position=SHOOTING_GUARD
+```
+    {
+        "result":"success",
+        "queries":
+            ["action","id","name","position"]
+    }
+```
+
+3. profile-edit?action=EDIT&id=awWo0cH6jw4Ib8fD9Fgi&position=SHOOTING_GUARD
+```
+    {
+        "result":"success",
+        "queries":["action","id","position"]
+    }
+```
+
+4. profile-edit?action=edit&id=a0Xd2wuFh9oGb3aJuv4K&name=Bosh Boshington
+```
+    {
+        "result":"success",
+        "queries":["action","id",'name"]
+    }
+```
+
+5. profile-edit?action=edit&id=definitelynotaplayerid&name=Bames Jond&position=SHOOTING_GUARD
+```
+failure condition. the result is `error_bad_request` and the corresponding exception sent back is a `NoItemFoundException`
+```
+
+6. profile-edit?id=definitelynotaplayerid&name=Jond, Bames Jond&position=SHOOTING_GUARD
+```
+    {
+        "result":"error_bad_request",
+        "details":"action keyword must contain the word 'edit' or 'delete'. Any other word will result in an error",
+        "queries":["id","name","position"]
+    }
+```
+
+#### `match-add <id>`
+
+1. match-add?id=a0Xd2wuFh9oGb3aJuv4K
+
+```
+    {
+        "result":"success",
+        "matchAdded":
+            {Note: this is a very large object and I am not entirely sure yet what of it I should realistically send to the frontend, as of such I am holding off on setting in stone what is returned here},
+        "queries":["id"]
+    }
+```
+
+#### `match-view`
    2. Example Queries (for a matchmaker with a limit of 3 matches). Each `matchN` here represents the following structure: {"result":"success","matches":[{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},null,null,null,null,null],"queries":[]}. Each `playerN` value represents the following:  `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
-      1. `match-view` --> {"result":"success","matches":[{match1},{match2},{match3}],"queries":[]}
-5. `queue-view`
+      1. match-view --> {"result":"success","matches":[{match1},{match2},{match3}],"queries":[]}
+#### `queue-view`
    2. Example Queries:
-      1. `queue-view` --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
-      2. `queue-view` --> {"result":"success","playerPosition":1,"queries":["id"]}
-6. `queue-add <id>`
+      1. queue-view --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
+      2. queue-view --> {"result":"success","playerPosition":1,"queries":["id"]}
+#### `queue-add <id>`
    3. Example Queries:
-      1. `queue-add?id=1234567890` --> {"result":"success","Message":"Player added to queue","newCourtMade":false,"addedID":"1234567890"} 
-      2. `queue-add?id=1234567890 (second time)` --> "result":"error_bad_request","details":"Player has already been added to queue.","newCourtMade":false,"queries":["id"]}
-      3. `queue-add?id=incorrectID` --> {"result":"error_bad_request","details":"Player Not Found: No Player found with corresponding ID","newCourtMade":false,"queries":["id"]}
+      1. queue-add?id=1234567890 --> {"result":"success","Message":"Player added to queue","newCourtMade":false,"addedID":"1234567890"} 
+      2. queue-add?id=1234567890 (second time) --> "result":"error_bad_request","details":"Player has already been added to queue.","newCourtMade":false,"queries":["id"]}
+      3. queue-add?id=incorrectID --> {"result":"error_bad_request","details":"Player Not Found: No Player found with corresponding ID","newCourtMade":false,"queries":["id"]}
    4. Example Query For Successful Match Creation. Every `{playerN}` here represents a different player (including the one just added) such as this: `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
-      5. `queue-add?id=1` --> {"result":"success","Message":"Player added to queue","newCourtMade":true,"addedID":"1","court":{"match":{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},"players":[{player1},{player2},{player3},{player4},{player5},{player6},{player7},{player8},{player9},{player10}]}}
+      5. queue-add?id=1 --> {"result":"success","Message":"Player added to queue","newCourtMade":true,"addedID":"1","court":{"match":{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},"players":[{player1},{player2},{player3},{player4},{player5},{player6},{player7},{player8},{player9},{player10}]}}
    5. Additionally, there exist the following errors:
        1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
        2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
