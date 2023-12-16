@@ -340,7 +340,11 @@ For the sake of brevity, some example queries will have the following two aliase
 5. profile-edit?action=edit&id=definitelynotaplayerid&name=Bames Jond&position=SHOOTING_GUARD
 
 ```
-failure condition. the result is `error_bad_request` and the corresponding exception sent back is a `NoItemFoundException`
+    {
+        "result":"error_bad_request",
+        "details":"No item found to edit: No Player found with corresponding ID",
+        "queries":["name","action","id","position"]
+    }
 ```
 
 6. profile-edit?id=definitelynotaplayerid&name=Jond, Bames Jond&position=SHOOTING_GUARD
