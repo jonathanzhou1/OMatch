@@ -48,6 +48,58 @@ Currently, you will have to start the backend server by running the main program
      
 ### Example Queries
 
+For the sake of brevity, some example queries will have the following two aliases instead of the entire object. This is because these objects are either very large, repititious, or both; and, therefore need to be aliased under a smaller name. They are the following:
+
+
+Note: Each `matchN` here represents the following structure: {"result":"success","matches":[{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},null,null,null,null,null],"queries":[]}. Each `playerN` value represents the following:  `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
+
+
+1. `playerN`
+
+```
+    {
+        "id":{ID},
+        "losses":{Losses},
+        "name":{name},
+        "position":{Position},
+        "skillLevel":{Skill Level},
+        "wins":{Wins}
+    }
+```
+
+2. `matchN`
+
+```
+{
+    "outcome":"ONGOING",
+    "team1":
+        {
+            "avgSkill":10.0,
+            "players":
+                [
+                    {player1},
+                    {player2},
+                    {player3},
+                    {player4},
+                    {player5}
+                ],
+            "size":5
+        },
+    "team2":
+        {
+            "avgSkill":10.0,
+            "players":
+                [
+                    {player6},
+                    {player7},
+                    {player8},
+                    {player9},
+                    {player10}
+                ],
+        "size":5
+    }
+```
+
 #### `profile-add <name> <position> <id>`
 1. profile-add?name=Josh Joshington&position=SMALL_FORWARD&id=a0Xd2wuFh9oGb3aJuv4K
 
@@ -189,6 +241,7 @@ failure condition. the result is `error_bad_request` and the corresponding excep
 
 #### `match-add <id>`
 
+
 1. match-add?id=a0Xd2wuFh9oGb3aJuv4K
 
 ```
@@ -201,12 +254,48 @@ failure condition. the result is `error_bad_request` and the corresponding excep
 ```
 
 #### `match-view`
-   2. Example Queries (for a matchmaker with a limit of 3 matches). Each `matchN` here represents the following structure: {"result":"success","matches":[{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},null,null,null,null,null],"queries":[]}. Each `playerN` value represents the following:  `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
-      1. match-view --> {"result":"success","matches":[{match1},{match2},{match3}],"queries":[]}
+1. match-view (Shown here with 3 matches but this number is configurable)
+
+```
+    {
+        "result":"success",
+        "matches":
+            [
+                {match1},
+                {match2},
+                {match3}
+            ],
+        "queries":[]
+    }
+```
+
 #### `queue-view`
-   2. Example Queries:
-      1. queue-view --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
-      2. queue-view --> {"result":"success","playerPosition":1,"queries":["id"]}
+1. queue-view
+```
+    {
+        "result":"success",
+        "PlayerQueue":
+            [
+                {
+                    "id":"a0Xd2wuFh9oGb3aJuv4K",
+                    "losses":12,
+                    "name":"Josh Joshington",
+                    "position":"POWER_FORWARD",
+                    "skillLevel":10.0,
+                    "wins":20
+                }
+            ],
+        "queries":[]
+    }
+```
+2. queue-view?id=a0Xd2wuFh9oGb3aJuv4K
+```
+    {
+        "result":"success",
+        "playerPosition":1,
+        "queries":["id"]
+    }
+```
 #### `queue-add <id>`
    3. Example Queries:
       1. queue-add?id=1234567890 --> {"result":"success","Message":"Player added to queue","newCourtMade":false,"addedID":"1234567890"} 
