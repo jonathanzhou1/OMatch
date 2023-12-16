@@ -15,6 +15,8 @@ Currently, you will have to start the backend server by running the main program
 
 ## Backend Handlers
 
+### Query Guide
+
 1. `profile-add <name> <position>`
     1. The profile addition handler manages the addition of profiles to the backend database. Any players with exactly the same name and position will be treated as different players with a different ID, so it is imperative that you use the editing handler for editing or deleting players.
     2. The `name` query has to do with the player's name, taken in as a UTF-8 String.
@@ -24,22 +26,38 @@ Currently, you will have to start the backend server by running the main program
           3. `SMALL_FORWARD`
           4. `POWER_FORWARD`
           5. `CENTER`
-    5. Example Queries:
-          1. `profile-add?name=Josh Joshington&position=SMALL_FORWARD` --> {"result":"success","playerID":"a0Xd2wuFh9oGb3aJuv4K","queries":["name","position"]}
-          2. `profile-add?name=Baka Sussy&position=CENTER` --> {"result":"success","playerID":"awWo0cH6jw4Ib8fD9Fgi","queries":["name","position"]}
 2. `profile-view <id>`
    1. The profile view handler retrieves all relevant data to the player, including, name, position, ELO ranking, and W/L ratio. 
    2. The `id` keyword is a randomized, unique ID for each player. 20 characters long. If no `id` keyword is present, the handler will return the list of all players
-   3. Example Queries:
-        1. `profile-view?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","player":{"id":"a0Xd2wuFh9oGb3aJuv4K","name":"Josh Joshington","skillLevel":9001.112,"wins":12,"losses":0,"Position":"SMALL_FORWARD"},"queries":["id"]}
-        2. `profile-view?id=awWo0cH6jw4Ib8fD9Fgi` --> {"result":"success","player":{"id":"awWo0cH6jw4Ib8fD9Fgi","name":"Baka Sussy","skillLevel":235,"wins":6,"losses":29,"Position":"CENTER"},"queries":["id"]}
-        3. `profile-view` --> {"result":"success","players":{"a0Xd2wuFh9oGb3aJuv4K":{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0},"awWo0cH6jw4Ib8fD9Fgi":{"id":"awWo0cH6jw4Ib8fD9Fgi","losses":0,"name":Baka Sussy","position":"CENTER","skillLevel":10.0,"wins":0}},"queries":[]}
 3. `profile-edit <action> <id> (name) (position)`
    1. The profile edit handler manages the editing and/or deleting of players.
    2. The `action` query has to do with whether the player in question is being edited or deleted. As of such, it can be one of two strings, "edit" or "delete". These strings are not case-sensitive
    3. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
    4. The `name` query is the player's new name, only recognized when the action is set to edit. This keyword is optional and the player's name will not be updated if it is not present.
    5. The `position` query is the player's updated position. These keywords are the same as for the `profile-add` handler. As with the name, this keyword is optional and will not be updated if it is not present.
+4. `match-add <id>`
+   1. The match addition handler manages player's being assigned to matches. It returns the match that the player was added to, which in turn contains all the team details.
+   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
+5. `match-view`
+   1. Returns a list of match objects, each containing details about the court the match is taking place on, as well as teams and their respective players.
+5. `queue-view`
+   1. Returns either the queue or the position of a player within the queue
+6. `queue-add <id>`
+   1. Adds a player to the matchmaking queue. When the queue length is 10, the first 10 players in the queue will be dequeued into a match. Whether this has happened will be represented by the NewCourtAdded boolean, which will be true if a new court has been added, and false otherwise.
+   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
+     
+### Example Queries
+
+1. `profile-add <name> <position>`
+    5. Example Queries:
+          1. `profile-add?name=Josh Joshington&position=SMALL_FORWARD` --> {"result":"success","playerID":"a0Xd2wuFh9oGb3aJuv4K","queries":["name","position"]}
+          2. `profile-add?name=Baka Sussy&position=CENTER` --> {"result":"success","playerID":"awWo0cH6jw4Ib8fD9Fgi","queries":["name","position"]}
+2. `profile-view <id>`
+   3. Example Queries:
+        1. `profile-view?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","player":{"id":"a0Xd2wuFh9oGb3aJuv4K","name":"Josh Joshington","skillLevel":9001.112,"wins":12,"losses":0,"Position":"SMALL_FORWARD"},"queries":["id"]}
+        2. `profile-view?id=awWo0cH6jw4Ib8fD9Fgi` --> {"result":"success","player":{"id":"awWo0cH6jw4Ib8fD9Fgi","name":"Baka Sussy","skillLevel":235,"wins":6,"losses":29,"Position":"CENTER"},"queries":["id"]}
+        3. `profile-view` --> {"result":"success","players":{"a0Xd2wuFh9oGb3aJuv4K":{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0},"awWo0cH6jw4Ib8fD9Fgi":{"id":"awWo0cH6jw4Ib8fD9Fgi","losses":0,"name":Baka Sussy","position":"CENTER","skillLevel":10.0,"wins":0}},"queries":[]}
+3. `profile-edit <action> <id> (name) (position)`
    6. Example Queries:
       1. `profile-edit?action=delete&id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","queries":["action","id"]}
       2. `profile-edit?action=eDiT&id=awWo0cH6jw4Ib8fD9Fgi&name=Sussy Baka&position=SHOOTING_GUARD` --> {"result":"success","queries":["action","id","name","position"]}
@@ -48,22 +66,16 @@ Currently, you will have to start the backend server by running the main program
       5. `profile-edit?action=edit&id=definitelynotaplayerid&name=Bames Jond&position=SHOOTING_GUARD` --> failure condition. the result is `error_bad_request` and the corresponding exception sent back is a `NoItemFoundException`
       6. `profile-edit?id=definitelynotaplayerid&name=Jond, Bames Jond&position=SHOOTING_GUARD` --> {"result":"error_bad_request","details":"action keyword must contain the word 'edit' or 'delete'. Any other word will result in an error","queries":["id","name","position"]}
 4. `match-add <id>`
-   1. The match addition handler manages player's being assigned to matches. It returns the match that the player was added to, which in turn contains all the team details.
-   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
    3. Example Queries:
       1. `match-add?id=a0Xd2wuFh9oGb3aJuv4K` --> {"result":"success","matchAdded":{Note: this is a very large object and I am not entirely sure yet what of it I should realistically send to the frontend, as of such I am holding off on setting in stone what is returned here},"queries":["id"]}
 5. `match-view`
-   1. Returns a list of match objects, each containing details about the court the match is taking place on, as well as teams and their respective players.
    2. Example Queries (for a matchmaker with a limit of 3 matches). Each `matchN` here represents the following structure: {"result":"success","matches":[{"outcome":"ONGOING","team1":{"avgSkill":10.0,"players":[{player1},{player2},{player3},{player4},{player5}],"size":5},"team2":{"avgSkill":10.0,"players":[{player6},{player7},{player8},{player9},{player10}],"size":5}},null,null,null,null,null],"queries":[]}. Each `playerN` value represents the following:  `{"id":"1234567890","losses":0,"name":"Josh Joshington","position":"SMALL_FORWARD","skillLevel":10.0,"wins":0}`
       1. `match-view` --> {"result":"success","matches":[{match1},{match2},{match3}],"queries":[]}
 5. `queue-view`
-   1. Returns either the queue or the position of a player within the queue
    2. Example Queries:
       1. `queue-view` --> {"result":"success","PlayerQueue":[{"id":"a0Xd2wuFh9oGb3aJuv4K","losses":12,"name":"Josh Joshington","position":"POWER_FORWARD","skillLevel":10.0,"wins":20}],"queries":[]}
       2. `queue-view` --> {"result":"success","playerPosition":1,"queries":["id"]}
 6. `queue-add <id>`
-   1. Adds a player to the matchmaking queue. When the queue length is 10, the first 10 players in the queue will be dequeued into a match. Whether this has happened will be represented by the NewCourtAdded boolean, which will be true if a new court has been added, and false otherwise.
-   2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
    3. Example Queries:
       1. `queue-add?id=1234567890` --> {"result":"success","Message":"Player added to queue","newCourtMade":false,"addedID":"1234567890"} 
       2. `queue-add?id=1234567890 (second time)` --> "result":"error_bad_request","details":"Player has already been added to queue.","newCourtMade":false,"queries":["id"]}
@@ -73,6 +85,7 @@ Currently, you will have to start the backend server by running the main program
    5. Additionally, there exist the following errors:
        1. `matchmaking_error` --> There has been an internal matchmaker error. If the matchmaker is properly tested, this will not come up.
        2. `matchmaking_full` --> Every alotted court has been filled up, the player has successfully been added to the queue, but they need to wait until other people leave to free them a space.
+
 ## Backend Player, Team, and Matches
 Each user in omatch will be assigned a Player class. This class will contain their specific user ID, skill level, W/L record, position, and other necessary information. 
 
