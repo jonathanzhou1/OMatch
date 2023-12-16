@@ -35,9 +35,13 @@ Currently, you will have to start the backend server by running the main program
    3. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
    4. The `name` query is the player's new name, only recognized when the action is set to edit. This keyword is optional and the player's name will not be updated if it is not present.
    5. The `position` query is the player's updated position. These keywords are the same as for the `profile-add` handler. As with the name, this keyword is optional and will not be updated if it is not present.
-4. `match-add <id>`
-   1. The match addition handler manages player's being assigned to matches. It returns the match that the player was added to, which in turn contains all the team details.
+4. `match-end <id> <playerWon>`
+   1. The match end handler is called when a player indicates that the match has ended and that they think the court can be freed. It should be noted however, that the handler requires all players to have a query associated with them for the handler to automatically delete the match and update the players' stats.
    2. The `id` keyword is a randomized, unique ID for each player. 20 characters long.
+   3. The `playerWon` keyword is linked to how the player did in that game. It can be one of the following. Any other words will be interpreted as a loss:
+      1. `win`
+      2. `lose`
+      3. `tie`
 5. `match-view`
    1. Returns a list of match objects, each containing details about the court the match is taking place on, as well as teams and their respective players.
 5. `queue-view`
@@ -139,6 +143,52 @@ For the sake of brevity, some example queries will have the following two aliase
 ```
 </details>
 
+<details>
+    <summary>Unsuccessful requests</summary>
+    <br>
+    
+1. profile-add
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"Error in specifying 'id' variable: id neccesary",
+        "queries":[]
+    }
+```
+
+2. profile-add?id=1234567890
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"Error in specifying 'name' variable: name neccesary",
+        "queries":["id"]
+    }
+```
+
+3. profile-add?id=1234567890&name=Sussy%20Baka
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"Error in specifying 'id' variable. Please use 'POINT_GUARD', 'SHOOTING_GUARD', 'SMALL_FORWARD', 'POWER_FORWARD', or 'CENTER' in your position query: position query neccesary",
+        "queries":["name","id"]
+    }
+```
+
+4. profile-add?id=1234567890&name=Sussy%20Baka&position=CENTER (Note: this is only in the case where you have already added this ID to the database)
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"Player already exists in the database, please use edit handler instead: Player to be added already exists within database. Please use updatePlayer in this instance.",
+        "queries":["name","id","position"]
+    }
+```
+
+</details>
+
 #### `profile-view <id>`
 
 <details>
@@ -208,7 +258,35 @@ For the sake of brevity, some example queries will have the following two aliase
         "queries":[]
     }
 ```
+
+4. profile-view (Empty list)
+
+```
+    {
+        "result":"success",
+        "players":{},
+        "queries":[]
+    }
+```
+
 </details>
+
+<details>
+    <summary>Unsuccessful requests</summary>
+    <br>
+
+4. profile-view?id=incorrectID
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"No item found within the database: No Player found with corresponding ID",
+        "queries":["id"]
+    }
+```
+
+</details>
+
 
 #### `profile-edit <action> <id> (name) (position)`
 
@@ -276,18 +354,43 @@ failure condition. the result is `error_bad_request` and the corresponding excep
 ```
 </details>
 
-#### `match-add <id>`
+#### `match-end <id> <playerWon>`
 
 <details>
     <summary>Successful requests</summary>
     <br>
-1. match-add?id=a0Xd2wuFh9oGb3aJuv4K
+
+1. match-end?id=2&playerWon=lose
 
 ```
     {
         "result":"success",
-        "matchAdded":
-            {match1},
+        "queries":["id","playerWon"]
+    }
+```
+
+</details>
+
+<details>
+    <summary>Unsuccessful requests</summary>
+    <br>
+
+1. match-end?id=1234567890
+
+```
+    {
+        "result":"error_bad_request",
+        "details":"Error in specifying 'playerWon' variable. Variable must be 'win', 'tie', or 'lose'",
+        "queries":["id"]
+    }
+```
+
+1. match-end?id=1234567890
+
+```
+    {
+        "result":"error_server",
+        "details":"Error getting match data from the server: {exception}",
         "queries":["id"]
     }
 ```
@@ -348,6 +451,21 @@ failure condition. the result is `error_bad_request` and the corresponding excep
         "queries":["id"]
     }
 ```
+</details>
+
+<details>
+    <summary>Unsuccessful requests</summary>
+    <br>
+1. queue-view
+
+```
+    {
+        "result":"error_datastore",
+        "details":"Datastore Error: {exception}",
+        "queries":["id"]
+    }
+```
+
 </details>
 
 #### `queue-add <id>`
