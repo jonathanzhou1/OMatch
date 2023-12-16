@@ -9,20 +9,20 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import server.Server;
+import server.ServerSharedState;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 public class MatchViewHandler implements Route {
 
-  private Server server;
+  private ServerSharedState serverSharedState;
 
   /**
-   * @param server
+   * @param serverSharedState
    */
-  public MatchViewHandler(Server server) {
-    this.server = server;
+  public MatchViewHandler(ServerSharedState serverSharedState) {
+    this.serverSharedState = serverSharedState;
   }
 
   /**
@@ -42,7 +42,7 @@ public class MatchViewHandler implements Route {
     // Try viewing the matches
     try {
       // Make an Array of the courts:
-      ICourt[] courts = server.getCourtAssigner().getCourts();
+      ICourt[] courts = serverSharedState.getCourtAssigner().getCourts();
       LinkedList<Match> matches = new LinkedList<>();
 
       for (ICourt i : courts) {
@@ -61,7 +61,7 @@ public class MatchViewHandler implements Route {
       // responseMap.put("matches", matches);
       return adapter.toJson(responseMap);
     } catch (Exception e) {
-      responseMap.put("result", "internal_server_error");
+      responseMap.put("result", "error_server");
       responseMap.put("details", "Error getting match data from the server: " + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);

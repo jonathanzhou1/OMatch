@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import server.Server;
+import server.ServerSharedState;
 import server.exceptions.NoItemFoundException;
 import server.exceptions.NoItemMadeException;
 import spark.Request;
@@ -18,10 +18,10 @@ import spark.Route;
 
 public class QueueAddHandler implements Route {
 
-  private Server server;
+  private ServerSharedState serverSharedState;
 
-  public QueueAddHandler(Server server) {
-    this.server = server;
+  public QueueAddHandler(ServerSharedState serverSharedState) {
+    this.serverSharedState = serverSharedState;
   }
 
   /**
@@ -51,9 +51,9 @@ public class QueueAddHandler implements Route {
 
     Player player;
     try {
-      player = server.getDataStore().getPlayer(playerID);
-      if (!server.getDataStore().getQueue().contains(player)) {
-        player = this.server.getDataStore().addQueue(playerID);
+      player = serverSharedState.getDataStore().getPlayer(playerID);
+      if (!serverSharedState.getDataStore().getQueue().contains(player)) {
+        player = this.serverSharedState.getDataStore().addQueue(playerID);
       } else {
         throw new Exception("Player has already been added to queue.");
       }
@@ -74,12 +74,15 @@ public class QueueAddHandler implements Route {
     ICourt court;
     responseMap.put("newCourtMade", false);
     try {
-      int courtIndex = server.getCourtAssigner().addPlayers(server.getDataStore().getQueue());
-      court = server.getCourtAssigner().getCourts()[courtIndex];
+      int courtIndex =
+          serverSharedState
+              .getCourtAssigner()
+              .addPlayers(serverSharedState.getDataStore().getQueue());
+      court = serverSharedState.getCourtAssigner().getCourts()[courtIndex];
       responseMap.put("court", court);
       responseMap.put("newCourtMade", true);
       for (int i = 0; i < 10; i++) {
-        server.getDataStore().getQueue().poll();
+        serverSharedState.getDataStore().getQueue().poll();
       }
     } catch (NoItemMadeException e) {
       if (!e.getMessage().equals("Queue length is not yet long enough for matchmaking.")) {
