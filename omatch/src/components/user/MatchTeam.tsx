@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "../../styles/index.css";
-import { match } from "assert";
 
 export default function MatchTeam() {
   //react state variable to display all matches
@@ -14,6 +13,10 @@ export default function MatchTeam() {
   //successMessage
   const [displaySuccessMessage, setDisplaySuccessMessage] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  //ask for win or loss upon ending match
+  const [showGameResultQuery, setShowGameResultQuery] = useState(false);
+  const [gameResult, setGameResult] = useState("");
 
   const userID = localStorage.getItem("userID");
   //call backend to match team
@@ -93,25 +96,124 @@ export default function MatchTeam() {
       });
   }
 
+  function queryResult() {
+    setDisplayErrorMessage(false);
+    setDisplaySuccessMessage(false);
+    setShowGameResultQuery(true);
+  }
+
+  async function endMatch() {
+    if (gameResult === "") {
+      setDisplayErrorMessage(true);
+      setDisplaySuccessMessage(false);
+      setErrorMessage("Please select a game result.");
+    } else {
+      let hostname = "http://localhost";
+      let port = ":3232";
+      let endMatchQuery =
+        "/match-end?&id=" + userID + "&playerWon=" + gameResult;
+      console.log(endMatchQuery);
+      await fetch(hostname + port + endMatchQuery)
+        .then((response) => response.json())
+        .then((responseJSON) => {
+          if (responseJSON.result !== "success") {
+            setDisplayErrorMessage(true);
+            setDisplaySuccessMessage(false);
+            setErrorMessage(responseJSON.details);
+          } else {
+            setDisplayErrorMessage(false);
+            setDisplaySuccessMessage(true);
+            setShowGameResultQuery(false);
+            setSuccessMessage("Game result has been updated to your profile");
+          }
+        })
+        .catch((_error) => {
+          setDisplayErrorMessage(true);
+          setDisplaySuccessMessage(false);
+          setErrorMessage("Error in ending match. Please try again!");
+        });
+    }
+  }
+
   return (
-    <div id="welcome">
-      <h1 className="welcomeHeader">MATCH TEAM!</h1>
+    <div id="match">
+      <h1 id="matchHeader">MATCH TEAM!</h1>
       <div id="buttonContainer">
-        <button className="button twoButtons leftButton" onClick={matchTeam}>
+        <button className="button threeButtons leftButton" onClick={matchTeam}>
           Match Team
         </button>
-        <button className="button twoButtons rightButton" onClick={viewMatches}>
+        <button
+          className="button threeButtons middleButton"
+          onClick={viewMatches}
+        >
           View Matches
         </button>
+        <button
+          className="button threeButtons rightButton"
+          onClick={queryResult}
+        >
+          End Match
+        </button>
       </div>
-      {displaySuccessMessage && <p>Success: {successMessage}</p>}
-      {displayErrorMessage && (
-        <p className="redText">Failure: {errorMessage}</p>
-      )}
       {showMatches && (
         <p>
           <b>Current Matches:</b> {matches}
         </p>
+      )}
+      {showGameResultQuery && (
+        <div>
+          <p>Please choose the game result: </p>
+          <div className="radios">
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  name="win"
+                  value="win"
+                  onChange={(event) => setGameResult(event.target.value)}
+                  checked={gameResult === "win"}
+                ></input>
+                Win
+              </label>
+            </div>
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  name="loss"
+                  value="lose"
+                  onChange={(event) => setGameResult(event.target.value)}
+                  checked={gameResult === "lose"}
+                ></input>
+                Loss
+              </label>
+            </div>
+            <div className="radio">
+              <label>
+                <input
+                  type="radio"
+                  name="draw"
+                  value="tie"
+                  onChange={(event) => setGameResult(event.target.value)}
+                  checked={gameResult === "tie"}
+                ></input>
+                Draw
+              </label>
+            </div>
+          </div>
+
+          <button
+            className="button singleButton"
+            id="submitGameResult"
+            onClick={endMatch}
+          >
+            Submit Result
+          </button>
+        </div>
+      )}
+      {displaySuccessMessage && <p>Success: {successMessage}</p>}
+      {displayErrorMessage && (
+        <p className="redText">Failure: {errorMessage}</p>
       )}
     </div>
   );

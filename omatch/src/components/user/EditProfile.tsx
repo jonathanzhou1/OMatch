@@ -64,6 +64,7 @@ export default function EditProfile() {
       <h1 id="editProfileHeader">Edit Profile</h1>
       <h2 id="lessTopMargin">First Name</h2>
       <input
+        className="input"
         aria-label="firstNameInput"
         type="text"
         onChange={(event) => {
@@ -72,6 +73,7 @@ export default function EditProfile() {
       />
       <h2>Last Name</h2>
       <input
+        className="input"
         aria-label="lastNameInput"
         type="text"
         onChange={(event) => {
