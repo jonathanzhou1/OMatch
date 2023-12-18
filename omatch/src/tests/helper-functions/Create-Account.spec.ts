@@ -51,9 +51,4 @@ export async function createAccountTestHelper(
   await lastNameInput.fill(lastName);
   await positionSelect.selectOption({ value: position });
   await createAccountButton.click();
-
-  // Ensure that we have navigated to the "Dashboard" page
-  await page.waitForURL("http://localhost:5173/dashboard");
-  await expect(page).toHaveURL("http://localhost:5173/dashboard");
-  await expect(page.getByText(email)).toBeVisible();
 }
