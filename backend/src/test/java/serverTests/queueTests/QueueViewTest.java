@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import okio.Buffer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -101,5 +102,37 @@ public class QueueViewTest {
   public void testAPICode200() throws IOException {
     HttpURLConnection clientConnection = tryRequest("queue-view");
     assertEquals(200, clientConnection.getResponseCode());
+  }
+
+  /** Tests that the queue view handler can retrieve an individual player */
+  @Test
+  public void testGetIndividualPlayer() throws IOException {
+    HttpURLConnection clientConnection =
+        tryRequest("profile-add?id=1&name=JoshJoshington&position=CENTER");
+    assertEquals(200, clientConnection.getResponseCode());
+    // Call Queue View when something isn't in the queue
+    clientConnection = tryRequest("queue-view?id=1");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> body =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert body != null;
+    assertEquals("success", body.get("result"));
+    assertEquals(-1.0, body.get("playerPosition"));
+
+    // Add something to the queue
+    clientConnection = tryRequest("queue-add?id=1");
+    assertEquals(200, clientConnection.getResponseCode());
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("success", body.get("result"));
+
+    // Call queue view again - Something should be there now
+    clientConnection = tryRequest("queue-view?id=1");
+    assertEquals(200, clientConnection.getResponseCode());
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+
+    assert body != null;
+    assertEquals("success", body.get("result"));
+    assertEquals(0.0, body.get("playerPosition"));
   }
 }

@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import server.ServerSharedState;
 import server.exceptions.NoItemFoundException;
-import server.exceptions.NoItemMadeException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -84,23 +83,18 @@ public class QueueAddHandler implements Route {
       for (int i = 0; i < 10; i++) {
         serverSharedState.getDataStore().getQueue().poll();
       }
-    } catch (NoItemMadeException e) {
+    } catch (IOException e) {
+      responseMap.put("result", "matchmaking_error");
+      responseMap.put("details", "Internal matchmaker error: " + e.getMessage());
+      responseMap.put("queries", request.queryParams());
+      return adapter.toJson(responseMap);
+    } catch (Exception e) {
       if (!e.getMessage().equals("Queue length is not yet long enough for matchmaking.")) {
         responseMap.put("result", "matchmaking_full");
         responseMap.put("details", "All queues full currently: " + e.getMessage());
         responseMap.put("queries", request.queryParams());
         return adapter.toJson(responseMap);
       }
-    } catch (IOException e) {
-      responseMap.put("result", "matchmaking_error");
-      responseMap.put("details", "Internal matchmaker error: " + e.getMessage());
-      responseMap.put("queries", request.queryParams());
-      return adapter.toJson(responseMap);
-    } catch (IndexOutOfBoundsException e) {
-      responseMap.put("result", "matchmaking_full");
-      responseMap.put("details", "Courts are currently full: " + e.getMessage());
-      responseMap.put("queries", request.queryParams());
-      return adapter.toJson(responseMap);
     }
 
     responseMap.put("result", "success");

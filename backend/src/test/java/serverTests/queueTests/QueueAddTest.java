@@ -1,9 +1,14 @@
 package serverTests.queueTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import Matchmaking.CourtAssigners.CourtAssigner;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
+import Matchmaking.Player;
+import Matchmaking.Position;
 import Matchmaking.SkillCalculators.SimpleSkill;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -14,9 +19,12 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import okio.Buffer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -101,5 +109,87 @@ public class QueueAddTest {
   public void testAPICode200() throws IOException {
     HttpURLConnection clientConnection = tryRequest("queue-add");
     assertEquals(200, clientConnection.getResponseCode());
+  }
+
+  /**
+   * Tests that the queue add handler can successfully add players when the correct conditions are
+   * met.
+   */
+  @Test
+  public void testAddPlayers() throws IOException {
+    HttpURLConnection clientConnection;
+
+    // Add something to the queue - Testing ID failure state
+    clientConnection = tryRequest("queue-add");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> body =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals("Player Not Found: No Player found with corresponding ID", body.get("details"));
+
+    // Add players to the queue:
+    int playerAdded = 0;
+    for (Player p : this.generatePlayerList()) {
+      String apiCall = "profile-add?id=";
+      apiCall += p.getId() + "&name=";
+      apiCall += p.getName() + "&position=";
+      apiCall += p.getPosition();
+      clientConnection = tryRequest(apiCall);
+      assertEquals(200, clientConnection.getResponseCode());
+
+      clientConnection = tryRequest("queue-add?id=" + p.getId());
+      // Check that the body is a success
+      body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+      System.out.println(body);
+      assertEquals("success", body.get("result"));
+      if (playerAdded > 8) {
+        assertEquals("success", body.get("result"));
+        assertTrue((Boolean) body.get("newCourtMade"));
+        assertNotNull(body.get("court"));
+      } else {
+        assertFalse((Boolean) body.get("newCourtMade"));
+      }
+      // Call queue view again - Something should be there now
+      clientConnection = tryRequest("queue-view?id=" + p.getId());
+      assertEquals(200, clientConnection.getResponseCode());
+      body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+      assert body != null;
+      assertEquals("success", body.get("result"));
+
+      playerAdded++;
+    }
+
+    // Try a failed addition
+    clientConnection = tryRequest("queue-add?id=" + "definitelyNotAnID");
+    // Check that the body is a success
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    System.out.println(body);
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals("Player Not Found: No Player found with corresponding ID", body.get("details"));
+  }
+
+  private List<Player> generatePlayerList() {
+    List<Player> players = new LinkedList<>();
+    Player testPlayer1 = new Player("a", Position.CENTER, "1");
+    players.add(testPlayer1);
+    Player testPlayer2 = new Player("b", Position.SMALL_FORWARD, "2");
+    players.add(testPlayer2);
+    Player testPlayer3 = new Player("c", Position.POINT_GUARD, "3");
+    players.add(testPlayer3);
+    Player testPlayer4 = new Player("d", Position.POWER_FORWARD, "4");
+    players.add(testPlayer4);
+    Player testPlayer5 = new Player("e", Position.SHOOTING_GUARD, "5");
+    players.add(testPlayer5);
+    Player testPlayer6 = new Player("f", Position.CENTER, "6");
+    players.add(testPlayer6);
+    Player testPlayer7 = new Player("g", Position.SMALL_FORWARD, "7");
+    players.add(testPlayer7);
+    Player testPlayer8 = new Player("h", Position.POINT_GUARD, "8");
+    players.add(testPlayer8);
+    Player testPlayer9 = new Player("i", Position.POWER_FORWARD, "9");
+    players.add(testPlayer9);
+    Player testPlayerA = new Player("j", Position.SHOOTING_GUARD, "a");
+    players.add(testPlayerA);
+    return players;
   }
 }

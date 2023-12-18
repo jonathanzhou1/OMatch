@@ -15,7 +15,7 @@ public class CourtAssigner implements ICourtAssigner {
 
   // Using an array here to minimize chances of swapping things around.
   private final ICourt[] courts;
-  boolean[] courtsFilled = new boolean[6];
+  boolean[] courtsFilled;
   private IMatchMaker matchMaker;
   private SkillUpdater skillUpdater;
 
@@ -33,6 +33,7 @@ public class CourtAssigner implements ICourtAssigner {
     }
     this.matchMaker = matchMaker;
     this.skillUpdater = skillUpdater;
+    this.courtsFilled = new boolean[numCourts];
   }
 
   /**
@@ -40,7 +41,7 @@ public class CourtAssigner implements ICourtAssigner {
    * team.
    *
    * @param newPlayers The new player being added to a match ahead of time.
-   * @return The court containing the added player.
+   * @return The index of the court containing the added player.
    */
   @Override
   public int addPlayers(Queue<Player> newPlayers) throws NoItemMadeException, IOException {
