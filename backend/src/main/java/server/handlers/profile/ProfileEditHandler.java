@@ -8,7 +8,7 @@ import com.squareup.moshi.Types;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import server.Server;
+import server.ServerSharedState;
 import server.exceptions.NoItemFoundException;
 import spark.Request;
 import spark.Response;
@@ -16,10 +16,10 @@ import spark.Route;
 
 public class ProfileEditHandler implements Route {
 
-  private Server server;
+  private ServerSharedState serverSharedState;
 
-  public ProfileEditHandler(Server server) {
-    this.server = server;
+  public ProfileEditHandler(ServerSharedState serverSharedState) {
+    this.serverSharedState = serverSharedState;
   }
 
   @Override
@@ -73,7 +73,7 @@ public class ProfileEditHandler implements Route {
 
     if (action.equalsIgnoreCase("delete")) {
       try {
-        server.getDataStore().deleteItem(playerID);
+        serverSharedState.getDataStore().deleteItem(playerID);
       } catch (NoItemFoundException e) {
         responseMap.put("result", "error_bad_request");
         responseMap.put("details", "No item found to delete: " + e.getMessage());
@@ -88,7 +88,7 @@ public class ProfileEditHandler implements Route {
       boolean playerPositionPresent = false;
 
       try {
-        player = server.getDataStore().getPlayer(playerID);
+        player = serverSharedState.getDataStore().getPlayer(playerID);
       } catch (NoItemFoundException e) {
         responseMap.put("result", "error_bad_request");
         responseMap.put("details", "No item found to edit: " + e.getMessage());
@@ -140,8 +140,8 @@ public class ProfileEditHandler implements Route {
       // update the player with a new value and return a success
       player = new Player(playerName, playerPosition);
       try {
-        server.getDataStore().updatePlayer(playerID, player);
-        System.out.println(server.getDataStore().getPlayers().toString());
+        serverSharedState.getDataStore().updatePlayer(playerID, player);
+        System.out.println(serverSharedState.getDataStore().getPlayers().toString());
       } catch (NoItemFoundException e) {
         responseMap.put("result", "error_datastore");
         responseMap.put(

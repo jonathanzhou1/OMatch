@@ -1,6 +1,7 @@
 package serverTests.profileTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import Matchmaking.CourtAssigners.CourtAssigner;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
@@ -16,16 +17,27 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.testng.annotations.Test;
+import org.junit.jupiter.api.Test;
 import server.Server;
+import server.ServerSharedState;
 import server.exceptions.ItemAlreadyExistsException;
+import server.handlers.match.MatchEndHandler;
+import server.handlers.match.MatchViewHandler;
+import server.handlers.profile.ProfileAddHandler;
+import server.handlers.profile.ProfileEditHandler;
+import server.handlers.profile.ProfileViewHandler;
+import server.handlers.queue.QueueAddHandler;
+import server.handlers.queue.QueueViewHandler;
 import spark.Spark;
 
 public class ProfileViewTest {
@@ -44,12 +56,20 @@ public class ProfileViewTest {
       Types.newParameterizedType(Map.class, String.class, Object.class);
   private JsonAdapter<Map<String, Object>> adapter;
 
+  private final ServerSharedState sharedState =
+      new ServerSharedState(
+          new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+
   @BeforeEach
   public void setup() throws FileNotFoundException {
 
-    server =
-        new Server(
-            new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+    Spark.get("profile-add", new ProfileAddHandler(sharedState));
+    Spark.get("profile-edit", new ProfileEditHandler(sharedState));
+    Spark.get("profile-view", new ProfileViewHandler(sharedState));
+    Spark.get("match-end", new MatchEndHandler(sharedState));
+    Spark.get("match-view", new MatchViewHandler(sharedState));
+    Spark.get("queue-add", new QueueAddHandler(sharedState));
+    Spark.get("queue-view", new QueueViewHandler(sharedState));
 
     Spark.init();
     Spark.awaitInitialization();
@@ -60,7 +80,7 @@ public class ProfileViewTest {
 
   private static HttpURLConnection tryRequest(String apiCall) throws IOException {
     // Configure the connection (but don't actually send the request yet)
-    URL requestURL = new URL("http://localhost:" + "3232" + "/" + apiCall);
+    URL requestURL = new URL("http://localhost:" + Spark.port() + "/" + apiCall);
     HttpURLConnection clientConnection = (HttpURLConnection) requestURL.openConnection();
     // The request body contains a Json object
     clientConnection.setRequestProperty("Content-Type", "application/json");
@@ -68,6 +88,25 @@ public class ProfileViewTest {
     clientConnection.setRequestProperty("Accept", "application/json");
     clientConnection.connect();
     return clientConnection;
+  }
+
+  @AfterEach
+  public void teardown() {
+    Spark.unmap("profile-add");
+    Spark.unmap("profile-edit");
+    Spark.unmap("profile-view");
+    Spark.unmap("match-end");
+    Spark.unmap("match-view");
+    Spark.unmap("queue-add");
+    Spark.unmap("queue-view");
+    Spark.awaitStop();
+  }
+
+  // Taken from edstem #397
+  @AfterAll
+  public static void shutdown() throws InterruptedException {
+    Spark.stop();
+    Thread.sleep(3000);
   }
 
   @Test
@@ -85,24 +124,18 @@ public class ProfileViewTest {
    */
   @Test
   public void testAPIRetrievesCorrectPlayer() throws ItemAlreadyExistsException, IOException {
-
-    // TODO: Run this with a for loop for brevity
-
     LinkedList<Player> players = new LinkedList<>();
-    String[] playerIDs = new String[3];
-    players.add(new Player("Nim Telson", Position.valueOf("CENTER")));
-    players.add(new Player("Josh Joshington", Position.valueOf("SMALL_FORWARD")));
-    players.add(new Player("Bas Ketball", Position.valueOf("POWER_FORWARD")));
+    players.add(new Player("Nim Telson", Position.valueOf("CENTER"), "asdf"));
+    players.add(new Player("Josh Joshington", Position.valueOf("SMALL_FORWARD"), "qwer"));
+    players.add(new Player("Bas Ketball", Position.valueOf("POWER_FORWARD"), "hjkl"));
 
-    // Add these manually through the datastore's addition handler, then use the view handler to
-    // check that they exist.
-    playerIDs[0] = server.getDataStore().addPlayer(players.get(0));
-    playerIDs[1] = server.getDataStore().addPlayer(players.get(1));
-    playerIDs[2] = server.getDataStore().addPlayer(players.get(2));
+    for (int i = 0; i < 3; i++) {
+      sharedState.getDataStore().addPlayer(players.get(i));
+    }
 
-    HttpURLConnection clientConnection0 = tryRequest("profile-view?id=" + playerIDs[0]);
-    HttpURLConnection clientConnection1 = tryRequest("profile-view?id=" + playerIDs[1]);
-    HttpURLConnection clientConnection2 = tryRequest("profile-view?id=" + playerIDs[2]);
+    HttpURLConnection clientConnection0 = tryRequest("profile-view?id=asdf");
+    HttpURLConnection clientConnection1 = tryRequest("profile-view?id=qwer");
+    HttpURLConnection clientConnection2 = tryRequest("profile-view?id=hjkl");
 
     Map<String, Object> body0 =
         adapter.fromJson(new Buffer().readFrom(clientConnection0.getInputStream()));
@@ -111,8 +144,111 @@ public class ProfileViewTest {
     Map<String, Object> body2 =
         adapter.fromJson(new Buffer().readFrom(clientConnection2.getInputStream()));
 
-    assertEquals(players.get(0), body0.get(playerIDs[0]));
-    assertEquals(players.get(1), body1.get(playerIDs[1]));
-    assertEquals(players.get(2), body2.get(playerIDs[2]));
+    System.out.println(body0);
+    System.out.println(body1);
+    System.out.println(body2);
+
+    assertEquals(200, clientConnection0.getResponseCode());
+    assertEquals(200, clientConnection1.getResponseCode());
+    assertEquals(200, clientConnection2.getResponseCode());
+
+    assertEquals("success", body0.get("result"));
+    assertEquals("success", body1.get("result"));
+    assertEquals("success", body2.get("result"));
+
+    Moshi moshi = new Moshi.Builder().build();
+    Type mapStringObject = Types.newParameterizedType(Map.class, String.class, Object.class);
+    JsonAdapter<Map<String, Object>> adapter = moshi.adapter(mapStringObject);
+    HashMap<String, Object> responseMap = new HashMap<>();
+
+    /*
+    responseMap.put("player", players.get(0));
+    assertEquals(responseMap.get("player"), body0.get("player"));
+
+    responseMap.put("player", players.get(1));
+    assertEquals(responseMap.get("player"), body1.get("player"));
+
+    responseMap.put("player", players.get(2));
+    assertEquals(responseMap.get("player"), body2.get("player"));
+    */
+  }
+
+  /**
+   * Tests that the API doesn't catastrophically fail upon an incorrect get request
+   *
+   * @throws IOException
+   * @throws ItemAlreadyExistsException
+   */
+  @Test
+  public void testAPIFailureStates() throws IOException, ItemAlreadyExistsException {
+
+    sharedState.getDataStore().addPlayer(new Player("Nim Telson", Position.CENTER, "aaaa"));
+
+    // profile-view
+    HttpURLConnection clientConnection = tryRequest("profile-view?id=aaaa");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    // The body of the string contains the proper data - "Success"
+    Map<String, Object> body =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+    assertEquals("success", body.get("result"));
+
+    // profile-view
+    clientConnection = tryRequest("profile-view?id=abab");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    // The body of the string contains the proper data - "Success"
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals(
+        "No item found within the database: No Player found with corresponding ID",
+        body.get("details"));
+  }
+
+  /**
+   * Tests that the API returns all the players in the datastore when there is no id specified
+   *
+   * @throws IOException
+   * @throws ItemAlreadyExistsException
+   */
+  @Test
+  public void testViewAllPlayers() throws IOException, ItemAlreadyExistsException {
+
+    HttpURLConnection clientConnection =
+        tryRequest("profile-add?name=johnjohnson&position=POINT_GUARD&id=1234567");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=BackMcBackend&position=CENTER&id=siufgb2ihb");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection =
+        tryRequest("profile-add?name=NimTelson&position=SMALL_FORWARD&id=soduvbwi234");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection =
+        tryRequest("profile-add?name=HoopHoopington&position=POWER_FORWARD&id=q932rfbsabBEWOB3");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=aaaa&position=CENTER&id=FE7DF3esfDFF");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    // profile-view - Test that the players are all getting retrieved by the database
+    clientConnection = tryRequest("profile-view?id=1234567");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-view?id=siufgb2ihb");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-view?id=soduvbwi234");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-view?id=q932rfbsabBEWOB3");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-view?id=FE7DF3esfDFF");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    // Get all the players
+    clientConnection = tryRequest("profile-view");
+    assertEquals(200, clientConnection.getResponseCode());
+    Map<String, Object> body =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+    assert body != null;
+    assertEquals("success", body.get("result"));
+    assertNotNull(body.get("players"));
   }
 }

@@ -8,7 +8,7 @@ import com.squareup.moshi.Types;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import server.Server;
+import server.ServerSharedState;
 import server.exceptions.ItemAlreadyExistsException;
 import spark.Request;
 import spark.Response;
@@ -16,10 +16,10 @@ import spark.Route;
 
 public class ProfileAddHandler implements Route {
 
-  private Server server;
+  private ServerSharedState serverSharedState;
 
-  public ProfileAddHandler(Server server) {
-    this.server = server;
+  public ProfileAddHandler(ServerSharedState serverSharedState) {
+    this.serverSharedState = serverSharedState;
   }
 
   /**
@@ -64,7 +64,7 @@ public class ProfileAddHandler implements Route {
       }
     } catch (Exception e) {
       responseMap.put("result", "error_bad_request");
-      responseMap.put("details", "Error in specifying 'id' variable: " + e.getMessage());
+      responseMap.put("details", "Error in specifying 'name' variable: " + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     }
@@ -81,7 +81,7 @@ public class ProfileAddHandler implements Route {
           "details",
           "Error in specifying 'id' variable. Please use 'POINT_GUARD', "
               + "'SHOOTING_GUARD', 'SMALL_FORWARD', 'POWER_FORWARD', or 'CENTER' in your "
-              + "position query:  "
+              + "position query: "
               + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
@@ -92,7 +92,7 @@ public class ProfileAddHandler implements Route {
     try {
       newPlayer = new Player(playerName, playerPosition);
       newPlayer.setId(playerID);
-      server.getDataStore().addPlayer(newPlayer);
+      serverSharedState.getDataStore().addPlayer(newPlayer);
     } catch (ItemAlreadyExistsException e) {
       responseMap.put("result", "error_bad_request");
       responseMap.put(
@@ -103,7 +103,7 @@ public class ProfileAddHandler implements Route {
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);
     } catch (Exception e) {
-      responseMap.put("result", "error_bad_contents");
+      responseMap.put("result", "error_server");
       responseMap.put("details", "Error in adding player to database: " + e.getMessage());
       responseMap.put("queries", request.queryParams());
       return adapter.toJson(responseMap);

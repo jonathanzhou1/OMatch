@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import Matchmaking.CourtAssigners.CourtAssigner;
 import Matchmaking.CourtAssigners.ICourt;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
+import Matchmaking.Player;
+import Matchmaking.Position;
 import Matchmaking.SkillCalculators.SimpleSkill;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
@@ -16,9 +18,12 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import okio.Buffer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -35,7 +40,7 @@ import server.handlers.queue.QueueAddHandler;
 import server.handlers.queue.QueueViewHandler;
 import spark.Spark;
 
-public class MatchViewTest {
+public class MatchEndTest {
 
   @BeforeAll
   public static void setupOnce() {
@@ -51,7 +56,7 @@ public class MatchViewTest {
 
   private final ServerSharedState sharedState =
       new ServerSharedState(
-          new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+          new SimpleDataStore(), new CourtAssigner(1, new SimpleMatchMaker(), new SimpleSkill()));
 
   @BeforeEach
   public void setup() throws FileNotFoundException {
@@ -104,18 +109,18 @@ public class MatchViewTest {
 
   @Test
   public void testAPICode200() throws IOException {
-    HttpURLConnection clientConnection = tryRequest("match-view");
+    HttpURLConnection clientConnection = tryRequest("match-end");
     assertEquals(200, clientConnection.getResponseCode());
   }
 
   /**
-   * Tests that the matchViewHandler correctly returns the correct view upon a full queue
+   * Tests that the matchEndHandler correctly ends a match after all players vote to end
    *
    * @throws IOException
    * @throws NoItemFoundException
    */
   @Test
-  public void testMatchView() throws IOException, NoItemFoundException {
+  public void testMatchCreation() throws IOException, NoItemFoundException {
     // Make at least 10 players in the server, then add a few extra as well
     HttpURLConnection clientConnection =
         tryRequest("profile-add?name=aaa&position=POINT_GUARD&id=1");
@@ -194,89 +199,82 @@ public class MatchViewTest {
     }
   }
 
-  /**
-   * Tests that the matchViewHandler correctly responds to empty queues
-   *
-   * @throws IOException
-   * @throws NoItemFoundException
-   */
   @Test
-  public void testMatchEmptyView() throws IOException, NoItemFoundException {
-    // Make at least 10 players in the server, then add a few extra as well
+  public void testBadPlayerwonRequest() throws IOException {
     HttpURLConnection clientConnection =
         tryRequest("profile-add?name=aaa&position=POINT_GUARD&id=1");
     assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=bbb&position=CENTER&id=2");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=ccc&position=SMALL_FORWARD&id=3");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=ddd&position=POWER_FORWARD&id=4");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=eee&position=CENTER&id=5");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=fff&position=POINT_GUARD&id=6");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=ggg&position=CENTER&id=7");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=hhh&position=SMALL_FORWARD&id=8");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=iii&position=POWER_FORWARD&id=9");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=jjj&position=CENTER&id=a");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=kk&position=POWER_FORWARD&id=b");
-    assertEquals(200, clientConnection.getResponseCode());
-    clientConnection = tryRequest("profile-add?name=lll&position=CENTER&id=c");
-    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("match-end?id=1&playerWon=mimimi");
+    Map<String, Object> body =
+        adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-    tryRequest("queue-add?id=1");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=2");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=3");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=4");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=5");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=6");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=7");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=8");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=9");
-    assertEquals(200, clientConnection.getResponseCode());
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals(
+        "Error in specifying 'playerWon' variable. " + "Variable must be 'win', 'tie', or 'lose'",
+        body.get("details"));
+  }
 
-    assertNull(sharedState.getCourtAssigner().getCourts()[0].getMatch());
-    System.out.println(sharedState.getDataStore().getQueue());
-    tryRequest("queue-add?id=a");
-    System.out.println(sharedState.getDataStore().getQueue());
-    assertEquals(200, clientConnection.getResponseCode());
-    // match should be created now
+  @Test
+  public void testMatchEnding() throws IOException {
+    HttpURLConnection clientConnection;
+    Map<String, Object> body;
 
-    // assertNotNull(sharedState.getCourtAssigner().getCourts()[0].getMatch());
-    // assertNotNull(sharedState.getCourtAssigner().getCourts()[1].getMatch());
-    // assertNotNull(sharedState.getCourtAssigner().getCourts()[2].getMatch());
-    // assertNotNull(sharedState.getCourtAssigner().getCourts()[3].getMatch());
-    // assertNotNull(sharedState.getCourtAssigner().getCourts()[4].getMatch());
-    // assertNotNull(sharedState.getCourtAssigner().getCourts()[5].getMatch());
+    int playerAdded = 0;
+    for (Player p : this.generatePlayerList()) {
+      String apiCall = "profile-add?id=";
+      apiCall += p.getId() + "&name=";
+      apiCall += p.getName() + "&position=";
+      apiCall += p.getPosition();
+      clientConnection = tryRequest(apiCall);
+      assertEquals(200, clientConnection.getResponseCode());
 
-    for (ICourt i : sharedState.getCourtAssigner().getCourts()) {
-      System.out.println(i.getMatch());
+      clientConnection = tryRequest("queue-add?id=" + p.getId());
+      // Check that the body is a success
+      body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+      System.out.println(body);
+      assertEquals("success", body.get("result"));
+
+      // Try ending the match
+      clientConnection = tryRequest("match-end?id=" + p.getId() + "&playerWon=win");
+      assertEquals(200, clientConnection.getResponseCode());
+      body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
+      assertEquals("success", body.get("result"));
+      playerAdded++;
     }
 
-    assertEquals(0, sharedState.getDataStore().getQueue().size());
+    clientConnection = tryRequest("match-end?id=1&playerWon=mimimi");
+    body = adapter.fromJson(new Buffer().readFrom(clientConnection.getInputStream()));
 
-    // Add a couple more to the queue to make sure that the queue is only length 2 at this point.
-    tryRequest("queue-add?id=b");
-    assertEquals(200, clientConnection.getResponseCode());
-    tryRequest("queue-add?id=c");
-    assertEquals(200, clientConnection.getResponseCode());
-    // assertEquals(2, sharedState.getDataStore().getQueue().size());
+    assertEquals("error_bad_request", body.get("result"));
+    assertEquals(
+        "Error in specifying 'playerWon' variable. " + "Variable must be 'win', 'tie', or 'lose'",
+        body.get("details"));
 
-    for (ICourt i : sharedState.getCourtAssigner().getCourts()) {
-      System.out.println(i.getMatch());
-    }
+    assertNull(sharedState.getCourtAssigner().getCourts()[0]);
+  }
+
+  private List<Player> generatePlayerList() {
+    List<Player> players = new LinkedList<>();
+    Player testPlayer1 = new Player("a", Position.CENTER, "1");
+    players.add(testPlayer1);
+    Player testPlayer2 = new Player("b", Position.SMALL_FORWARD, "2");
+    players.add(testPlayer2);
+    Player testPlayer3 = new Player("c", Position.POINT_GUARD, "3");
+    players.add(testPlayer3);
+    Player testPlayer4 = new Player("d", Position.POWER_FORWARD, "4");
+    players.add(testPlayer4);
+    Player testPlayer5 = new Player("e", Position.SHOOTING_GUARD, "5");
+    players.add(testPlayer5);
+    Player testPlayer6 = new Player("f", Position.CENTER, "6");
+    players.add(testPlayer6);
+    Player testPlayer7 = new Player("g", Position.SMALL_FORWARD, "7");
+    players.add(testPlayer7);
+    Player testPlayer8 = new Player("h", Position.POINT_GUARD, "8");
+    players.add(testPlayer8);
+    Player testPlayer9 = new Player("i", Position.POWER_FORWARD, "9");
+    players.add(testPlayer9);
+    Player testPlayerA = new Player("j", Position.SHOOTING_GUARD, "a");
+    players.add(testPlayerA);
+    return players;
   }
 }

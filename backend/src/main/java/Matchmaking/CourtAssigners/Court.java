@@ -55,7 +55,7 @@ public class Court implements ICourt {
   public void addPlayer(Player player) throws IllegalStateException {
     if (this.match != null) {
       throw new IllegalStateException(
-          "Match is currently going on, cannot currently " + "add more players");
+          "Match is currently going on, cannot currently add more players");
     } else {
       this.players.add(player);
     }
@@ -67,7 +67,11 @@ public class Court implements ICourt {
    */
   @Override
   public Match getMatch() throws NoSuchElementException {
+    // if(this.match != null) {
     return this.match;
+    // }
+    // throw new NoSuchElementException("Court needs 10 players before a match can"
+    //    + "be made");
   }
 
   /** Sets the match to a new value. */

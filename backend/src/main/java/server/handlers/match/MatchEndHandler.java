@@ -8,20 +8,20 @@ import com.squareup.moshi.Types;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-import server.Server;
+import server.ServerSharedState;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 /** Adds a player to the most fitting match for their skill levels */
 public class MatchEndHandler implements Route {
-  private Server server;
+  private ServerSharedState serverSharedState;
 
   /**
-   * @param server
+   * @param serverSharedState
    */
-  public MatchEndHandler(Server server) {
-    this.server = server;
+  public MatchEndHandler(ServerSharedState serverSharedState) {
+    this.serverSharedState = serverSharedState;
   }
 
   @Override
@@ -38,7 +38,7 @@ public class MatchEndHandler implements Route {
     String playerWon;
     try {
       playerID = request.queryMap().get("id").value();
-      player = this.server.getDataStore().getPlayer(playerID);
+      player = this.serverSharedState.getDataStore().getPlayer(playerID);
     } catch (Exception e) {
       responseMap.put("result", "error_bad_request");
       responseMap.put("details", "Error in specifying 'id' variable: ");
@@ -64,15 +64,16 @@ public class MatchEndHandler implements Route {
 
     // Now that we have the ID and winState correct, we can call the matching Court and add it
     // to the court's internal tally
-    ICourt[] courts = this.server.getCourtAssigner().getCourts();
+    ICourt[] courts = this.serverSharedState.getCourtAssigner().getCourts();
 
     for (int i = 0; i < courts.length; i++) {
       if (courts[i].getPlayers().contains(player)) {
         if (courts[i].tryEndGame(player, playerWon)) {
           // This court has done its job and can now be removed.
-          Map<String, Player> playerMap = server.getCourtAssigner().removeInternalCourt(i);
+          Map<String, Player> playerMap =
+              serverSharedState.getCourtAssigner().removeInternalCourt(i);
           for (String pID : playerMap.keySet()) {
-            server.getDataStore().updatePlayer(pID, playerMap.get(pID));
+            serverSharedState.getDataStore().updatePlayer(pID, playerMap.get(pID));
           }
         }
         break;

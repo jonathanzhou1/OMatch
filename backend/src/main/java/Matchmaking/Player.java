@@ -34,7 +34,15 @@ public class Player implements IPlayer {
     this.wins = 0;
   }
 
-  public void generateID() {
+  public Player(String name, Position position, String id) {
+    this.name = name;
+    this.position = position;
+    this.skillLevel = 1500;
+    this.wins = 0;
+    this.id = id;
+  }
+
+  public String generateID() {
     String initialChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     Random random = new Random();
     StringBuilder idBuilder = new StringBuilder();
@@ -50,7 +58,7 @@ public class Player implements IPlayer {
 
       length++;
     }
-    this.id = idBuilder.toString();
+    return idBuilder.toString();
   }
 
   public Position getPosition() {
