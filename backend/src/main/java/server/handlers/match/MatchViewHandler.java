@@ -26,9 +26,11 @@ public class MatchViewHandler implements Route {
   }
 
   /**
-   * @param request
-   * @param response
-   * @return
+   * Returns a list of match objects, each containing details about the court the match is taking
+   * place on, as well as teams and their respective players.
+   * @param request A Standard HTTPS request according to Spark Java
+   * @param response A Standard HTTPS response according to Spark Java
+   * @return A Map from String to Object, adapted to JSON.
    * @throws Exception
    */
   @Override

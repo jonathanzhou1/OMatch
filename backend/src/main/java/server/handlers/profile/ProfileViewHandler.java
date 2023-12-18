@@ -21,9 +21,11 @@ public class ProfileViewHandler implements Route {
   }
 
   /**
-   * @param request
-   * @param response
-   * @return
+   * The profile view handler retrieves all relevant data to the player, including, name, position,
+   * ELO ranking, and W/L ratio.
+   * @param request A Standard HTTPS request according to Spark Java
+   * @param response A Standard HTTPS response according to Spark Java
+   * @return A Map from String to Object, adapted to JSON.
    * @throws Exception
    */
   @Override
