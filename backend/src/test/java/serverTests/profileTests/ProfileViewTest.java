@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import okio.Buffer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -99,6 +100,13 @@ public class ProfileViewTest {
     Spark.unmap("queue-add");
     Spark.unmap("queue-view");
     Spark.awaitStop();
+  }
+
+  // Taken from edstem #397
+  @AfterAll
+  public static void shutdown() throws InterruptedException {
+    Spark.stop();
+    Thread.sleep(3000);
   }
 
   @Test

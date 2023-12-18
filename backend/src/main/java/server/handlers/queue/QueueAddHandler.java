@@ -86,7 +86,7 @@ public class QueueAddHandler implements Route {
       }
     } catch (NoItemMadeException e) {
       if (!e.getMessage().equals("Queue length is not yet long enough for matchmaking.")) {
-        responseMap.put("result", "matchmaking_error");
+        responseMap.put("result", "matchmaking_full");
         responseMap.put("details", "All queues full currently: " + e.getMessage());
         responseMap.put("queries", request.queryParams());
         return adapter.toJson(responseMap);

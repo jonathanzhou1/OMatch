@@ -111,7 +111,7 @@ public class SimpleDatastoreTest {
     Player player2New = new Player("McBallin", Position.SMALL_FORWARD, "234567890");
 
     assertEquals(2, testDS.getPlayers().size());
-    testDS.updatePlayer("1234567890",player1New);
+    testDS.updatePlayer("1234567890", player1New);
     testDS.updatePlayer("234567890", player2New);
 
     assertEquals(player1New, testDS.getPlayer("1234567890"));
@@ -188,5 +188,4 @@ public class SimpleDatastoreTest {
             });
     assertEquals("Cannot Add Player To Queue, No ID Found", exception.getMessage());
   }
-
 }

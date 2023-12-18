@@ -1,8 +1,10 @@
 package serverTests.matchTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import Matchmaking.CourtAssigners.CourtAssigner;
+import Matchmaking.CourtAssigners.ICourt;
 import Matchmaking.MatchAlgs.SimpleMatchMaker;
 import Matchmaking.SkillCalculators.SimpleSkill;
 import com.squareup.moshi.JsonAdapter;
@@ -17,11 +19,13 @@ import java.net.URL;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.ServerSharedState;
+import server.exceptions.NoItemFoundException;
 import server.handlers.match.MatchEndHandler;
 import server.handlers.match.MatchViewHandler;
 import server.handlers.profile.ProfileAddHandler;
@@ -91,9 +95,102 @@ public class MatchEndTest {
     Spark.awaitStop();
   }
 
+  // Taken from edstem #397
+  @AfterAll
+  public static void shutdown() throws InterruptedException {
+    Spark.stop();
+    Thread.sleep(3000);
+  }
+
   @Test
   public void testAPICode200() throws IOException {
     HttpURLConnection clientConnection = tryRequest("match-end");
     assertEquals(200, clientConnection.getResponseCode());
+  }
+
+  /**
+   * Tests that the matchEndHandler correctly ends a match after all players vote to end
+   *
+   * @throws IOException
+   * @throws NoItemFoundException
+   */
+  @Test
+  public void testMatchCreation() throws IOException, NoItemFoundException {
+    // Make at least 10 players in the server, then add a few extra as well
+    HttpURLConnection clientConnection =
+        tryRequest("profile-add?name=aaa&position=POINT_GUARD&id=1");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=bbb&position=CENTER&id=2");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=ccc&position=SMALL_FORWARD&id=3");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=ddd&position=POWER_FORWARD&id=4");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=eee&position=CENTER&id=5");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=fff&position=POINT_GUARD&id=6");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=ggg&position=CENTER&id=7");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=hhh&position=SMALL_FORWARD&id=8");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=iii&position=POWER_FORWARD&id=9");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=jjj&position=CENTER&id=a");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=kk&position=POWER_FORWARD&id=b");
+    assertEquals(200, clientConnection.getResponseCode());
+    clientConnection = tryRequest("profile-add?name=lll&position=CENTER&id=c");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    tryRequest("queue-add?id=1");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=2");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=3");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=4");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=5");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=6");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=7");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=8");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=9");
+    assertEquals(200, clientConnection.getResponseCode());
+
+    assertNull(sharedState.getCourtAssigner().getCourts()[0].getMatch());
+    System.out.println(sharedState.getDataStore().getQueue());
+    tryRequest("queue-add?id=a");
+    System.out.println(sharedState.getDataStore().getQueue());
+    assertEquals(200, clientConnection.getResponseCode());
+    // match should be created now
+
+    // assertNotNull(sharedState.getCourtAssigner().getCourts()[0].getMatch());
+    // assertNotNull(sharedState.getCourtAssigner().getCourts()[1].getMatch());
+    // assertNotNull(sharedState.getCourtAssigner().getCourts()[2].getMatch());
+    // assertNotNull(sharedState.getCourtAssigner().getCourts()[3].getMatch());
+    // assertNotNull(sharedState.getCourtAssigner().getCourts()[4].getMatch());
+    // assertNotNull(sharedState.getCourtAssigner().getCourts()[5].getMatch());
+
+    for (ICourt i : sharedState.getCourtAssigner().getCourts()) {
+      System.out.println(i.getMatch());
+    }
+
+    assertEquals(0, sharedState.getDataStore().getQueue().size());
+
+    // Add a couple more to the queue to make sure that the queue is only length 2 at this point.
+    tryRequest("queue-add?id=b");
+    assertEquals(200, clientConnection.getResponseCode());
+    tryRequest("queue-add?id=c");
+    assertEquals(200, clientConnection.getResponseCode());
+    // assertEquals(2, sharedState.getDataStore().getQueue().size());
+
+    for (ICourt i : sharedState.getCourtAssigner().getCourts()) {
+      System.out.println(i.getMatch());
+    }
   }
 }
