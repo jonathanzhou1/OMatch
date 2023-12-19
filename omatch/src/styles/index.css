@@ -27,7 +27,8 @@ body {
 }
 
 #editProfileHeader,
-#viewProfileHeader {
+#viewProfileHeader,
+#matchHeader {
   padding-top: 5vh;
 }
 
@@ -54,7 +55,8 @@ h2 {
 #signIn,
 #viewProfile,
 #createAccount,
-#editProfile {
+#editProfile,
+#match {
   margin: auto;
   width: 40vw;
   background-color: rgb(255, 165, 47);
@@ -68,13 +70,18 @@ h2 {
   min-height: 400px;
 }
 
+#match {
+  text-align: center;
+}
+
 #createAccount,
-#viewProfile {
+#viewProfile,
+#match {
   height: 90vh;
   min-height: 750px;
 }
 
-input {
+.input {
   width: 20vw;
   border-radius: 7px;
   font-size: calc(16px + 0.2vw);
@@ -243,4 +250,17 @@ select {
 /**INPUT FORM STYLING **/
 #lessTopMargin {
   margin-top: -2vh;
+}
+
+/**Matchmaking*/
+.radios {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.radio {
+  width: 3vw;
+  padding-right: 2vw;
+  padding-left: 2vw;
+  margin-bottom: 2vh;
 }

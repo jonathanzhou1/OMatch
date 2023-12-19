@@ -147,6 +147,7 @@ export default function CreateAccountBox() {
       <h1 id="createAccountHeader">Create Account</h1>
       <h2 id="lessTopMargin">Email</h2>
       <input
+        className="input"
         aria-label="emailInput"
         type="email"
         onChange={(event) => {
@@ -162,6 +163,7 @@ export default function CreateAccountBox() {
       <h2>Password</h2>
       {/* Consider adding minLength and pattern properties for more secure passwords */}
       <input
+        className="input"
         aria-label="passwordInput"
         type="password"
         onChange={(event) => {
@@ -176,6 +178,7 @@ export default function CreateAccountBox() {
       ></input>
       <h2>First Name</h2>
       <input
+        className="input"
         aria-label="firstNameInput"
         type="text"
         onChange={(event) => {
@@ -184,6 +187,7 @@ export default function CreateAccountBox() {
       />
       <h2>Last Name</h2>
       <input
+        className="input"
         aria-label="lastNameInput"
         type="text"
         onChange={(event) => {

@@ -62,6 +62,7 @@ export default function SignInBox() {
       <h1 className="welcomeHeader">Sign In</h1>
       <h2 id="lessTopMargin">Email</h2>
       <input
+        className="input"
         aria-label="emailInput"
         type="email"
         onChange={(event) => {
@@ -76,6 +77,7 @@ export default function SignInBox() {
       ></input>
       <h2>Password</h2>
       <input
+        className="input"
         aria-label="passwordInput"
         type="password"
         onChange={(event) => {

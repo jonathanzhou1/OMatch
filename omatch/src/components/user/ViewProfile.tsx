@@ -238,6 +238,7 @@ export default function ViewProfile() {
           <div>
             <p>Please reinput your password: </p>
             <input
+              className="input"
               aria-label="passwordInput"
               type="password"
               onChange={(event) => {
