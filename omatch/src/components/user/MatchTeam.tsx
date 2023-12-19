@@ -170,6 +170,7 @@ export default function MatchTeam() {
                   type="radio"
                   name="win"
                   value="win"
+                  aria-label="win"
                   onChange={(event) => setGameResult(event.target.value)}
                   checked={gameResult === "win"}
                 ></input>
@@ -182,6 +183,7 @@ export default function MatchTeam() {
                   type="radio"
                   name="loss"
                   value="lose"
+                  aria-label="lose"
                   onChange={(event) => setGameResult(event.target.value)}
                   checked={gameResult === "lose"}
                 ></input>
@@ -194,6 +196,7 @@ export default function MatchTeam() {
                   type="radio"
                   name="draw"
                   value="tie"
+                  aria-label="tie"
                   onChange={(event) => setGameResult(event.target.value)}
                   checked={gameResult === "tie"}
                 ></input>
