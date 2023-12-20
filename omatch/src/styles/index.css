@@ -265,10 +265,18 @@ select {
   margin-bottom: 2vh;
 }
 
+.centerDiv {
+  text-align: center;
+}
+
 #currentMatches {
   margin: auto;
   align-self: center;
   display: inline-block;
+}
+
+#endMatch {
+  text-align: center;
 }
 
 /* TABLE CSS */

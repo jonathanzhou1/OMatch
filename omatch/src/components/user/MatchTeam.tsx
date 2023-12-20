@@ -80,7 +80,7 @@ export default function MatchTeam() {
       }
     }
     return (
-      <div>
+      <div className="centerDiv">
         {liveMatches.map((match: Match, index) => (
           <div id="currentMatches">
             <h3>{`Match ${index + 1}`}</h3>
@@ -126,42 +126,42 @@ export default function MatchTeam() {
           }
         }
         setLiveMatches(liveMatches); // NEW EDIT
-        let matchDescription: string = "";
-        //iterate through all live matches
-        for (
-          let matchIndex = 0;
-          matchIndex < liveMatches.length;
-          matchIndex++
-        ) {
-          const curMatch = liveMatches[matchIndex];
-          const status: string = curMatch.outcome;
-          //get players from both teams and display
-          let team1players: string[] = [];
-          let team2players: string[] = [];
-          for (
-            let playerIndex = 0;
-            playerIndex < curMatch.team1.players.length;
-            playerIndex++
-          ) {
-            team1players.push(curMatch.team1.players[playerIndex].name);
-            team2players.push(curMatch.team2.players[playerIndex].name);
-          }
-          //set descriptive match string
-          matchDescription = matchDescription.concat(
-            "MATCH STATUS: " +
-              status +
-              ", TEAM 1 PLAYERS: " +
-              team1players +
-              ", TEAM 2 PLAYERS: " +
-              team2players +
-              "; "
-          );
-        }
-        if (matchDescription === "") {
-          setMatches("No matches yet!");
-        } else {
-          setMatches(matchDescription);
-        }
+        // let matchDescription: string = "";
+        // //iterate through all live matches
+        // for (
+        //   let matchIndex = 0;
+        //   matchIndex < liveMatches.length;
+        //   matchIndex++
+        // ) {
+        //   const curMatch = liveMatches[matchIndex];
+        //   const status: string = curMatch.outcome;
+        //   //get players from both teams and display
+        //   let team1players: string[] = [];
+        //   let team2players: string[] = [];
+        //   for (
+        //     let playerIndex = 0;
+        //     playerIndex < curMatch.team1.players.length;
+        //     playerIndex++
+        //   ) {
+        //     team1players.push(curMatch.team1.players[playerIndex].name);
+        //     team2players.push(curMatch.team2.players[playerIndex].name);
+        //   }
+        //   //set descriptive match string
+        //   matchDescription = matchDescription.concat(
+        //     "MATCH STATUS: " +
+        //       status +
+        //       ", TEAM 1 PLAYERS: " +
+        //       team1players +
+        //       ", TEAM 2 PLAYERS: " +
+        //       team2players +
+        //       "; "
+        //   );
+        // }
+        // if (matchDescription === "") {
+        //   setMatches("No matches yet!");
+        // } else {
+        //   setMatches(matchDescription);
+        // }
         setShowMatches(true);
       });
   }
@@ -206,7 +206,7 @@ export default function MatchTeam() {
   }
 
   return (
-    <div id="match">
+    <div>
       <h1 id="matchHeader">MATCH TEAM!</h1>
       <div id="buttonContainer">
         <button className="button threeButtons leftButton" onClick={matchTeam}>
@@ -226,9 +226,9 @@ export default function MatchTeam() {
         </button>
         <h2 id="activeMatchesHeader">Active Matches</h2>
       </div>
-      {showMatches ? formatMatches(liveMatches) : <p>No active matches.</p>}
+      {showMatches && formatMatches(liveMatches)}
       {showGameResultQuery && (
-        <div>
+        <div id="endMatch">
           <p>Please choose the game result: </p>
           <div className="radios">
             <div className="radio">
@@ -273,7 +273,7 @@ export default function MatchTeam() {
           </div>
 
           <button
-            className="button singleButton"
+            className="button threeButtons"
             id="submitGameResult"
             onClick={endMatch}
           >
