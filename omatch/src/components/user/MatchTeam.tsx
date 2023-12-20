@@ -26,7 +26,7 @@ interface Match {
 export default function MatchTeam() {
   //react state variable to display all matches
   const [showMatches, setShowMatches] = useState(false);
-  const [matches, setMatches] = useState("");
+  //const [matches, setMatches] = useState("");
   const [liveMatches, setLiveMatches] = useState<Match[]>([]);
 
   //errorMessage handling
@@ -82,6 +82,9 @@ export default function MatchTeam() {
     }
     return (
       <div className="centerDiv">
+        {liveMatches.length == 0 && (
+          <p className="centerDiv">No live matches!</p>
+        )}
         {liveMatches.map((match: Match, index) => (
           <div id="currentMatches">
             <h3>{`Match ${index + 1}`}</h3>
@@ -93,12 +96,12 @@ export default function MatchTeam() {
                 </tr>
                 <tr>
                   <td>
-                    {match.team1.players.map((player: Player, index) => (
+                    {match.team1.players.map((player: Player, _index) => (
                       <p>{player.name}</p>
                     ))}
                   </td>
                   <td>
-                    {match.team2.players.map((player: Player, index) => (
+                    {match.team2.players.map((player: Player, _index) => (
                       <p>{player.name}</p>
                     ))}
                   </td>
@@ -289,9 +292,11 @@ export default function MatchTeam() {
           </button>
         </div>
       )}
-      {displaySuccessMessage && <p>Success: {successMessage}</p>}
+      {displaySuccessMessage && (
+        <p className="centerDiv">Success: {successMessage}</p>
+      )}
       {displayErrorMessage && (
-        <p className="redText">Failure: {errorMessage}</p>
+        <p className="redText centerDiv">Failure: {errorMessage}</p>
       )}
     </div>
   );
