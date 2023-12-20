@@ -1,10 +1,32 @@
 import { useState } from "react";
 import "../../styles/index.css";
 
+interface Player {
+  id: string;
+  name: string;
+  position: string;
+  skillLevel: number;
+  wins: number;
+  losses: number;
+}
+
+interface Team {
+  avgSkill: number;
+  players: Player[];
+  size: number;
+}
+
+interface Match {
+  outcome: string;
+  team1: Team;
+  team2: Team;
+}
+
 export default function MatchTeam() {
   //react state variable to display all matches
   const [showMatches, setShowMatches] = useState(false);
   const [matches, setMatches] = useState("");
+  const [liveMatches, setLiveMatches] = useState<Match[]>([]);
 
   //errorMessage handling
   const [displayErrorMessage, setDisplayErrorMessage] = useState(false);
@@ -41,6 +63,53 @@ export default function MatchTeam() {
       });
   }
 
+  function formatMatches(liveMatches: Match[]) {
+    //iterate through all live matches
+    for (let matchIndex = 0; matchIndex < liveMatches.length; matchIndex++) {
+      const curMatch = liveMatches[matchIndex];
+      //get players from both teams and display
+      const team1players: string[] = [];
+      const team2players: string[] = [];
+      for (
+        let playerIndex = 0;
+        playerIndex < curMatch.team1.players.length;
+        playerIndex++
+      ) {
+        team1players.push(curMatch.team1.players[playerIndex].name);
+        team2players.push(curMatch.team2.players[playerIndex].name);
+      }
+    }
+    return (
+      <div>
+        {liveMatches.map((match: Match, index) => (
+          <div id="currentMatches">
+            <h3>{`Match ${index + 1}`}</h3>
+            <table>
+              <tbody>
+                <tr>
+                  <th>Team 1</th>
+                  <th>Team 2</th>
+                </tr>
+                <tr>
+                  <td>
+                    {match.team1.players.map((player: Player, index) => (
+                      <p>{player.name}</p>
+                    ))}
+                  </td>
+                  <td>
+                    {match.team2.players.map((player: Player, index) => (
+                      <p>{player.name}</p>
+                    ))}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   async function viewMatches() {
     let hostname = "http://localhost";
     let port = ":3232";
@@ -56,6 +125,7 @@ export default function MatchTeam() {
             liveMatches.push(curMatches[courtIndex]);
           }
         }
+        setLiveMatches(liveMatches); // NEW EDIT
         let matchDescription: string = "";
         //iterate through all live matches
         for (
@@ -154,12 +224,9 @@ export default function MatchTeam() {
         >
           End Match
         </button>
+        <h2 id="activeMatchesHeader">Active Matches</h2>
       </div>
-      {showMatches && (
-        <p>
-          <b>Current Matches:</b> {matches}
-        </p>
-      )}
+      {showMatches ? formatMatches(liveMatches) : <p>No active matches.</p>}
       {showGameResultQuery && (
         <div>
           <p>Please choose the game result: </p>
