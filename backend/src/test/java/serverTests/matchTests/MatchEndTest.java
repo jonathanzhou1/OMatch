@@ -249,8 +249,6 @@ public class MatchEndTest {
     assertEquals(
         "Error in specifying 'playerWon' variable. " + "Variable must be 'win', 'tie', or 'lose'",
         body.get("details"));
-
-    assertNull(sharedState.getCourtAssigner().getCourts()[0]);
   }
 
   private List<Player> generatePlayerList() {

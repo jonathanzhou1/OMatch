@@ -29,6 +29,7 @@ public class MatchEndHandler implements Route {
    * think the court can be freed. It should be noted however, that the handler requires all players
    * to have a query associated with them for the handler to automatically delete the match and
    * update the players' stat
+   *
    * @param request A Standard HTTPS request according to Spark Java
    * @param response A Standard HTTPS response according to Spark Java
    * @return A Map from String to Object, adapted to JSON.

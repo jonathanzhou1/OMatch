@@ -26,6 +26,7 @@ public class ProfileEditHandler implements Route {
    * The profile edit handler manages the editing and/or deleting of players. Note: this is
    * different from creating profiles, as that requires adding a new profile to the database. This
    * handler is designed exclusively for editing a profile.
+   *
    * @param request A Standard HTTPS request according to Spark Java
    * @param response A Standard HTTPS response according to Spark Java
    * @return A Map from String to Object, adapted to JSON.

@@ -82,7 +82,7 @@ public class QueueAddHandler implements Route {
       court = serverSharedState.getCourtAssigner().getCourts()[courtIndex];
       responseMap.put("court", court);
       responseMap.put("newCourtMade", true);
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < serverSharedState.getPlayersPerCourt(); i++) {
         serverSharedState.getDataStore().getQueue().poll();
       }
     } catch (IOException e) {

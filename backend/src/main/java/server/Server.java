@@ -67,6 +67,43 @@ public class Server {
     System.out.println("For Queue Adding:     http://localhost:" + port + "/queue-add");
   }
 
+  /** */
+  public Server(DataStore dataStore, ICourtAssigner courtAssigner, int numPlayersPerCourt) {
+
+    this.serverSharedState = new ServerSharedState(dataStore, courtAssigner, numPlayersPerCourt);
+
+    Spark.port(port);
+
+    after(
+        (request, response) -> {
+          response.header("Access-Control-Allow-Origin", "*");
+          response.header("Access-Control-Allow-Methods", "*");
+        });
+
+    // Set up handlers:
+    Spark.get("profile-add", new ProfileAddHandler(this.serverSharedState));
+    Spark.get("profile-edit", new ProfileEditHandler(this.serverSharedState));
+    Spark.get("profile-view", new ProfileViewHandler(this.serverSharedState));
+    Spark.get("match-end", new MatchEndHandler(this.serverSharedState));
+    Spark.get("match-view", new MatchViewHandler(this.serverSharedState));
+    Spark.get("queue-add", new QueueAddHandler(this.serverSharedState));
+    Spark.get("queue-view", new QueueViewHandler(this.serverSharedState));
+
+    Spark.awaitInitialization();
+
+    System.out.println("Server started at http://localhost:" + port);
+
+    System.out.println("\n- - - - - - - ENDPOINTS - - - - - - -\n");
+
+    System.out.println("For Profile Viewing:  http://localhost:" + port + "/profile-view");
+    System.out.println("For Profile Adding:   http://localhost:" + port + "/profile-add");
+    System.out.println("For Profile Editing:  http://localhost:" + port + "/profile-edit");
+    System.out.println("For Match Ending:     http://localhost:" + port + "/match-end");
+    System.out.println("For Match Viewing:    http://localhost:" + port + "/match-view");
+    System.out.println("For Queue Viewing:    http://localhost:" + port + "/queue-view");
+    System.out.println("For Queue Adding:     http://localhost:" + port + "/queue-add");
+  }
+
   /**
    * Main method. Run to initialize server. Instantiates the server with a mocked data store, court
    * assigner, matchmaker, and skill assigner.
