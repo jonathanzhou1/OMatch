@@ -23,11 +23,14 @@ public class ProfileAddHandler implements Route {
   }
 
   /**
-   * Adds a new profile to the database
+   * The profile addition handler manages the addition of profiles to the backend database. Any
+   * players with exactly the same name and position will be treated as different players with a
+   * different ID, so it is imperative that you use the editing handler for editing or deleting
+   * players.
    *
-   * @param request
-   * @param response
-   * @return
+   * @param request A Standard HTTPS request according to Spark Java
+   * @param response A Standard HTTPS response according to Spark Java
+   * @return A Map from String to Object, adapted to JSON.
    * @throws Exception
    */
   @Override

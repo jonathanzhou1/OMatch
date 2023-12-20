@@ -21,9 +21,11 @@ public class QueueViewHandler implements Route {
   }
 
   /**
-   * @param request
-   * @param response
-   * @return
+   * Returns either the queue or the position of a player within the queue.
+   *
+   * @param request A Standard HTTPS request according to Spark Java
+   * @param response A Standard HTTPS response according to Spark Java
+   * @return A Map from String to Object, adapted to JSON.
    * @throws Exception
    */
   @Override

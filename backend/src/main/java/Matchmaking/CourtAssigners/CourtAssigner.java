@@ -18,6 +18,7 @@ public class CourtAssigner implements ICourtAssigner {
   boolean[] courtsFilled;
   private IMatchMaker matchMaker;
   private SkillUpdater skillUpdater;
+  int numPlayersPerCourt = 10;
 
   /**
    * Constructs a CourtAssigner object for managing an arbitrary number of courts.
@@ -37,6 +38,25 @@ public class CourtAssigner implements ICourtAssigner {
   }
 
   /**
+   * Constructs a CourtAssigner object for managing an arbitrary number of courts.
+   *
+   * @param numCourts The total number of courts that the assigner will be managing
+   * @param matchMaker The matchmaker used across all courts
+   * @param skillUpdater The skill updater used across all courts
+   */
+  public CourtAssigner(
+      int numCourts, IMatchMaker matchMaker, SkillUpdater skillUpdater, int numPlayersPerCourt) {
+    courts = new ICourt[numCourts];
+    for (int i = 0; i < numCourts; i++) {
+      courts[i] = new Court();
+    }
+    this.matchMaker = matchMaker;
+    this.skillUpdater = skillUpdater;
+    this.courtsFilled = new boolean[numCourts];
+    this.numPlayersPerCourt = numPlayersPerCourt;
+  }
+
+  /**
    * Takes in a new player and uses its positioning and skill level to add it to the most fitting
    * team.
    *
@@ -46,12 +66,13 @@ public class CourtAssigner implements ICourtAssigner {
   @Override
   public int addPlayers(Queue<Player> newPlayers) throws NoItemMadeException, IOException {
     List<Player> queuePlayers = List.of(newPlayers.toArray(new Player[0]));
-    if (queuePlayers.size() < 10) {
+    if (queuePlayers.size() < this.numPlayersPerCourt) {
       throw new NoItemMadeException("Queue length is not yet long enough for matchmaking.");
     } else {
-      List<Match> matches = this.matchMaker.matchmaker(queuePlayers.subList(0, 10), 2);
+      List<Match> matches =
+          this.matchMaker.matchmaker(queuePlayers.subList(0, this.numPlayersPerCourt), 2);
       if (matches.size() == 1) {
-        Court court = new Court(matches.get(0), queuePlayers.subList(0, 10));
+        Court court = new Court(matches.get(0), queuePlayers.subList(0, this.numPlayersPerCourt));
         int courtMade = this.addInternalCourt(court);
         if (courtMade >= 0) {
           return courtMade;

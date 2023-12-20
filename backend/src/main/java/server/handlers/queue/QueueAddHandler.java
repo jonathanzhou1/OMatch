@@ -24,7 +24,9 @@ public class QueueAddHandler implements Route {
   }
 
   /**
-   * Invoked when a request is made on this route's corresponding path e.g. '/hello'
+   * Adds a player to the matchmaking queue. When the queue length is 10, the first 10 players in
+   * the queue will be dequeued into a match. Whether this has happened will be represented by the
+   * NewCourtAdded boolean, which will be true if a new court has been added, and false otherwise.
    *
    * @param request The request object providing information about the HTTP request
    * @param response The response object providing functionality for modifying the response
@@ -80,7 +82,7 @@ public class QueueAddHandler implements Route {
       court = serverSharedState.getCourtAssigner().getCourts()[courtIndex];
       responseMap.put("court", court);
       responseMap.put("newCourtMade", true);
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < serverSharedState.getPlayersPerCourt(); i++) {
         serverSharedState.getDataStore().getQueue().poll();
       }
     } catch (IOException e) {
