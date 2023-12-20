@@ -173,10 +173,18 @@ export default function ViewProfile() {
   }
 
   return (
-    <div id="viewProfile">
-      <h1 id="viewProfileHeader">VIEW PROFILE!</h1>
-      <div id="buttonContainer">
-        {/* *USE FOR MOCKS
+    <div>
+      <div id="backButtonContainer">
+        <Link to="/dashboard">
+          <button className="button singleButton" id="backButton">
+            Back
+          </button>
+        </Link>
+      </div>
+      <div id="viewProfile">
+        <h1 id="viewProfileHeader">VIEW PROFILE!</h1>
+        <div id="buttonContainer">
+          {/* *USE FOR MOCKS
         <p>NOTE: Mocked Profile</p>
         <div id="profileInfo">
           <h3>User Info</h3>
@@ -189,77 +197,78 @@ export default function ViewProfile() {
           )}
           {!existingMock && <p>{profileInfo}</p>}
         </div> */}
-        <div id="profileInfo">
-          <h3>User Info</h3>
-          <p>
-            <b>Name: </b> {name}
-            <br></br>
-            <b>Position: </b> {position}
-            <br></br>
-            <b>Wins: </b> {wins}
-            <br></br>
-            <b>Losses: </b> {losses}
-          </p>
-        </div>
-        <div>
-          <Link to="/edit-profile">
-            <button className="button singleButton" id="editProfileButton">
-              Edit Profile
-            </button>
-          </Link>
-        </div>
-        <div>
-          <button
-            className="button singleButton"
-            id="deleteProfileButton"
-            onClick={doubleCheckDelete}
-          >
-            Delete Profile
-          </button>
-        </div>
-        {displayRedMessage && <p className="redText">{redMessage}</p>}
-        {displayDeleteConfirmation && (
-          <div>
-            <button
-              className="button twoButtons leftButton"
-              onClick={getPassword}
-            >
-              Yes
-            </button>
-            <button
-              className="button twoButtons rightButton"
-              onClick={resetConfirmation}
-            >
-              No
-            </button>
+          <div id="profileInfo">
+            <h3>User Info</h3>
+            <p>
+              <b>Name: </b> {name}
+              <br></br>
+              <b>Position: </b> {position}
+              <br></br>
+              <b>Wins: </b> {wins}
+              <br></br>
+              <b>Losses: </b> {losses}
+            </p>
           </div>
-        )}
-        {needPassword && (
           <div>
-            <p>Please reinput your password: </p>
-            <input
-              className="input"
-              aria-label="passwordInput"
-              type="password"
-              onChange={(event) => {
-                setPassword(event.target.value);
-              }}
-              onKeyDown={(event) => {
-                if (event.key === "Enter") {
-                  event.preventDefault();
-                  deleteProfile();
-                }
-              }}
-            ></input>
+            <Link to="/edit-profile">
+              <button className="button singleButton" id="editProfileButton">
+                Edit Profile
+              </button>
+            </Link>
+          </div>
+          <div>
             <button
               className="button singleButton"
-              id="submitPassword"
-              onClick={deleteProfile}
+              id="deleteProfileButton"
+              onClick={doubleCheckDelete}
             >
-              Submit Password
+              Delete Profile
             </button>
           </div>
-        )}
+          {displayRedMessage && <p className="redText">{redMessage}</p>}
+          {displayDeleteConfirmation && (
+            <div>
+              <button
+                className="button twoButtons leftButton"
+                onClick={getPassword}
+              >
+                Yes
+              </button>
+              <button
+                className="button twoButtons rightButton"
+                onClick={resetConfirmation}
+              >
+                No
+              </button>
+            </div>
+          )}
+          {needPassword && (
+            <div>
+              <p>Please reinput your password: </p>
+              <input
+                className="input"
+                aria-label="passwordInput"
+                type="password"
+                onChange={(event) => {
+                  setPassword(event.target.value);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    deleteProfile();
+                  }
+                }}
+              ></input>
+              <button
+                className="button singleButton"
+                id="submitPassword"
+                onClick={deleteProfile}
+              >
+                Submit Password
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
