@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "../../styles/index.css";
+import { Link } from "react-router-dom";
 
 interface Player {
   id: string;
@@ -207,6 +208,13 @@ export default function MatchTeam() {
 
   return (
     <div>
+      <div id="backButtonContainer">
+        <Link to="/dashboard">
+          <button className="button singleButton" id="backButton">
+            Back
+          </button>
+        </Link>
+      </div>
       <h1 id="matchHeader">MATCH TEAM!</h1>
       <div id="buttonContainer">
         <button className="button threeButtons leftButton" onClick={matchTeam}>

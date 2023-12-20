@@ -27,8 +27,7 @@ body {
 }
 
 #editProfileHeader,
-#viewProfileHeader,
-#matchHeader {
+#viewProfileHeader {
   padding-top: 5vh;
 }
 
@@ -308,4 +307,11 @@ table td {
   border: 1px solid #8d5910;
   font-weight: bold;
   background-color: rgb(255, 165, 47);
+}
+
+/** BACK BUTTON */
+#backButtonContainer {
+  width: calc(30% + 100px);
+  margin-top: 1vw;
+  margin-left: 1vw;
 }
