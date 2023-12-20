@@ -121,7 +121,7 @@ public class Server {
             new Server(
                 new SimpleDataStore(),
                 new CourtAssigner(6, new SortSkillMatchMaker(), new EloSkill()));
-      } else {
+      } else if(args[0].equalsIgnoreCase("JoshJoshington")){
         SimpleDataStore simple = new SimpleDataStore();
 
         // This is kinda bad tbh
@@ -150,6 +150,9 @@ public class Server {
         }
         Server server =
             new Server(simple, new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()));
+      }else{
+        Server server =
+            new Server(new SimpleDataStore(), new CourtAssigner(6, new SimpleMatchMaker(), new SimpleSkill()), 1);
       }
     } else {
       Server server =
