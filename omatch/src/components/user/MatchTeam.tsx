@@ -92,18 +92,14 @@ export default function MatchTeam() {
                 </tr>
                 <tr>
                   <td>
-                    <ul>
-                      {match.team1.players.map((player: Player, index) => (
-                        <li>{player.name}</li>
-                      ))}
-                    </ul>
+                    {match.team1.players.map((player: Player, index) => (
+                      <p>{player.name}</p>
+                    ))}
                   </td>
                   <td>
-                    <ul>
-                      {match.team2.players.map((player: Player, index) => (
-                        <li>{player.name}</li>
-                      ))}
-                    </ul>
+                    {match.team2.players.map((player: Player, index) => (
+                      <p>{player.name}</p>
+                    ))}
                   </td>
                 </tr>
               </tbody>
