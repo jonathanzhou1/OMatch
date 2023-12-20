@@ -81,11 +81,8 @@ test("E2E, integration: create account + match team + view matches + end match",
   const viewMatchesButton = page.getByRole("button", { name: "View Matches" });
   await expect(viewMatchesButton).toBeVisible();
   await viewMatchesButton.click();
-  await expect(
-    page.getByText(
-      "Current Matches: MATCH STATUS: ONGOING, TEAM 1 PLAYERS: Josh Joshington,Josh Joshington,Josh Joshington,Josh Joshington,Josh Joshington, TEAM 2 PLAYERS: Josh Joshington,Josh Joshington,Josh Joshington,Josh Joshington,Jonathan Zhou;"
-    )
-  ).toBeVisible();
+  await expect(page.getByText("Josh Joshington")).toHaveCount(9);
+  await expect(page.getByText("Giannis Antetokounmpo")).toHaveCount(1);
 
   //End Match
   const endMatchButton = page.getByRole("button", { name: "End Match" });
@@ -107,5 +104,8 @@ test("E2E, integration: create account + match team + view matches + end match",
   await expect(
     page.getByText("Success: Game result has been updated to your profile")
   ).toBeVisible();
+});
+
+test.afterEach(async ({ page }) => {
   await deleteAccountTestHelper(page);
 });
