@@ -26,8 +26,6 @@ export default function SignInBox() {
     await signInWithEmailAndPassword(auth, loginEmail, loginPassword)
       .then((userCredential) => {
         const user = userCredential.user;
-        //remove console log later
-        console.log(user);
         // localStorage acts as a KV-store locally on the browser
         //store email and user id locally for later use
         localStorage.setItem("userEmail", loginEmail);
@@ -53,7 +51,6 @@ export default function SignInBox() {
           }
         }
         setErrorStatus(true);
-        console.log(error.message);
       });
   }
 

@@ -15,6 +15,10 @@ import {
 } from "firebase/auth";
 import { auth } from "../../firebase-config";
 
+/**
+ * @deprecated old mock version of viewing profiles
+ * New one is integrated with the backend
+ */
 function MockView() {
   //get user id and make sure it is valid using type predicates
   let userID: string | null = localStorage.getItem("userID");
@@ -80,11 +84,12 @@ export default function ViewProfile() {
     fetch(localhost + port + viewQuery)
       .then((response) => response.json())
       .then((responseJSON) => {
-        console.log(responseJSON);
         if (responseJSON.result !== "success") {
+          //clear error message display
           setDisplayRedMessage(true);
           setRedMessage(responseJSON.details);
         } else {
+          //display profile information
           setDisplayRedMessage(false);
           setName(responseJSON.player.name);
           setWins(responseJSON.player.wins);
@@ -92,8 +97,10 @@ export default function ViewProfile() {
           setPosition(responseJSON.player.position);
         }
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((_error) => {
+        //clear error message display
+        setDisplayRedMessage(true);
+        setRedMessage("Error retrieving profile data");
       });
   }, []);
 
@@ -242,6 +249,7 @@ export default function ViewProfile() {
               </button>
             </div>
           )}
+          {/**Ask for password for re-authentication when deleting profile */}
           {needPassword && (
             <div>
               <p>Please reinput your password: </p>

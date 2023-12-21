@@ -63,8 +63,6 @@ export default function CreateAccountBox() {
           }
         }
         setErrorStatus(true);
-        //remove later
-        console.log(error.message);
         return;
       });
 
@@ -88,11 +86,8 @@ export default function CreateAccountBox() {
           setErrorMessage(
             "Please make sure to fill out every field in your profile."
           );
-          console.log(responseObject.details);
-          console.log(createProfileQuery);
 
-          // delete the account just created
-
+          // delete the account just created upon to maintain consistency
           const curUser = auth.currentUser;
           const curCredential = EmailAuthProvider.credential(
             registerEmail,
@@ -117,13 +112,10 @@ export default function CreateAccountBox() {
                     //remove local storage data
                     localStorage.removeItem("userEmail");
                     localStorage.removeItem("userID");
-
-                    // remove later
-                    console.log("user deleted");
                   })
                   .catch(() => setErrorMessage("Failed to delete user."));
               })
-              .catch((error: AuthError) => {
+              .catch((_error: AuthError) => {
                 setErrorMessage("Account reauthentication failed.");
                 setErrorStatus(true);
               });
@@ -134,8 +126,6 @@ export default function CreateAccountBox() {
           //store user email and user id locally on browser for later access
           localStorage.setItem("userEmail", registerEmail);
           localStorage.setItem("userID", uid);
-          console.log(`user id: ${uid}`);
-          console.log("successful response from backend");
           //go to dashboard upon successful account creation
           return navigate("/dashboard");
         }
@@ -161,7 +151,7 @@ export default function CreateAccountBox() {
         }}
       ></input>
       <h2>Password</h2>
-      {/* Consider adding minLength and pattern properties for more secure passwords */}
+      {/* minimum length requirement for more secure passwords */}
       <input
         className="input"
         aria-label="passwordInput"
@@ -201,7 +191,6 @@ export default function CreateAccountBox() {
           name="position"
           onChange={(event) => {
             setPosition(event.target.value);
-            console.log(event.target.value);
           }}
         >
           <option value={""}>Choose a position</option>
