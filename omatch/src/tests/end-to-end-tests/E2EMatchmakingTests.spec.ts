@@ -34,6 +34,9 @@ test("E2E, integration: create account + view empty matches", async ({
   await viewMatchesButton.click();
 
   await expect(page.getByText("No live matches!")).toBeVisible();
+
+  // delete account
+  await deleteAccountTestHelper(page);
 });
 
 test("E2E, integration: create account + match team + view matches + end match", async ({
@@ -88,6 +91,9 @@ test("E2E, integration: create account + match team + view matches + end match",
   await expect(
     page.getByText("Success: Game result has been updated to your profile")
   ).toBeVisible();
+
+  // delete account
+  await deleteAccountTestHelper(page);
 });
 
 test("E2E, integration: creating a full match from scratch", async ({
@@ -147,8 +153,10 @@ test("E2E, integration: creating a full match from scratch", async ({
       await expect(page.getByText("Baller 0")).toHaveCount(1);
 
       await expect(page.getByText("Match 2")).toBeVisible();
-      for (let j = 1; j < 11; j++) {
-        await expect(page.getByText(`Baller ${j}`)).toHaveCount(1);
+      for (let j = 0; j < 11; j++) {
+        await expect(
+          page.getByText(`Baller ${j}`, { exact: true })
+        ).toHaveCount(1);
       }
     }
 
@@ -159,18 +167,24 @@ test("E2E, integration: creating a full match from scratch", async ({
 
   // delete each account
   for (let i = 0; i < 11; i++) {
-    // declare the new account information
+    // sign in information
     const email = `b${i}@gmail.com`;
     const password = "1234567";
 
     // sign in
     await signInTestHelper(page, email, password);
 
+    // go to "View Profile"
+    const viewProfileButton = page.getByRole("button", {
+      name: "View Profile",
+    });
+    await viewProfileButton.click();
+
     // delete account
     await deleteAccountTestHelper(page);
   }
 });
 
-test.afterEach(async ({ page }) => {
-  await deleteAccountTestHelper(page);
-});
+// test.afterEach(async ({ page }) => {
+//   await deleteAccountTestHelper(page);
+// });
