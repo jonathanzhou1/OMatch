@@ -1,20 +1,8 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { createAccountTestHelper } from "../helper-functions/Create-Account.spec";
 import { deleteAccountTestHelper } from "../helper-functions/Delete-Account.spec";
-
-// /**
-//  * Helper function for testing edit profile functionality. This function assumes that page starts on the Dashboard page.
-//  * @param page Playwright page
-//  * @param firstName
-//  * @param lastName
-//  * @param position
-//  */
-// async function editProfileTestHelper(
-//   page: Page,
-//   firstName: string,
-//   lastName: string,
-//   position: string
-// ) {}
+import { signOutTestHelper } from "../helper-functions/SignOut.spec";
+import { signInTestHelper } from "../helper-functions/SignIn.spec";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:5173/");
@@ -45,10 +33,9 @@ test("E2E, integration: create account + view empty matches", async ({
 
   await viewMatchesButton.click();
 
-  await expect(
-    page.getByText("Current Matches: No matches yet!")
-  ).toBeVisible();
+  await expect(page.getByText("No live matches!")).toBeVisible();
 
+  // delete account
   await deleteAccountTestHelper(page);
 });
 
@@ -104,8 +91,100 @@ test("E2E, integration: create account + match team + view matches + end match",
   await expect(
     page.getByText("Success: Game result has been updated to your profile")
   ).toBeVisible();
-});
 
-test.afterEach(async ({ page }) => {
+  // delete account
   await deleteAccountTestHelper(page);
 });
+
+test("E2E, integration: creating a full match from scratch", async ({
+  page,
+}) => {
+  test.setTimeout(120000);
+  // create 11 different accounts to add to the queue
+  for (let i = 0; i < 11; i++) {
+    // declare the new account information
+    const email = `b${i}@gmail.com`;
+    const password = "1234567";
+    const firstName = "Baller";
+    const lastName = `${i}`;
+    const positions = [
+      "POINT_GUARD",
+      "SHOOTING_GUARD",
+      "SMALL_FORWARD",
+      "POWER_FORWARD",
+      "CENTER",
+    ];
+    const position = positions[i % 5];
+
+    // create the account
+    await createAccountTestHelper(
+      page,
+      email,
+      password,
+      firstName,
+      lastName,
+      position
+    );
+
+    // navigate to the "Match a Team" page
+    const matchButton = page.getByRole("button", { name: "Match a Team" });
+    await matchButton.click();
+
+    // match a team
+    const matchTeamButton = page.getByRole("button", { name: "Match Team" });
+    await matchTeamButton.click();
+    await expect(
+      page.getByText("Success: Player added to queue")
+    ).toBeVisible();
+
+    // if it's the last account, view matches; otherwise, sign out
+    if (i === 10) {
+      // view matches
+      const viewMatchesButton = page.getByRole("button", {
+        name: "View Matches",
+      });
+      await viewMatchesButton.click();
+
+      // confirm existing matches
+      await expect(page.getByText("Match 1")).toBeVisible();
+      await expect(page.getByText("Josh Joshington")).toHaveCount(9, {
+        timeout: 20000,
+      });
+      await expect(page.getByText("Baller 0")).toHaveCount(1);
+
+      await expect(page.getByText("Match 2")).toBeVisible();
+      for (let j = 0; j < 11; j++) {
+        await expect(
+          page.getByText(`Baller ${j}`, { exact: true })
+        ).toHaveCount(1);
+      }
+    }
+
+    // sign out
+    await page.goto("http://localhost:5173/dashboard");
+    await signOutTestHelper(page);
+  }
+
+  // delete each account
+  for (let i = 0; i < 11; i++) {
+    // sign in information
+    const email = `b${i}@gmail.com`;
+    const password = "1234567";
+
+    // sign in
+    await signInTestHelper(page, email, password);
+
+    // go to "View Profile"
+    const viewProfileButton = page.getByRole("button", {
+      name: "View Profile",
+    });
+    await viewProfileButton.click();
+
+    // delete account
+    await deleteAccountTestHelper(page);
+  }
+});
+
+// test.afterEach(async ({ page }) => {
+//   await deleteAccountTestHelper(page);
+// });

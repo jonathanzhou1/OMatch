@@ -33,7 +33,7 @@ export async function deleteAccountTestHelper(page: Page) {
   await submitPasswordButton.click();
 
   // Confirm deletion by page navigating back to home page
-  await expect(page).toHaveURL("http://localhost:5173/");
+  await expect(page).toHaveURL("http://localhost:5173/", { timeout: 20000 });
 
   //Further extensive tests to see if delete account works in E2RDeleteProfileTests
 }

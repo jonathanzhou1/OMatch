@@ -13,6 +13,7 @@ export default function LandingPage() {
       localStorage.getItem("userEmail") !== null &&
       localStorage.getItem("userID") !== null
     ) {
+      console.log("id", localStorage.getItem("userID"));
       navigate("/dashboard");
     }
   }, [location, navigate]);
