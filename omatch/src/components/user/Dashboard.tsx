@@ -15,9 +15,6 @@ export default function Dashboard() {
   //have dashboard update accordingly whenever changes are made
   useEffect(() => {
     if (localStorage.getItem("userEmail") == null) {
-      console.log(
-        `Dashboard currentUser: ${localStorage.getItem("userEmail")}`
-      );
       navigate("/");
     }
   }, [location, navigate]);
@@ -63,6 +60,7 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
+      {/**OMAC schedule imported from the OMAC facilities website page */}
       <div id="calendarHolder">
         <embed
           id="calendar"

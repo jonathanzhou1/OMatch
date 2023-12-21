@@ -4,16 +4,9 @@ import { useEffect } from "react";
 
 export default function WelcomeBox() {
   //react state variable keeping track of which user is currently logged in
-  // const [loggedInUser, setLoggedInUser] = useState(auth.currentUser);
   let loggedInUser = localStorage.getItem("userEmail");
 
-  // onAuthStateChanged(auth, (user) => {
-  //   setLoggedInUser(user);
-  //   //remove console logs later
-  //   console.log("entered onAuthStateChanged function");
-  //   console.log(user);
-  // });
-
+  //upon changing users, update local storage
   useEffect(() => {
     loggedInUser = localStorage.getItem("userEmail");
   }, [localStorage.getItem("userEmail")]);

@@ -19,20 +19,14 @@ export default function EditProfile() {
   async function edit() {
     let userID = localStorage.getItem("userID");
     if (!isString(userID)) {
-      //how is this possible?? ERR
+      //set error messages accordingly
       setErrorStatus(true);
       setErrorMessage("Invalid UserID. Please re-login");
     } else if (position === "") {
       setErrorStatus(true);
       setErrorMessage("Please a select valid position");
     } else {
-      //TEMP FUNCTION UNTIL WE CAN ACTUALLY UPDATE BACKEND
-      const editedProfile: UserProfile = {
-        id: userID,
-        name: `${firstName} ${lastName}`,
-        position: position,
-      };
-      console.log(editedProfile);
+      //query backend to edit profile
       const hostname = "http://localhost";
       const port = ":3232";
       const editProfileQuery =
@@ -47,12 +41,12 @@ export default function EditProfile() {
         .then((response) => response.json())
         .then((responseJson) => {
           if (responseJson.result !== "success") {
+            //display clear error message for user
             setErrorStatus(true);
             setErrorMessage(responseJson.details);
-            console.log(responseJson.details);
           } else {
+            //upon success, go back to view profile page.
             setErrorStatus(false);
-            console.log("successful response from backend");
             return navigate("/view-profile");
           }
         });
@@ -95,7 +89,6 @@ export default function EditProfile() {
             name="position"
             onChange={(event) => {
               setPosition(event.target.value);
-              console.log(event.target.value);
             }}
           >
             <option value={""}>Choose a position</option>

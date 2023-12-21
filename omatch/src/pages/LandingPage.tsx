@@ -7,12 +7,6 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // onAuthStateChanged(auth, (user) => {
-  //   if (user !== null) {
-  //     navigate("/dashboard");
-  //   }
-  // });
-
   //if user is already logged in, automatically go to dashboard
   useEffect(() => {
     if (

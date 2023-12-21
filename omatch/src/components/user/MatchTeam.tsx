@@ -82,9 +82,11 @@ export default function MatchTeam() {
     }
     return (
       <div className="centerDiv">
+        {/**Print out message if there are no live matches */}
         {liveMatches.length == 0 && (
           <p className="centerDiv">No live matches!</p>
         )}
+        {/**Otherwise, map through the matches and print them all out in tabular format */}
         {liveMatches.map((match: Match, index) => (
           <div id="currentMatches">
             <h3>{`Match ${index + 1}`}</h3>
@@ -129,7 +131,10 @@ export default function MatchTeam() {
             liveMatches.push(curMatches[courtIndex]);
           }
         }
-        setLiveMatches(liveMatches); // NEW EDIT
+        setLiveMatches(liveMatches);
+
+        // Commented out code is a different display format --> string serialized rather than table form
+
         // let matchDescription: string = "";
         // //iterate through all live matches
         // for (
@@ -170,31 +175,36 @@ export default function MatchTeam() {
       });
   }
 
+  //queryResult displays the message that asks user to select game result
   function queryResult() {
     setDisplayErrorMessage(false);
     setDisplaySuccessMessage(false);
     setShowGameResultQuery(true);
   }
 
+  //ending match functionality
   async function endMatch() {
+    //if no result selected, return error message
     if (gameResult === "") {
       setDisplayErrorMessage(true);
       setDisplaySuccessMessage(false);
       setErrorMessage("Please select a game result.");
     } else {
+      //query to end match to the backend
       let hostname = "http://localhost";
       let port = ":3232";
       let endMatchQuery =
         "/match-end?&id=" + userID + "&playerWon=" + gameResult;
-      console.log(endMatchQuery);
       await fetch(hostname + port + endMatchQuery)
         .then((response) => response.json())
         .then((responseJSON) => {
           if (responseJSON.result !== "success") {
+            //return the error message details
             setDisplayErrorMessage(true);
             setDisplaySuccessMessage(false);
             setErrorMessage(responseJSON.details);
           } else {
+            //upon success, give success message
             setDisplayErrorMessage(false);
             setDisplaySuccessMessage(true);
             setShowGameResultQuery(false);
@@ -237,7 +247,9 @@ export default function MatchTeam() {
         </button>
         <h2 id="activeMatchesHeader">Active Matches</h2>
       </div>
+      {/**Shows matches only when View Matches button is clicked*/}
       {showMatches && formatMatches(liveMatches)}
+      {/**Show game result query only when End Match button clicked */}
       {showGameResultQuery && (
         <div id="endMatch">
           <p>Please choose the game result: </p>
@@ -292,6 +304,7 @@ export default function MatchTeam() {
           </button>
         </div>
       )}
+      {/**Error and success messages displayed at bottom */}
       {displaySuccessMessage && (
         <p className="centerDiv">Success: {successMessage}</p>
       )}
