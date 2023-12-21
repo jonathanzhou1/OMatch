@@ -30,7 +30,7 @@ public class SimpleSkill implements SkillUpdater {
       for (Player player : team1Players) {
         float oldSkill = player.getSkillLevel();
         player.setSkillLevel(oldSkill + 1);
-        player.addLoss();
+        player.addWin();
       }
       for (Player player : team2Players) {
         float oldSkill = player.getSkillLevel();
