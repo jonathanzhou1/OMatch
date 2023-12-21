@@ -151,6 +151,7 @@ test("E2E, integration: creating a match + viewing after signing out", async ({
   await deleteAccountTestHelper(page);
 });
 
+// Restart backend!
 test("E2E, integration: creating a full match from scratch", async ({
   page,
 }) => {
